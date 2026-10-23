@@ -177,7 +177,7 @@ function buildSteps(p){
   else{[[0,1],[2,3]].forEach(([a,b])=>{for(let s=0;s<n;s++){st.push({ex:ex[a],s,rest:30});st.push({ex:ex[b],s,rest:75})}});for(let s=0;s<n;s++)st.push({ex:ex[4],s,rest:60})}
   st[st.length-1].rest=0; return st;
 }
-function startWorkout(){const p=plan(HOY);T.start=Date.now();T.steps=buildSteps(p);T.i=0;T.stepStart=Date.now();T.resting=false;T.restEnd=0;S.draft.tiempos={};clearInterval(T.iv);T.iv=setInterval(tick,250);render()}
+function startWorkout(){const p=plan(DIA);T.start=Date.now();T.steps=buildSteps(p);T.i=0;T.stepStart=Date.now();T.resting=false;T.restEnd=0;S.draft.tiempos={};clearInterval(T.iv);T.iv=setInterval(tick,250);render()}
 function finishWorkout(){S.draft.dur=(Date.now()-T.start)/1000;T.start=0;T.resting=false;clearInterval(T.iv);render()}
 function serieHecha(){
   const st=T.steps[T.i],d=S.draft,v=(document.getElementById("treps")?.value||"").replace(/\D/g,"");
@@ -199,7 +199,7 @@ function barInner(){
   if(T.resting){const nx=T.steps[T.i+1];return head+`<div class="row"><span class="grow"><span class="small" style="opacity:.7">Pausa</span><br><span class="big" id="trest">${fmt((T.restEnd-Date.now())/1000)}</span></span><span class="small" style="text-align:right;opacity:.85">Sigue:<br><b>${esc(nx.ex)}</b> · serie ${nx.s+1}</span></div>
      <div class="row"><button id="tskip">Saltar pausa ⏭</button><span class="grow"></span><button id="tfin">Terminar</button></div>`}
   const prev=(S.draft.ej[st.ex]||[])[st.s]??"";
-  return head+`<p class="big" style="font-size:1.15rem">${esc(st.ex)}</p><p class="small" style="opacity:.8">Serie ${st.s+1} de ${n} · ${esc((SES[plan(HOY).ses][1].find(x=>x[0]===st.ex)||[])[1]||"")}</p>
+  return head+`<p class="big" style="font-size:1.15rem">${esc(st.ex)}</p><p class="small" style="opacity:.8">Serie ${st.s+1} de ${n} · ${esc((SES[plan(DIA).ses][1].find(x=>x[0]===st.ex)||[])[1]||"")}</p>
    <div class="row"><input id="treps" inputmode="numeric" placeholder="¿Cuántas hiciste?" value="${prev}" style="flex:1;min-width:0;background:var(--card);color:var(--fg)"><button class="go" id="thecha" style="padding:14px 16px;font-size:1rem">✓ Serie hecha</button></div>
    <div class="row"><span class="small grow" style="opacity:.7">Al tocar "Serie hecha" arranca sola la pausa.</span><button id="tfin">Terminar</button></div>`;
 }
@@ -270,6 +270,7 @@ function diaDelReto(){
   return Math.floor((hoy-Date.UTC(y,m-1,d))/86400000)+1;
 }
 let HOY=diaDelReto();
+let DIA=Math.min(Math.max(HOY,1),28);
 const PRUEBA=new URLSearchParams(location.search).has("dia");
 
 /* Normaliza celulares argentinos a 10 dígitos (código de área + número) */
@@ -404,9 +405,15 @@ function renderHoy(){
     <p class="muted small">Mientras tanto, prepará tu espacio: una silla firme, una mesa resistente o una mochila con libros, y una botella de agua.</p></div>
     <div class="card"><span class="tag">Primera pregunta</span><p class="quote">${esc(preg(1))}</p><p class="small muted">Pensala estos días. El día 1 la vas a responder acá.</p></div>`;
   if(HOY>28) return `<div class="done-banner">¡Terminaste el reto! 🎉 Mirá todo lo que hiciste en "Mi recorrido".</div>`;
-  const p=plan(HOY); const ya=S.logs[HOY];
-  if(ya&&!S.draft) return `<div class="done-banner">✓ Día ${HOY} registrado. ¡Mañana seguimos!</div>
-   <div class="card"><span class="tag">Frase del día</span><p class="quote">${esc(frase(HOY))}</p></div>
+  const hoyN=Math.min(HOY,28);
+  const pend=Array.from({length:hoyN},(_,i)=>i+1).filter(x=>!S.logs[x]);
+  if(!S.diaElegido) DIA=S.logs[hoyN]&&pend.length?pend[0]:hoyN;
+  const sel=pend.length>1||(pend.length===1&&pend[0]!==hoyN)?`<div class="card"><span class="tag">Tus días</span><h2>Hoy toca el día ${hoyN}</h2>
+    <p class="small">${pend.filter(x=>x!==hoyN).length?`Tenés pendiente${pend.filter(x=>x!==hoyN).length>1?"s":""} ${pend.filter(x=>x!==hoyN).map(x=>"el día "+x).join(", ")}. `:""}Elegí qué hacer hoy: ponerte al día con el grupo, completar lo que quedó, o dejarlo pendiente y seguir. Cualquier opción vale: lo que cuenta es lo que elegís y sostenés hoy.</p>
+    <div class="row">${pend.map(x=>`<button class="tbtn ${x===DIA?"run":""}" data-dia="${x}">Día ${x}${x===hoyN?" (hoy)":""}</button>`).join("")}</div></div>`:"";
+  const p=plan(DIA); const ya=S.logs[DIA];
+  if(ya&&!S.draft) return sel+`<div class="done-banner">✓ Día ${DIA} registrado.${pend.length?"":" ¡Mañana seguimos!"}</div>
+   <div class="card"><span class="tag">Frase del día</span><p class="quote">${esc(frase(DIA))}</p></div>
    <button class="btn ghost" id="editar">Editar lo que cargué hoy</button>`;
   const d=S.draft||(S.draft=JSON.parse(JSON.stringify(ya||{antes:0,despues:0,esfuerzo:6,ej:{},niv:{},resp:"",palabraAntes:"",test:{}})));
   let ej="";
@@ -421,7 +428,7 @@ function renderHoy(){
   const test=(p.tipo==="test"||p.tipo==="testfin")?`<div class="card"><span class="tag">${p.tipo==="test"?"Test inicial":"Test final"}</span><h2>${p.tipo==="test"?"Tu punto de partida":"¿Cuánto avanzaste?"}</h2>
     <p class="small muted">Hacé cada prueba con la misma variante${p.tipo==="testfin"?" que usaste el día 1":" que vas a usar en el reto"}. Este número no es una nota: es tu punto de partida.</p>
     ${TEST.map(([t],i)=>`<div><label for="t${i}">${esc(t)}</label><input id="t${i}" data-test="${esc(t)}" inputmode="numeric" value="${esc(d.test?.[t]??"")}"></div>`).join("")}</div>`:"";
-  return antes(p,HOY)+`
+  return sel+antes(p,DIA)+`
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="cansada, con ganas, dudando…"></div></div>
@@ -432,20 +439,20 @@ function renderHoy(){
     <div class="moods" data-k="despues">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.despues===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="esf">¿Cuánto te costó? <b id="esfv">${d.esfuerzo}</b>/10</label><input type="range" id="esf" min="1" max="10" value="${d.esfuerzo}"></div></div>
   ${p.ses||p.tipo==="activo"?despues(p):""}
-  <div class="card"><span class="tag">4 · Desde el coaching</span><p class="quote">${esc(frase(HOY))}</p>
-    <div><label for="resp">${esc(preg(HOY))}</label><textarea id="resp" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
+  <div class="card"><span class="tag">4 · Desde el coaching</span><p class="quote">${esc(frase(DIA))}</p>
+    <div><label for="resp">${esc(preg(DIA))}</label><textarea id="resp" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
   <div class="card"><span class="tag">5 · Extra (opcional)</span><h2>¿Hiciste otra actividad?</h2>
     <div class="row"><select id="xt" class="grow"><option value="">Nada extra hoy</option>${EXTRA.map(x=>`<option ${d.extra?.tipo===x?"selected":""}>${x}</option>`).join("")}</select>
     <input id="xm" inputmode="numeric" placeholder="min" style="width:90px" value="${d.extra?.min??""}"></div></div>
   ${S.msg?`<p class="err">${S.msg}</p>`:""}
-  <button class="btn" id="guardar" ${S.busy?"disabled":""}>${S.busy?"Guardando…":`Guardar día ${HOY}`}</button>`;
+  <button class="btn" id="guardar" ${S.busy?"disabled":""}>${S.busy?"Guardando…":`Guardar día ${DIA}`}</button>`;
 }
 async function guardarDia(){
   const d=S.draft; if(!d.antes||!d.despues){S.msg="Marcá cómo te sentías antes y después.";return render()}
   if(T.start){d.dur=(Date.now()-T.start)/1000;T.start=0;clearInterval(T.iv)}
   S.busy=true;S.msg="";render();
-  const data={...d,prog:PROG.id,d:HOY,ts:serverTimestamp()};
-  try{await setDoc(doc(db,"usuarios",S.tel,"dias",PROG.id+"_"+HOY),data);S.logs[HOY]={...data};S.draft=null;S.busy=false;scrollTo({top:0});render()}
+  const data={...d,prog:PROG.id,d:DIA,diaCalendario:HOY,atrasado:DIA<HOY,ts:serverTimestamp()};
+  try{await setDoc(doc(db,"usuarios",S.tel,"dias",PROG.id+"_"+DIA),data);S.logs[DIA]={...data};S.diaElegido=false;S.draft=null;S.busy=false;scrollTo({top:0});render()}
   catch(e){S.busy=false;S.msg="No se pudo guardar. Revisá tu internet y tocá Guardar de nuevo (lo que cargaste sigue acá).";render()}
 }
 function totalReps(L){let t=0;Object.values(L).forEach(l=>Object.values(l.ej||{}).forEach(a=>(a||[]).forEach(v=>t+=+v||0)));return t}
@@ -482,9 +489,14 @@ async function cargarAdmin(){
   S.cont=c.exists()?c.data():{}; S.A=A; render();
 }
 function estado(u){
-  const ds=Object.keys(u.logs).map(Number); const last=ds.length?Math.max(...ds):0; const gap=Math.min(HOY,28)-last;
   if(HOY<1) return ["ok","Inscripta"];
-  if(gap<=0) return ["ok","Al día"]; if(gap===1) return ["ok","Cargó ayer"]; if(gap<=3) return ["warn",gap+" días sin cargar"]; return ["bad","Posible abandono"];
+  const L=Object.values(u.logs); const hoyN=Math.min(HOY,28);
+  const lastCal=L.length?Math.max(...L.map(l=>l.diaCalendario||l.d)):0; const gap=hoyN-lastCal;
+  const pend=Array.from({length:hoyN},(_,i)=>i+1).filter(x=>!u.logs[x]).length;
+  if(gap>=4) return ["bad","Posible abandono"];
+  if(gap>=2) return ["warn",gap+" días sin entrar"];
+  if(pend>1) return ["ok",`Activa · ${pend} pendientes`];
+  return ["ok",pend===1&&!u.logs[hoyN]?"Le falta hoy":"Al día"];
 }
 function renderAdmin(){
   const head=`<div class="brand"><span class="logo">SC</span><div><h1>Panel de Rogelio</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
@@ -596,7 +608,8 @@ document.addEventListener("click",async e=>{
   if(b.id==="thecha"&&S.draft) return serieHecha();
   if(b.id==="tskip") return nextStep();
   if(b.id==="tfin"&&S.draft) return finishWorkout();
-  if(b.id==="editar"){S.draft=JSON.parse(JSON.stringify(S.logs[HOY]));delete S.draft.ts;return render()}
+  if(b.dataset.dia){if(T.start)return;DIA=+b.dataset.dia;S.diaElegido=true;S.draft=null;S.msg="";return render()}
+  if(b.id==="editar"){S.draft=JSON.parse(JSON.stringify(S.logs[DIA]));delete S.draft.ts;return render()}
   if(b.id==="guardar") return guardarDia();
   if(b.id==="imprimir"){S.imprimir=true;return render()}
   if(b.id==="cerrarimp"){S.imprimir=false;return render()}
