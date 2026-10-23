@@ -326,7 +326,7 @@ function renderAdminLogin(){
     <button class="btn ghost" id="volverlogin">Volver</button></div>`;
 }
 function renderRegistro(){
-  return `<div class="card"><span class="tag">Primera vez</span><h1>¡Bienvenida a Ser Constante!</h1>
+  return `<div class="card"><span class="tag">Primera vez</span><h1>¡Bienvenido a Ser Constante!</h1>
     <p class="muted">Tu número está inscripto. Completá estos datos una sola vez.</p>
     <div><label for="pin2">Repetí tu PIN</label><input id="pin2" type="password" inputmode="numeric" maxlength="4" placeholder="••••"></div>
     <div><label for="nom">Nombre y apellido</label><input id="nom" autocomplete="name"></div>
@@ -394,7 +394,7 @@ function renderProgramas(done){
   const sub=HOY<1?`Arranca el martes 3/11 · faltan ${1-HOY} días`:HOY>28?"Terminado":`Día ${HOY} de 28`;
   return `<div class="brand"><span class="logo">SC</span><div><h1>Hola, ${esc(S.perfil.nombre.split(" ")[0])}</h1><p class="small muted">Ser Constante · tus programas</p></div></div>
   <p class="tag">Cuerpo</p>
-  <button class="card prog" id="p28"><div class="hero">${ring(done,HOY,84)}<div class="grow"><h2>${esc(PROG.nombre)}</h2><p class="small muted">${PROG.edicion} · ${sub}</p><span class="chip ok">${HOY<1?"Inscripta":"En curso"}</span></div></div></button>
+  <button class="card prog" id="p28"><div class="hero">${ring(done,HOY,84)}<div class="grow"><h2>${esc(PROG.nombre)}</h2><p class="small muted">${PROG.edicion} · ${sub}</p><span class="chip ok">${HOY<1?"Inscripción confirmada":"En curso"}</span></div></div></button>
   <p class="tag">Hábitos</p>
   <div class="card" style="opacity:.6"><h2>Reto de hábitos</h2><p class="small muted">Próximamente</p></div>
   <button class="btn ghost" id="salir">Salir</button>`;
@@ -431,7 +431,7 @@ function renderHoy(){
   return sel+antes(p,DIA)+`
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
-    <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="cansada, con ganas, dudando…"></div></div>
+    <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="con sueño, con ganas, dudando…"></div></div>
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
     ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p>`:""}${ej}</div>`:""}
@@ -489,13 +489,13 @@ async function cargarAdmin(){
   S.cont=c.exists()?c.data():{}; S.A=A; render();
 }
 function estado(u){
-  if(HOY<1) return ["ok","Inscripta"];
+  if(HOY<1) return ["ok","Inscripción confirmada"];
   const L=Object.values(u.logs); const hoyN=Math.min(HOY,28);
   const lastCal=L.length?Math.max(...L.map(l=>l.diaCalendario||l.d)):0; const gap=hoyN-lastCal;
   const pend=Array.from({length:hoyN},(_,i)=>i+1).filter(x=>!u.logs[x]).length;
   if(gap>=4) return ["bad","Posible abandono"];
   if(gap>=2) return ["warn",gap+" días sin entrar"];
-  if(pend>1) return ["ok",`Activa · ${pend} pendientes`];
+  if(pend>1) return ["ok",`Entrando · ${pend} pendientes`];
   return ["ok",pend===1&&!u.logs[hoyN]?"Le falta hoy":"Al día"];
 }
 function renderAdmin(){
