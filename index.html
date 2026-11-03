@@ -132,7 +132,7 @@ const SES={
  B_inf:["Tren inferior B",[["Sentadilla búlgara","8 a 12 por pierna"],["Peso muerto a una pierna","10 a 12 por pierna"],["Subida al cajón (silla firme)","10 a 12 por pierna"],["Puente de isquios caminando","8 a 12 reps"],["Bloque de energía","5 minutos"]]],
  CORE:["Core, movilidad y estiramiento",[["Plancha frontal","20 a 45 s"],["Plancha lateral","15 a 30 s por lado"],["Dead bug","8 a 12 por lado"],["Hollow hold","15 a 30 s"],["Rutina de movilidad","12 minutos"]]]
 };
-const TEST=[["Flexiones máximas sin pausa","reps"],["Remo máximo (mesa o mochila)","reps"],["Sentadillas en 60 segundos","reps"],["Sentadilla búlgara máxima, pierna más débil","reps"]];
+const TEST=[["Flexiones máximas sin pausa","reps","Todas las que puedas sin parar, con el cuerpo recto de cabeza a talones. Si en el piso no te sale ninguna, hacelas con las manos en la mesa o en la pared."],["Remo máximo (mesa o mochila)","reps","Todas las que puedas sin parar: bajo la mesa con las rodillas flexionadas, o con la mochila (contá un solo brazo). Tirá hasta juntar los omóplatos y bajá lento."],["Sentadillas en 60 segundos","reps","Poné un cronómetro de 1 minuto y contá cuántas hacés bajando hasta tocar apenas una silla con la cola. Si necesitás, frená un segundo y seguí."],["Sentadilla búlgara máxima, pierna más débil","reps","Pie de atrás apoyado en la silla, bajá hasta que la rodilla de atrás quede cerca del piso. Contá las que puedas con la pierna que sentís más débil. Si te cuesta el equilibrio, apoyate en una pared."]];
 function plan(d){
   const w=Math.ceil(d/7), k=(d-1)%7+1, series=[3,4,4,4][w-1];
   if(d===1) return {tipo:"test",titulo:"Test inicial + Tren superior A",ses:"A_sup",series:2};
@@ -410,22 +410,26 @@ function renderHoy(){
    <div class="card"><span class="tag">Frase del día</span><p class="quote">${esc(frase(DIA))}</p></div>
    <button class="btn ghost" id="editar">Editar lo que cargué hoy</button>`;
   const d=S.draft||(S.draft=JSON.parse(JSON.stringify(ya||{antes:0,despues:0,esfuerzo:6,ej:{},niv:{},resp:"",palabraAntes:"",test:{}})));
+  const esTest=p.tipo==="test"||p.tipo==="testfin";
+  const calBody=CAL.map(([n,t,c],i)=>`<div><p class="optname">${i+1}. ${esc(n)} <span class="small muted">· ${t}</span></p><p class="small">${esc(c)}</p></div>`).join("");
   let ej="";
   if(p.ses){
     ej=SES[p.ses][1].map(([ex,rng],i)=>`<div class="ex"><div class="row"><h3 class="grow">${esc(ex)}</h3><span class="small muted">${rng}</span></div>
       ${d.tiempos?.[ex]?`<span class="small muted tnum">⏱ Tiempo: ${fmt(d.tiempos[ex])}</span>`:""}
       <div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:""}${guiaHTML(ex,d)}</div>`).join("");
     ej=`<div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`)}</div>
-    ${!T.start&&!d.dur?`<p class="small muted">Hacé primero el calentamiento. Después tocá Empezar: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}
-    <details class="how"><summary>Primero: calentamiento · 5 minutos ▾</summary><div class="how-body">${CAL.map(([n,t,c],i)=>`<div><p class="optname">${i+1}. ${esc(n)} <span class="small muted">· ${t}</span></p><p class="small">${esc(c)}</p></div>`).join("")}</div></details>`+ej+estiramiento(p);
+    ${!T.start&&!d.dur?`<p class="small muted">${esTest?"Ya calentaste para el test, así que podés arrancar directo.":"Hacé primero el calentamiento."} Después tocá Empezar: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}
+    ${esTest?"":`<details class="how"><summary>Primero: calentamiento · 5 minutos ▾</summary><div class="how-body">${calBody}</div></details>`}`+ej+estiramiento(p);
   } else if(p.tipo!=="testfin") ej=`<p>${esc(p.titulo)}</p><div class="row"><input type="checkbox" id="hecho" style="width:auto" ${d.hecho?"checked":""}><label for="hecho" style="margin:0">Lo hice</label></div>`;
   const test=(p.tipo==="test"||p.tipo==="testfin")?`<div class="card"><span class="tag">${p.tipo==="test"?"Test inicial":"Test final"}</span><h2>${p.tipo==="test"?"Tu punto de partida":"¿Cuánto avanzaste?"}</h2>
     <p class="small muted">Hacé cada prueba con la misma variante${p.tipo==="testfin"?" que usaste el día 1":" que vas a usar en el reto"}. Este número no es una nota: es tu punto de partida.</p>
-    ${TEST.map(([t],i)=>`<div><label for="t${i}">${esc(t)}</label><input id="t${i}" data-test="${esc(t)}" inputmode="numeric" value="${esc(d.test?.[t]??"")}"></div>`).join("")}</div>`:"";
+    ${p.tipo==="test"?`<details class="how"><summary>Cómo se hace el test ▾</summary><div class="how-body small"><p><b>1.</b> Primero el calentamiento de 5 minutos (está justo arriba).</p><p><b>2.</b> Hacé las 4 pruebas en orden, con <b>2 o 3 minutos de pausa</b> entre una y otra.</p><p><b>3.</b> Contá solo las repeticiones con buena técnica. Cuando la técnica se rompe, la prueba terminó.</p><p><b>4.</b> Acordate qué variante usaste (piso, mesa, pared…): el día 28 repetís el test igual para comparar.</p><p><b>5.</b> Después del test hacés el entrenamiento de hoy con 2 series en vez de 3.</p></div></details>`:""}
+    ${TEST.map(([t,u,c],i)=>`<div><label for="t${i}">${esc(t)}</label>${c?`<p class="small muted" style="margin:2px 0 6px">${esc(c)}</p>`:""}<input id="t${i}" data-test="${esc(t)}" inputmode="numeric" value="${esc(d.test?.[t]??"")}"></div>`).join("")}</div>`:"";
   return sel+antes(p,DIA)+`
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="con sueño, con ganas, dudando…"></div></div>
+  ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás.</p><details class="how"><summary>Ver el calentamiento ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
     ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p>`:""}${ej}</div>`:""}
