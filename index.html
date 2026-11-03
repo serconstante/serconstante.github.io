@@ -60,7 +60,7 @@ textarea{min-height:90px;resize:vertical}
 .chip.ok{background:var(--ok-soft);color:var(--ok)} .chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.bad{background:var(--bad-soft);color:var(--bad)}
 .quote{font-family:var(--display);font-weight:600;font-size:1.1rem;border-left:4px solid var(--accent);padding-left:12px}
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.kpi{display:flex;flex-direction:column;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
 .kpi b{display:block;font:700 1.7rem var(--display);font-variant-numeric:tabular-nums}
 .list{display:flex;flex-direction:column}
 .person{display:flex;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;color:inherit;text-align:left;font:inherit;width:100%}
@@ -169,6 +169,8 @@ function dKey(){return "sc_prog_"+S.tel+"_"+PROG.id+"_"+DIA}
 function saveLocal(){try{if(S.vista!=="part"||!S.draft||!S.tel)return;const D=S.draft;if(!T.start&&!D.antes&&!D.palabraAntes&&!D.resp&&!Object.values(D.ej||{}).some(x=>(x||[]).some(Boolean))&&!Object.values(D.test||{}).some(Boolean))return;const t=T.start?{start:T.start,steps:T.steps,i:T.i,stepStart:T.stepStart,restEnd:T.restEnd,resting:T.resting,ultimo:T.ultimo||""}:null;localStorage.setItem(dKey(),JSON.stringify({draft:S.draft,T:t,ts:Date.now()}))}catch(e){}}
 function loadLocal(){try{const x=JSON.parse(localStorage.getItem(dKey())||"null");if(x&&Date.now()-x.ts<3*864e5)return x}catch(e){}return null}
 function clearLocal(){try{localStorage.removeItem(dKey())}catch(e){}}
+const PLAYLIST="https://open.spotify.com/playlist/4K5Ibt3LxQ8sKDSOfn6ov4";
+const musicaBtn=()=>`<a class="btn ghost" href="${PLAYLIST}" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">🎧 Música para entrenar · playlist del reto</a>`;
 const W={on:false,i:0,end:0,left:0,paused:false,iv:null,done:false};
 const WDUR=[30,30,40,40,60,40,60];
 function wStart(){if(T.start)return;W.on=true;W.i=0;W.paused=false;W.end=Date.now()+WDUR[0]*1000;clearInterval(W.iv);W.iv=setInterval(wTick,250);render()}
@@ -440,7 +442,7 @@ function renderHoy(){
     ej=SES[p.ses][1].map(([ex,rng],i)=>`<div class="ex"><div class="row"><h3 class="grow">${esc(ex)}</h3><span class="small muted">${rng}</span></div>
       ${d.tiempos?.[ex]?`<span class="small muted tnum">⏱ Tiempo: ${fmt(d.tiempos[ex])}</span>`:""}
       <div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:""}${guiaHTML(ex,d)}</div>`).join("");
-    ej=`<div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`)}</div>
+    ej=`${esTest?"":musicaBtn()}<div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`)}</div>
     ${!T.start&&!d.dur?`<p class="small muted">${esTest?"Ya calentaste para el test, así que podés arrancar directo.":"Hacé primero el calentamiento."} Después tocá Empezar: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}
     ${esTest?"":`${calBtn}<details class="how"><summary>Primero: calentamiento · 5 minutos ▾</summary><div class="how-body">${calBody}</div></details>`}`+ej+estiramiento(p);
   } else if(p.tipo!=="testfin") ej=`<p>${esc(p.titulo)}</p><div class="row"><input type="checkbox" id="hecho" style="width:auto" ${d.hecho?"checked":""}><label for="hecho" style="margin:0">Lo hice</label></div>`;
@@ -452,7 +454,7 @@ function renderHoy(){
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="con sueño, con ganas, dudando…"></div></div>
-  ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás. Tocá el botón y la app te va marcando el tiempo de cada ejercicio, con aviso al terminar.</p>${calBtn}<details class="how"><summary>Ver cómo se hace cada ejercicio ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
+  ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás. Tocá el botón y la app te va marcando el tiempo de cada ejercicio, con aviso al terminar.</p>${musicaBtn()}${calBtn}<details class="how"><summary>Ver cómo se hace cada ejercicio ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
     ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p>`:""}${ej}</div>`:""}
@@ -480,10 +482,16 @@ function totalReps(L){let t=0;Object.values(L).forEach(l=>Object.values(l.ej||{}
 function renderRecorrido(){
   const L=Object.entries(S.logs).sort((a,b)=>a[0]-b[0]); const ant=avg(L.map(x=>x[1].antes).filter(Boolean)), des=avg(L.map(x=>x[1].despues).filter(Boolean));
   const t1=S.logs[1]?.test||{}, t28=S.logs[28]?.test||{};
-  return `<div class="kpis"><div class="kpi"><b>${L.length}</b><span class="small muted">días cumplidos</span></div><div class="kpi"><b>${totalReps(S.logs).toLocaleString("es-AR")}</b><span class="small muted">repeticiones en total</span></div>
+  return `<div class="kpis"><div class="kpi"><b>${L.length}</b><span class="small muted">días cumplidos</span></div><a class="kpi" href="#diaxdia" style="text-decoration:none;color:inherit"><b>${totalReps(S.logs).toLocaleString("es-AR")}</b><span class="small muted">repeticiones en total</span><span class="small" style="color:var(--accent);font-weight:600">Ver día por día ↓</span></a>
   <div class="kpi"><b>${EMO[Math.round(ant)-1]||"–"} → ${EMO[Math.round(des)-1]||"–"}</b><span class="small muted">ánimo antes → después</span></div><div class="kpi"><b>${Math.round(L.reduce((a,x)=>a+(x[1].dur||0),0)/60)} min</b><span class="small muted">entrenando en total</span></div></div>
   <div class="card"><span class="tag">Test</span><h2>Día 1 vs. día 28</h2><div class="compare"><span class="h">Prueba</span><span class="h">Día 1</span><span class="h">Día 28</span><span class="h">Dif.</span>
    ${TEST.map(([t])=>{const a=+t1[t],b=+t28[t];return `<span>${t}</span><b>${t1[t]||"–"}</b><b>${t28[t]||"–"}</b><span style="color:var(--ok)">${a&&b?(b-a>0?"+":"")+(b-a):"—"}</span>`}).join("")}</div></div>
+  <div class="card" id="diaxdia"><span class="tag">Día por día</span><h2>Lo que hiciste cada día</h2>
+   ${L.length?L.map(([d,l])=>{const ej=Object.entries(l.ej||{}).filter(([,a])=>(a||[]).some(Boolean));const tot=ej.reduce((t,[,a])=>t+a.reduce((x,v)=>x+(+v||0),0),0);const tst=Object.entries(l.test||{}).filter(([,v])=>v);
+     return `<details class="how"><summary>Día ${d} · ${esc(plan(+d).titulo)}<br><span class="small muted" style="font-weight:500">${tot?tot+" reps":(l.hecho?"✓ Hecho":"")}${l.dur?" · "+fmt(l.dur):""}${l.antes&&l.despues?" · "+EMO[l.antes-1]+" → "+EMO[l.despues-1]:""}</span></summary><div class="how-body small">
+     ${tst.length?`<p><b>Test:</b></p>${tst.map(([t,v])=>`<div class="row"><span class="grow">${esc(t)}</span><b>${esc(v)}</b></div>`).join("")}`:""}
+     ${ej.length?`${tst.length?"<p><b>Entrenamiento:</b></p>":""}${ej.map(([e,a])=>`<div class="row"><span class="grow">${esc(e)}</span><span class="tnum">${a.map((v,i)=>v?`S${i+1}: <b>${esc(v)}</b>`:"").filter(Boolean).join(" · ")}</span></div>`).join("")}`:(tst.length?"":`<p class="muted">${l.hecho?"Actividad hecha.":"Sin repeticiones cargadas."}</p>`)}
+     ${l.extra?`<p>Extra: ${esc(l.extra.tipo)}${l.extra.min?" · "+l.extra.min+" min":""}</p>`:""}</div></details>`}).join(""):`<p class="muted">Todavía no cargaste días.</p>`}</div>
   <div class="card"><span class="tag">Lo que fuiste respondiendo</span>${L.filter(x=>x[1].resp).map(([d,l])=>`<div><p class="small muted">Día ${d} · ${esc(preg(+d))}</p><p>${esc(l.resp)}</p></div>`).join("")||`<p class="muted">Todavía no respondiste preguntas.</p>`}</div>
   <div class="sheet"><h3>📄 Mi recorrido</h3><p class="small muted">Abrí la versión para imprimir o guardar como PDF (en el menú de imprimir, elegí "Guardar como PDF").</p><button class="btn ghost" id="imprimir">Ver para imprimir / PDF</button></div>`;
 }
