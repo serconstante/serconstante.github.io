@@ -43,7 +43,7 @@ input,textarea,select{width:100%;font:inherit;color:var(--fg);background:var(--b
 textarea{min-height:90px;resize:vertical}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .grow{flex:1;min-width:0}
-.tabs{display:flex;gap:6px;overflow-x:auto}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tabs button{flex:1;border:0;background:var(--card);border:1px solid var(--line);color:var(--muted);font:600 .9rem var(--display);padding:10px;border-radius:12px;cursor:pointer;white-space:nowrap}
 .tabs button.on{color:var(--fg);border-color:var(--fg)}
 .hero{display:flex;gap:16px;align-items:center}
@@ -149,7 +149,7 @@ function plan(d){
   return {tipo:"descanso",titulo:"Descanso total"};
 }
 const PREG=["¿Para qué querés hacer este reto?", "¿Qué te dijiste hoy antes de empezar?", "Hoy, ¿pensaste «no puedo» o «yo no soy de los que…»? ¿Eso es un hecho o una opinión tuya sobre vos?", "¿Qué hecho de hoy, algo que se pueda contar o medir, te sorprendió de vos?", "¿Qué excusa apareció hoy y qué hiciste con ella?", "¿Cómo mirás hoy tu cuerpo: desde lo que le falta o desde lo que puede?", "¿Qué juicio sobre vos empezaste a mirar distinto esta semana?", "Se terminó la novedad. ¿Qué te está sosteniendo ahora?", "¿Qué no salió como esperabas esta semana? ¿Qué posibilidad nueva te abre?", "¿Qué emoción apareció hoy al terminar?", "¿En qué momento te descubriste pensando «para qué, si igual…»?", "¿Qué «no puedo» se convirtió en «todavía»?", "Si tu ánimo de hoy fuera un clima, ¿cuál sería? ¿Qué te ayuda a cambiarlo?", "Mitad del camino: ¿qué hiciste estas dos semanas que antes te parecía imposible?", "¿Qué te dice tu cuerpo hoy, si lo escuchás sin apurarte?", "¿Cómo te parás cuando algo te cuesta? ¿Qué cambia si te parás distinto?", "¿Cómo te hablás cuando algo no sale?", "¿Qué ayuda te estás guardando de pedir?", "¿A quién le podrías prometer algo concreto para la semana que viene? ¿Qué y para cuándo?", "¿Quién te acompaña en esto, aunque no lo sepa?", "¿Qué querés declarar para la última semana?", "¿A qué le tenés que decir «no» para poder decirle «sí» a esto?", "¿A qué le dijiste «sí» en estas semanas que antes evitabas?", "¿Qué no sabés todavía de vos y te gustaría aprender?", "¿Qué te perdonarías hoy? Un día que faltaste, algo que no salió…", "¿A quién le querés dar las gracias por estos días? ¿Y a vos?", "¿Qué no querés perder cuando termine el reto?", "¿Quién sos hoy que no eras hace 28 días?"];
-const FRASES=["Empezá con lo que podés.", "Hoy cuenta aunque sea poco.", "«No puedo» no es un hecho. Es un juicio.", "Los hechos se cuentan. Los juicios se revisan.", "No hace falta tener ganas. Hace falta aparecer.", "«No sabemos cómo las cosas son. Sólo sabemos cómo las observamos.» R. Echeverría", "Una semana. Ya no sos el mismo que empezó.", "La novedad se terminó. Empieza el compromiso.", "Cuando algo se corta, aparece una pregunta. No un final.", "Las ganas llegan caminando.", "Un día que faltás no arruina nada. El «ya fue» sí.", "«Todavía no puedo» es una puerta abierta.", "El ánimo también se mueve caminando.", "Mitad del camino. Seguís acá.", "Tu cuerpo también habla. Escuchalo.", "Cambiá la postura y cambia la conversación.", "Hablate como le hablarías a alguien que querés.", "Pedir no es debilidad. Es animarse a no hacerlo solo.", "Una promesa clara tiene qué, a quién y para cuándo.", "Nadie llega solo.", "Última semana: vos decidís cómo la terminás.", "Cada «no» que decís cuida un «sí».", "Ya no estás empezando: estás sosteniendo.", "Decir «no sé» es el primer paso para aprender.", "Perdonarte también es seguir.", "Dar las gracias también es cerrar bien.", "Lo que construiste es tuyo.", "«No sólo actuamos de acuerdo a como somos, también somos de acuerdo a como actuamos.» R. Echeverría"];
+const FRASES=["Empezá con lo que podés.", "Hoy cuenta aunque sea poco.", "«No puedo» no es un hecho. Es un juicio.", "Los hechos se cuentan. Los juicios se revisan.", "No hace falta tener ganas. Hace falta empezar.", "«No sabemos cómo las cosas son. Sólo sabemos cómo las observamos.» R. Echeverría", "Una semana. Ya no sos el mismo que empezó.", "La novedad se terminó. Empieza el compromiso.", "Cuando algo se corta, aparece una pregunta. No un final.", "Las ganas llegan caminando.", "Un día que faltás no arruina nada. El «ya fue» sí.", "«Todavía no puedo» es una puerta abierta.", "El ánimo también se mueve caminando.", "Mitad del camino. Seguís acá.", "Tu cuerpo también habla. Escuchalo.", "Cambiá la postura y cambia la conversación.", "Hablate como le hablarías a alguien que querés.", "Pedir no es debilidad. Es animarse a no hacerlo solo.", "Una promesa clara tiene qué, a quién y para cuándo.", "Nadie llega solo.", "Última semana: vos decidís cómo la terminás.", "Cada «no» que decís cuida un «sí».", "Ya no estás empezando: estás sosteniendo.", "Decir «no sé» es el primer paso para aprender.", "Perdonarte también es seguir.", "Dar las gracias también es cerrar bien.", "Lo que construiste es tuyo.", "«No sólo actuamos de acuerdo a como somos, también somos de acuerdo a como actuamos.» R. Echeverría"];
 const EXTRA=["Caminata","Bici","Baile","Pileta","Yoga","Fútbol","Otra"];
 const EMO=["😣","😕","😐","🙂","😄"];
 function ring(done,today,size=120){
@@ -171,7 +171,7 @@ function loadLocal(){try{const x=JSON.parse(localStorage.getItem(dKey())||"null"
 function clearLocal(){try{localStorage.removeItem(dKey())}catch(e){}}
 const PLAYLIST="https://open.spotify.com/playlist/4K5Ibt3LxQ8sKDSOfn6ov4";
 const musicaBtn=()=>`<a class="btn ghost" href="${PLAYLIST}" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">🎧 Música para entrenar · playlist del reto</a>`;
-const BLQ=()=>{const w=Math.min(4,Math.ceil(DIA/7));const tr=[20,25,30,30][w-1];return {tr,pa:60-tr}};
+const BLQ=(dd=DIA)=>{const w=Math.min(4,Math.ceil(dd/7));const tr=[20,25,30,30][w-1];return {tr,pa:60-tr}};
 const ESTAC=()=>GUIA["Bloque de energía"].lista.map(x=>{const [n,s]=x.split(" · suave: ");return {n,s:s||""}});
 const NIVS=["Fácil","Base","Difícil"];
 const nivDe=v=>v==="Más fácil"?"Fácil":v==="Más difícil"?"Difícil":v==="Base"?"Base":"";
@@ -557,9 +557,27 @@ function estado(u){
 function renderAdmin(){
   const head=`<div class="brand"><span class="logo">SC</span><div><h1>Panel de Rogelio</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
   if(!S.A) return head+`<div class="card"><p class="muted">Cargando datos…</p></div>`;
-  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["num","Números"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
+  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["plan","Plan"],["num","Números"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
   if(S.verUser) return head+tabs+renderUser(S.verUser);
-  return head+tabs+({resumen:aResumen,gente:aGente,num:aNum,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
+  return head+tabs+({resumen:aResumen,gente:aGente,plan:aPlan,num:aNum,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
+}
+function aPlan(){
+  const [y,m,dd]=PROG.inicio.split("-").map(Number), DS=["dom","lun","mar","mié","jue","vie","sáb"];
+  const sem=["Semana 1 · Empezar","Semana 2 · Sostener","Semana 3 · Subir","Semana 4 · Cerrar"];
+  let h=`<div class="card"><span class="tag">Planificación</span><h2>Los 28 días del reto</h2><p class="small muted">Tocá un día para ver los ejercicios. ⚡ = tiene bloque de energía.</p></div>`;
+  for(let w=0;w<4;w++){
+    h+=`<div class="card"><h3>${sem[w]}</h3>`;
+    for(let d=w*7+1;d<=w*7+7;d++){
+      const p=plan(d), f=new Date(y,m-1,dd+d-1), L=p.ses?SES[p.ses][1]:[], blq=L.some(x=>x[0]==="Bloque de energía");
+      const icon={test:"🧪",testfin:"🏁",fuerza:"💪",activo:"🚶",descanso:"😴"}[p.tipo]||"";
+      h+=`<details class="how" ${d===HOY?"open":""} style="${d===HOY?"border-color:var(--accent)":""}"><summary>${icon} Día ${d} · ${DS[f.getDay()]} ${f.getDate()}/${f.getMonth()+1}${d===HOY?" · HOY":""}<br><span class="small" style="font-weight:500;color:var(--fg)">${esc(p.titulo)}${blq?" ⚡":""}</span></summary><div class="how-body small">
+        ${p.tipo==="test"||p.tipo==="testfin"?`<p><b>${p.tipo==="test"?"Test inicial":"Test final"}:</b> ${TEST.map(t=>esc(t[0])).join(" · ")}</p>`:""}
+        ${p.ses?`<p><b>${p.series} series</b> por ejercicio (core: 3)</p><ol style="margin:0;padding-left:20px">${L.map(([e,r])=>`<li>${esc(e)} · <span class="muted">${e==="Bloque de energía"?`1 vuelta · ${BLQ(d).tr} s trabajo / ${BLQ(d).pa} s pausa`:esc(r)}</span></li>`).join("")}</ol>`:""}
+        <p style="margin-top:8px"><b>Pregunta:</b> ${esc(preg(d))}</p><p><b>Frase:</b> ${esc(frase(d))}</p></div></details>`;
+    }
+    h+=`</div>`;
+  }
+  return h;
 }
 function aResumen(){
   const U=Object.values(S.A.users); const est=U.map(estado); const N=Math.max(1,Math.min(HOY,28));
