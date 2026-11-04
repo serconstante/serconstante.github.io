@@ -73,6 +73,19 @@ textarea{min-height:90px;resize:vertical}
 .compare{display:grid;grid-template-columns:1fr auto auto auto;gap:6px 12px;font-variant-numeric:tabular-nums;align-items:center}
 .compare .h{font:600 .75rem var(--display);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .note{font-size:.8rem;color:var(--muted);text-align:center}
+.logros{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.logro{border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;background:var(--bg)}
+.logro b{display:block;font-size:1.9rem;line-height:1.1}
+.logro span{display:block;font:600 .78rem var(--display);margin-top:4px}
+.logro.off{opacity:.38;filter:grayscale(1)}
+.nuevo-logro{background:linear-gradient(135deg,#FFE7A3,#FFC83D);color:#1B1714;border-radius:16px;padding:16px;text-align:center;font:700 1rem var(--display)}
+.nuevo-logro b{display:block;font-size:2.4rem}
+.diploma{border:6px double var(--accent);border-radius:18px;padding:26px 20px;text-align:center;background:var(--card)}
+.diploma h1{font-size:1.9rem;margin:6px 0}
+.diploma .big{font:800 1.6rem var(--display);color:var(--accent);margin:6px 0}
+.diploma .dstats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;text-align:left}
+.diploma .dstats div{border:1px solid var(--line);border-radius:12px;padding:10px}
+.diploma .dstats b{display:block;font:800 1.15rem var(--display)}
 .done-banner{background:var(--ok-soft);color:var(--ok);border-radius:14px;padding:14px;font:600 1rem var(--display);text-align:center}
 .err{color:var(--bad);font-size:.9rem}
 .sheet{border:1.5px dashed var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
@@ -421,6 +434,7 @@ const frase=d=>(S.cont?.frases?.[d-1])||FRASES[d-1];
 /* ---------- Participante ---------- */
 function renderPart(){
   if(S.imprimir) return renderImprimir();
+  if(S.diploma) return renderDiploma();
   const done=Object.keys(S.logs).map(Number);
   if(!S.perfil?.nombre) return `<div class="card"><h2>Completá tus datos</h2><div><label for="nom">Nombre y apellido</label><input id="nom"></div><div><label for="eda">Edad</label><input id="eda" inputmode="numeric"></div><button class="btn" id="guardarperfil">Guardar</button></div>`;
   if(!S.prog) return renderProgramas(done);
@@ -452,7 +466,7 @@ function renderHoy(){
     <p class="small">${pend.filter(x=>x!==hoyN).length?`Tenés pendiente${pend.filter(x=>x!==hoyN).length>1?"s":""} ${pend.filter(x=>x!==hoyN).map(x=>"el día "+x).join(", ")}. `:""}Elegí qué hacer hoy: ponerte al día con el grupo, completar lo que quedó, o dejarlo pendiente y seguir. Cualquier opción vale: lo que cuenta es lo que elegís y sostenés hoy.</p>
     <div class="row">${pend.map(x=>`<button class="tbtn ${x===DIA?"run":""}" data-dia="${x}">Día ${x}${x===hoyN?" (hoy)":""}</button>`).join("")}</div></div>`:"";
   const p=plan(DIA); const ya=S.logs[DIA];
-  if(ya&&!S.draft) return sel+`<div class="done-banner">✓ Día ${DIA} registrado.${pend.length?"":" ¡Mañana seguimos!"}</div>
+  if(ya&&!S.draft) return sel+`${(S.nuevos||[]).map(l=>`<div class="nuevo-logro"><b>${l.i}</b>¡Logro desbloqueado! ${esc(l.t)}<br><span class="small" style="font-weight:500">${esc(l.d)}</span></div>`).join("")}<div class="done-banner">✓ Día ${DIA} registrado.${pend.length?"":" ¡Mañana seguimos!"}</div>${S.logs[28]?`<button class="btn" id="verdip">🎓 Ver mi diploma</button>`:""}
    <div class="card"><span class="tag">Frase del día</span><p class="quote">${esc(frase(DIA))}</p></div>
    <button class="btn ghost" id="editar">Editar lo que cargué hoy</button>`;
   if(!S.draft&&!ya){const L=loadLocal();if(L&&L.draft){S.draft=L.draft;S.restaurado=true;if(L.T&&!T.start&&Date.now()-L.T.start<4*3600e3){Object.assign(T,L.T);clearInterval(T.iv);T.iv=setInterval(tick,250)}}}
@@ -492,7 +506,8 @@ function renderHoy(){
     <div><label for="resp">${esc(preg(DIA))}</label><textarea id="resp" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
   <div class="card"><span class="tag">5 · Extra (opcional)</span><h2>¿Hiciste otra actividad?</h2>
     <div class="row"><select id="xt" class="grow"><option value="">Nada extra hoy</option>${EXTRA.map(x=>`<option ${d.extra?.tipo===x?"selected":""}>${x}</option>`).join("")}</select>
-    <input id="xm" inputmode="numeric" placeholder="min" style="width:90px" value="${d.extra?.min??""}"></div></div>
+    <input id="xm" inputmode="numeric" placeholder="min" style="width:90px" value="${d.extra?.min??""}"></div>
+    <div><label for="cancion">🎧 ¿Qué canción te acompañó hoy?</label><input id="cancion" placeholder="Opcional · tema y artista" value="${esc(d.cancion||"")}"></div></div>
   ${S.msg?`<p class="err">${S.msg}</p>`:""}
   <button class="btn" id="guardar" ${S.busy?"disabled":""}>${S.busy?"Guardando…":`Guardar día ${DIA}`}</button>`;
 }
@@ -500,9 +515,54 @@ async function guardarDia(){
   const d=S.draft; if(!d.antes||!d.despues){S.msg="Marcá cómo te sentías antes y después.";return render()}
   if(T.start){d.dur=(Date.now()-T.start)/1000;T.start=0;clearInterval(T.iv)}
   S.busy=true;S.msg="";render();
+  const antesL=calcLogros(S.logs).filter(x=>x.ok).map(x=>x.id);
   const data={...d,prog:PROG.id,d:DIA,diaCalendario:HOY,atrasado:DIA<HOY,ts:serverTimestamp()};
-  try{await setDoc(doc(db,"usuarios",S.tel,"dias",PROG.id+"_"+DIA),data);clearLocal();S.logs[DIA]={...data};S.diaElegido=false;S.draft=null;S.busy=false;scrollTo({top:0});render()}
+  try{await setDoc(doc(db,"usuarios",S.tel,"dias",PROG.id+"_"+DIA),data);clearLocal();S.logs[DIA]={...data};S.nuevos=calcLogros(S.logs).filter(x=>x.ok&&!antesL.includes(x.id));S.diaElegido=false;S.draft=null;S.busy=false;scrollTo({top:0});render()}
   catch(e){S.busy=false;S.msg="No se pudo guardar. Revisá tu internet y tocá Guardar de nuevo (lo que cargaste sigue acá).";render()}
+}
+function calcLogros(logs){
+  const ds=Object.keys(logs).map(Number).sort((a,b)=>a-b),n=ds.length,V=Object.values(logs);
+  const gap=ds.some((d,i)=>i>0&&d-ds[i-1]>1)||(ds.length&&ds[0]>1&&ds.length>1);
+  const dif=V.some(l=>Object.values(l.nivS||{}).some(a=>(a||[]).includes("Difícil"))||Object.values(l.niv||{}).includes("Más difícil"));
+  return [
+   {id:"primer",i:"🌱",t:"Primer paso",d:"Cargaste tu primer día. Empezar es lo más difícil.",ok:n>=1},
+   {id:"bloque",i:"⚡",t:"Energía a full",d:"Completaste tu primer bloque de energía.",ok:V.some(l=>l.bloque?.hecho)},
+   {id:"semana",i:"🔥",t:"Una semana",d:"7 días cargados. Ya no sos el mismo que empezó.",ok:n>=7},
+   {id:"volviste",i:"💪",t:"Volviste",d:"Fallaste un día y seguiste. Eso es constancia.",ok:gap},
+   {id:"mitad",i:"⛰️",t:"Mitad del camino",d:"14 días cargados. Seguís acá.",ok:n>=14},
+   {id:"dificil",i:"🚀",t:"Nivel difícil",d:"Hiciste una serie en nivel difícil.",ok:dif},
+   {id:"tres",i:"🏅",t:"Tres semanas",d:"21 días cargados. Lo difícil también se entrena.",ok:n>=21},
+   {id:"final",i:"🏁",t:"Llegaste al final",d:"Hiciste el test final del día 28.",ok:!!logs[28]},
+   {id:"perfecto",i:"👑",t:"28 de 28",d:"Cargaste los 28 días del reto.",ok:n>=28}];
+}
+function resumenReto(logs){
+  const L=Object.entries(logs).map(([d,l])=>[+d,l]);
+  const reps=l=>Object.values(l.ej||{}).reduce((t,a)=>t+(a||[]).reduce((x,v)=>x+(+v||0),0),0);
+  const mejor=L.filter(x=>plan(x[0]).ses).reduce((b,x)=>reps(x[1])>(b?reps(b[1]):0)?x:b,null);
+  const t1=logs[1]?.test||{},t28=logs[28]?.test||{};
+  const mej=TEST.map(([t])=>[t,(+t28[t]||0)-(+t1[t]||0),+t1[t]||0]).filter(x=>t1[x[0]]&&t28[x[0]]).sort((a,b)=>b[1]-a[1])[0];
+  const cs={};L.forEach(([,l])=>{const c=(l.cancion||"").trim();if(c){const k=c.toLowerCase();cs[k]=cs[k]||{c,n:0};cs[k].n++}});
+  const can=Object.values(cs).sort((a,b)=>b.n-a.n)[0];
+  const sub=L.filter(([,l])=>l.antes&&l.despues&&l.despues>l.antes).length;
+  return {dias:L.length,reps:totalReps(logs),min:Math.round(L.reduce((a,x)=>a+(x[1].dur||0),0)/60),mejor:mejor&&reps(mejor[1])?{d:mejor[0],r:reps(mejor[1]),t:plan(mejor[0]).titulo}:null,mej,can,sub};
+}
+function renderDiploma(){
+  const R=resumenReto(S.logs),f=new Date();
+  return `<div class="noprint row"><button class="btn ghost small" id="cerrardip">← Volver</button><button class="btn small" id="imprimirdip">Guardar / imprimir</button></div>
+  <div class="diploma"><p class="tag">Ser Constante · Rogelio Coach</p><p style="font-size:2.6rem;margin:6px 0">🎓</p>
+   <p class="small muted">Este reconocimiento es para</p><h1>${esc(S.perfil.nombre)}</h1>
+   <p>por completar el reto</p><p class="big">${esc(PROG.nombre)}</p><p class="small muted">${PROG.edicion}</p>
+   <div class="dstats">
+    <div><b>${R.dias} de 28</b><span class="small muted">días cargados</span></div>
+    <div><b>${R.reps.toLocaleString("es-AR")}</b><span class="small muted">repeticiones</span></div>
+    <div><b>${R.min} min</b><span class="small muted">entrenando</span></div>
+    <div><b>${R.sub}</b><span class="small muted">días que terminaste mejor de lo que empezaste</span></div>
+    ${R.mejor?`<div><b>Día ${R.mejor.d}</b><span class="small muted">tu mejor día: ${R.mejor.r} reps · ${esc(R.mejor.t)}</span></div>`:""}
+    ${R.mej?`<div><b>${R.mej[1]>0?"+":""}${R.mej[1]}</b><span class="small muted">tu mayor avance: ${esc(R.mej[0])} (de ${R.mej[2]} a ${R.mej[2]+R.mej[1]})</span></div>`:""}
+   </div>
+   ${R.can?`<p>🎧 La canción que más te acompañó:<br><b>${esc(R.can.c)}</b></p>`:""}
+   <p class="quote" style="margin-top:14px">Lo que pudiste. Eso fue lo que pudiste. Y fue un montón.</p>
+   <p class="small muted" style="margin-top:14px">Rogelio Coach · Coach ontológico · ${f.getDate()}/${f.getMonth()+1}/${f.getFullYear()}</p></div>`;
 }
 function totalReps(L){let t=0;Object.values(L).forEach(l=>Object.values(l.ej||{}).forEach(a=>(a||[]).forEach(v=>t+=+v||0)));return t}
 function renderRecorrido(){
@@ -512,12 +572,17 @@ function renderRecorrido(){
   <div class="kpi"><b>${EMO[Math.round(ant)-1]||"–"} → ${EMO[Math.round(des)-1]||"–"}</b><span class="small muted">ánimo antes → después</span></div><div class="kpi"><b>${Math.round(L.reduce((a,x)=>a+(x[1].dur||0),0)/60)} min</b><span class="small muted">entrenando en total</span></div></div>
   <div class="card"><span class="tag">Test</span><h2>Día 1 vs. día 28</h2><div class="compare"><span class="h">Prueba</span><span class="h">Día 1</span><span class="h">Día 28</span><span class="h">Dif.</span>
    ${TEST.map(([t])=>{const a=+t1[t],b=+t28[t];return `<span>${t}</span><b>${t1[t]||"–"}</b><b>${t28[t]||"–"}</b><span style="color:var(--ok)">${a&&b?(b-a>0?"+":"")+(b-a):"—"}</span>`}).join("")}</div></div>
+  <div class="card"><span class="tag">Tus logros</span><h2>${calcLogros(S.logs).filter(x=>x.ok).length} de 9 desbloqueados</h2>
+   <div class="logros">${calcLogros(S.logs).map(l=>`<div class="logro ${l.ok?"":"off"}" title="${esc(l.d)}"><b>${l.ok?l.i:"🔒"}</b><span>${esc(l.t)}</span></div>`).join("")}</div>
+   <p class="small muted">${S.logs[28]?"":"🎓 Al llegar al día 28 se desbloquea tu diploma con tu mejor día, tu mayor avance y la canción que más te acompañó."}</p>
+   ${S.logs[28]?`<button class="btn" id="verdip">🎓 Ver mi diploma</button>`:""}</div>
   <div class="card" id="diaxdia"><span class="tag">Día por día</span><h2>Lo que hiciste cada día</h2>
    ${L.length?L.map(([d,l])=>{const ej=Object.entries(l.ej||{}).filter(([,a])=>(a||[]).some(Boolean));const tot=ej.reduce((t,[,a])=>t+a.reduce((x,v)=>x+(+v||0),0),0);const tst=Object.entries(l.test||{}).filter(([,v])=>v);
      return `<details class="how"><summary>Día ${d} · ${esc(plan(+d).titulo)}<br><span class="small muted" style="font-weight:500">${tot?tot+" reps":(l.hecho?"✓ Hecho":"")}${l.dur?" · "+fmt(l.dur):""}${l.antes&&l.despues?" · "+EMO[l.antes-1]+" → "+EMO[l.despues-1]:""}</span></summary><div class="how-body small">
      ${tst.length?`<p><b>Test:</b></p>${tst.map(([t,v])=>`<div class="row"><span class="grow">${esc(t)}</span><b>${esc(v)}</b></div>`).join("")}`:""}
      ${ej.length?`${tst.length?"<p><b>Entrenamiento:</b></p>":""}${ej.map(([e,a])=>`<div class="row"><span class="grow">${esc(e)}</span><span class="tnum">${a.map((v,i)=>v?`S${i+1}: <b>${esc(v)}</b>${(l.nivS?.[e]||[])[i]?` <span class="muted">(${esc(l.nivS[e][i])})</span>`:""}`:"").filter(Boolean).join(" · ")}</span></div>`).join("")}`:(tst.length?"":`<p class="muted">${l.hecho?"Actividad hecha.":"Sin repeticiones cargadas."}</p>`)}
      ${l.bloque?.hecho?`<p>⚡ Bloque de energía hecho (${l.bloque.tr} s / ${l.bloque.pa} s, versión ${esc(l.bloque.ver)})</p>`:""}
+     ${l.cancion?`<p>🎧 ${esc(l.cancion)}</p>`:""}
      ${l.extra?`<p>Extra: ${esc(l.extra.tipo)}${l.extra.min?" · "+l.extra.min+" min":""}</p>`:""}</div></details>`}).join(""):`<p class="muted">Todavía no cargaste días.</p>`}</div>
   <div class="card"><span class="tag">Lo que fuiste respondiendo</span>${L.filter(x=>x[1].resp).map(([d,l])=>`<div><p class="small muted">Día ${d} · ${esc(preg(+d))}</p><p>${esc(l.resp)}</p></div>`).join("")||`<p class="muted">Todavía no respondiste preguntas.</p>`}</div>
   <div class="sheet"><h3>📄 Mi recorrido</h3><p class="small muted">Abrí la versión para imprimir o guardar como PDF (en el menú de imprimir, elegí "Guardar como PDF").</p><button class="btn ghost" id="imprimir">Ver para imprimir / PDF</button></div>`;
@@ -651,7 +716,7 @@ document.addEventListener("input",e=>{
   if(t.dataset.ex&&d){(d.ej[t.dataset.ex]=d.ej[t.dataset.ex]||[])[+t.dataset.s]=t.value.replace(/\D/g,"");}
   if(t.dataset.test&&d){(d.test=d.test||{})[t.dataset.test]=t.value.replace(/\D/g,"")}
   if(!d) return;
-  if(t.id==="pal") d.palabraAntes=t.value; if(t.id==="resp") d.resp=t.value; if(t.id==="hecho") d.hecho=t.checked;
+  if(t.id==="pal") d.palabraAntes=t.value; if(t.id==="cancion") d.cancion=t.value; if(t.id==="resp") d.resp=t.value; if(t.id==="hecho") d.hecho=t.checked;
   if(t.id==="esf"){d.esfuerzo=+t.value;$("#esfv").textContent=t.value}
   if(t.id==="xt"||t.id==="xm"){const x=$("#xt").value;d.extra=x?{tipo:x,min:+$("#xm").value||0}:null}
 });
@@ -694,10 +759,13 @@ document.addEventListener("click",async e=>{
   if(b.id==="tblq") return blqStart();
   if(b.id==="tblqskip") return blqNext();
   if(b.id==="tfin"&&S.draft) return finishWorkout();
-  if(b.dataset.dia){if(T.start)return;DIA=+b.dataset.dia;S.diaElegido=true;S.draft=null;S.msg="";return render()}
-  if(b.id==="editar"){S.draft=JSON.parse(JSON.stringify(S.logs[DIA]));delete S.draft.ts;return render()}
+  if(b.dataset.dia){if(T.start)return;DIA=+b.dataset.dia;S.diaElegido=true;S.draft=null;S.nuevos=null;S.msg="";return render()}
+  if(b.id==="editar"){S.nuevos=null;S.draft=JSON.parse(JSON.stringify(S.logs[DIA]));delete S.draft.ts;return render()}
   if(b.id==="guardar") return guardarDia();
   if(b.id==="imprimir"){S.imprimir=true;return render()}
+  if(b.id==="verdip"){S.diploma=true;scrollTo({top:0});return render()}
+  if(b.id==="cerrardip"){S.diploma=false;return render()}
+  if(b.id==="imprimirdip"){return window.print()}
   if(b.id==="cerrarimp"){S.imprimir=false;return render()}
   if(b.dataset.atab){S.adminTab=b.dataset.atab;S.verUser=null;S.msg="";S.ok="";return render()}
   if(b.dataset.u){S.verUser=b.dataset.u;return render()}
@@ -711,7 +779,7 @@ document.addEventListener("click",async e=>{
 
 getRedirectResult(auth).catch(e=>{S.adminMsg="No se pudo entrar con Google ("+e.code+").";render()});
 onAuthStateChanged(auth,async user=>{
-  if(S.vista!=="adminlogin"){S.msg="";S.ok="";}S.draft=null;S.imprimir=false;
+  if(S.vista!=="adminlogin"){S.msg="";S.ok="";}S.draft=null;S.imprimir=false;S.diploma=false;S.nuevos=null;
   if(!user){S.vista=S.vista==="adminlogin"?"adminlogin":"login";S.tel=null;S.A=null;S.busy=false;return render()}
   if(user.email===ADMIN_EMAIL){
     if(!user.emailVerified){try{await sendEmailVerification(user)}catch(e){} await signOut(auth);S.vista="adminlogin";S.busy=false;S.msg="";S.ok="Falta un paso: te mandamos un mail para verificar tu Gmail. Abrí el link y volvé a entrar con tu contraseña.";return render()}
