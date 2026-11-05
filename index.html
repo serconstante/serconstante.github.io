@@ -195,6 +195,8 @@ const musicaBtn=()=>`<a class="btn ghost" href="${PLAYLIST}" target="_blank" rel
 const BLQ=(dd=DIA)=>{const w=Math.min(4,Math.ceil(dd/7));const tr=[20,25,30,30][w-1];return {tr,pa:60-tr}};
 const ESTAC=()=>GUIA["Bloque de energía"].lista.map(x=>{const [n,s]=x.split(" · suave: ");return {n,s:s||""}});
 const NIVS=["Fácil","Base","Difícil"];
+const MUNECA=ex=>/^Flexiones|^Plancha|^Fondos/.test(ex);
+const avisoMuneca=ex=>`<p class="small" style="background:#FFF1D6;color:#7A4B00;border-radius:10px;padding:8px 10px;margin:0">⚠️ <b>Cuidá tus muñecas:</b> si nunca entrenaste o te molestan, ${/^Flexiones (de brazos|cerradas|con pies)/.test(ex)?"empezá contra la pared o con las manos en la mesa":"empezá por el nivel fácil"}. Si sentís dolor en la muñeca, pará.</p>`;
 const nivDe=v=>v==="Más fácil"?"Fácil":v==="Más difícil"?"Difícil":v==="Base"?"Base":"";
 const W={on:false,i:0,end:0,left:0,paused:false,iv:null,done:false};
 const WDUR=[30,30,40,40,60,40,60];
@@ -261,7 +263,7 @@ function barInner(){
   const nivRow=gN?`<div class="row"><span class="small" style="opacity:.8">Nivel:</span>${NIVS.map(n=>`<button data-nivs="${n}" class="${T.nivSel===n?"go":""}" style="padding:7px 10px">${n}</button>`).join("")}</div>`:"";
   const prev=(S.draft.ej[st.ex]||[])[st.s]??"";
   return head+`<p class="big" style="font-size:1.15rem">${esc(st.ex)}</p><p class="small" style="opacity:.8">Serie ${st.s+1} de ${n} · meta: ${esc((SES[plan(DIA).ses][1].find(x=>x[0]===st.ex)||[])[1]||"")} · si no llegás, las que puedas</p>
-   ${nivRow}<div class="row"><input id="treps" inputmode="numeric" placeholder="¿Cuántas hiciste?" value="${prev}" style="flex:1;min-width:0;background:var(--card);color:var(--fg)"><button class="go" id="thecha" style="padding:14px 16px;font-size:1rem">✓ Serie hecha</button></div>
+   ${MUNECA(st.ex)?`<p class="small" style="margin:0;opacity:.85">⚠️ Si te duele la muñeca, pará o bajá de nivel.</p>`:""}${nivRow}<div class="row"><input id="treps" inputmode="numeric" placeholder="¿Cuántas hiciste?" value="${prev}" style="flex:1;min-width:0;background:var(--card);color:var(--fg)"><button class="go" id="thecha" style="padding:14px 16px;font-size:1rem">✓ Serie hecha</button></div>
    <div class="row"><span class="small grow" style="opacity:.7">Al tocar "Serie hecha" arranca sola la pausa.</span><button id="tfin">Terminar</button></div>`;
 }
 function drawBar(){const b=document.getElementById("tbar");if(b){b.querySelector(".in").innerHTML=W.on?wInner():barInner()}}
@@ -489,7 +491,7 @@ function renderHoy(){
       <p class="small muted" style="margin:0">Una sola vuelta a 5 estaciones · ${BLQ().tr} s de trabajo y ${BLQ().pa} s de pausa. La app te marca el tiempo.</p>
       ${d.bloque?.hecho?`<span class="chip ok" style="align-self:flex-start">✓ Bloque hecho${d.tiempos?.[ex]?" · "+fmt(d.tiempos[ex]):""}</span>`:""}${guiaHTML(ex,d)}</div>`:`<div class="ex"><div class="row"><h3 class="grow">${esc(ex)}</h3><span class="small muted">${rng}</span></div>
       ${d.tiempos?.[ex]?`<span class="small muted tnum">⏱ Tiempo: ${fmt(d.tiempos[ex])}</span>`:""}
-      <div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.nivS||{})[ex]?.some(Boolean)?`<span class="small muted">Nivel: ${(d.nivS[ex]).map((n,k)=>n?`S${k+1} ${esc(n)}`:"").filter(Boolean).join(" · ")}</span>`:((d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:"")}${guiaHTML(ex,d)}</div>`).join("");
+      ${MUNECA(ex)?avisoMuneca(ex):""}<div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.nivS||{})[ex]?.some(Boolean)?`<span class="small muted">Nivel: ${(d.nivS[ex]).map((n,k)=>n?`S${k+1} ${esc(n)}`:"").filter(Boolean).join(" · ")}</span>`:((d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:"")}${guiaHTML(ex,d)}</div>`).join("");
     ej=`${esTest?"":musicaBtn()}<div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`)}</div>
     ${!T.start&&!d.dur?`<p class="small muted">${esTest?"Ya calentaste para el test, así que podés arrancar directo.":"Hacé primero el calentamiento."} Después tocá Empezar: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}
     ${esTest?"":`${calBtn}<details class="how"><summary>Primero: calentamiento · 5 minutos ▾</summary><div class="how-body">${calBody}</div></details>`}`+ej+estiramiento(p);
