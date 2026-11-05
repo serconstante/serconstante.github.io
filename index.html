@@ -65,6 +65,13 @@ textarea{min-height:90px;resize:vertical}
 .list{display:flex;flex-direction:column}
 .person{display:flex;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;color:inherit;text-align:left;font:inherit;width:100%}
 .person:first-child{border-top:0}
+.avatar{width:64px;height:64px;border-radius:50%;flex:none;position:relative;cursor:pointer;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font:700 1.3rem var(--display);overflow:hidden}
+.avatar img,.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.avatar .cam{position:absolute;right:0;bottom:0;background:var(--accent);color:#fff;border-radius:50%;width:24px;height:24px;font-size:.75rem;display:flex;align-items:center;justify-content:center;border:2px solid var(--card)}
+.stars{display:flex;gap:6px}.stars button{background:none;border:0;font-size:2rem;cursor:pointer;padding:0;line-height:1;filter:grayscale(1);opacity:.4}.stars button.on{filter:none;opacity:1}
+.testi{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.testi .who{display:flex;gap:10px;align-items:center}
+.testi .av{width:48px;height:48px}
 .av{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font:700 .9rem var(--display);flex:none}
 .bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;border-bottom:1px solid var(--line)}
 .bar-chart div{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
@@ -447,7 +454,7 @@ function renderPart(){
 }
 function renderProgramas(done){
   const sub=HOY<1?`Arranca el martes 3/11 · faltan ${1-HOY} días`:HOY>28?"Terminado":`Día ${HOY} de 28`;
-  return `<div class="brand"><span class="logo">SC</span><div><h1>Hola, ${esc(S.perfil.nombre.split(" ")[0])}</h1><p class="small muted">Ser Constante · tus programas</p></div></div>
+  return `<div class="brand"><label class="avatar" for="fotoin" title="Cambiar foto">${S.perfil.foto?`<img src="${S.perfil.foto}" alt="Tu foto">`:esc(ini(S.perfil.nombre))}<span class="cam">📷</span></label><input type="file" id="fotoin" accept="image/*" hidden><div><h1>Hola, ${esc(S.perfil.nombre.split(" ")[0])}</h1><p class="small muted">${S.perfil.foto?"Ser Constante · tus programas":"Tocá el círculo para poner tu foto 📷"}</p></div></div>
   <p class="tag">Cuerpo</p>
   <button class="card prog" id="p28"><div class="hero">${ring(done,HOY,84)}<div class="grow"><h2>${esc(PROG.nombre)}</h2><p class="small muted">${PROG.edicion} · ${sub}</p><span class="chip ok">${HOY<1?"Inscripción confirmada":"En curso"}</span></div></div></button>
   <p class="tag">Hábitos</p>
@@ -521,6 +528,9 @@ async function guardarDia(){
   try{await setDoc(doc(db,"usuarios",S.tel,"dias",PROG.id+"_"+DIA),data);clearLocal();S.logs[DIA]={...data};S.nuevos=calcLogros(S.logs).filter(x=>x.ok&&!antesL.includes(x.id));S.diaElegido=false;S.draft=null;S.busy=false;scrollTo({top:0});render()}
   catch(e){S.busy=false;S.msg="No se pudo guardar. Revisá tu internet y tocá Guardar de nuevo (lo que cargaste sigue acá).";render()}
 }
+const avHTML=(u,cls="av")=>`<span class="${cls}">${u?.foto?`<img src="${u.foto}" alt="">`:esc(ini(u?.nombre||"?"))}</span>`;
+const starsTxt=n=>"★".repeat(n||0)+"☆".repeat(5-(n||0));
+function achicarFoto(file){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const z=320,c=document.createElement("canvas");c.width=c.height=z;const m=Math.min(im.width,im.height);c.getContext("2d").drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,z,z);ok(c.toDataURL("image/jpeg",.8))};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
 function calcLogros(logs){
   const ds=Object.keys(logs).map(Number).sort((a,b)=>a-b),n=ds.length,V=Object.values(logs);
   const gap=ds.some((d,i)=>i>0&&d-ds[i-1]>1)||(ds.length&&ds[0]>1&&ds.length>1);
@@ -546,6 +556,16 @@ function resumenReto(logs){
   const can=Object.values(cs).sort((a,b)=>b.n-a.n)[0];
   const sub=L.filter(([,l])=>l.antes&&l.despues&&l.despues>l.antes).length;
   return {dias:L.length,reps:totalReps(logs),min:Math.round(L.reduce((a,x)=>a+(x[1].dur||0),0)/60),mejor:mejor&&reps(mejor[1])?{d:mejor[0],r:reps(mejor[1]),t:plan(mejor[0]).titulo}:null,mej,can,sub};
+}
+function opinionHTML(){
+  const o=S.op||(S.op={...(S.perfil.opinion||{estrellas:0,texto:"",permiso:false})});
+  return `<div class="card"><span class="tag">Tu opinión</span><h2>¿Cómo te está resultando el reto?</h2>
+   <div class="row"><label class="avatar" for="fotoin" style="width:52px;height:52px;font-size:1rem">${S.perfil.foto?`<img src="${S.perfil.foto}" alt="">`:esc(ini(S.perfil.nombre))}<span class="cam" style="width:20px;height:20px">📷</span></label><input type="file" id="fotoin" accept="image/*" hidden><span class="small muted grow">${S.perfil.foto?"Tu foto de perfil. Tocala para cambiarla.":"Tocá el círculo para poner tu foto."}</span></div>
+   <div class="stars">${[1,2,3,4,5].map(n=>`<button data-star="${n}" class="${o.estrellas>=n?"on":""}" aria-label="${n} estrellas">⭐</button>`).join("")}</div>
+   <textarea id="optxt" rows="3" placeholder="Contá con tus palabras qué te está dejando el reto, la app, el grupo…">${esc(o.texto||"")}</textarea>
+   <label class="small" style="display:flex;align-items:flex-start;gap:8px;font-weight:400;flex-direction:row"><input type="checkbox" id="opperm" ${o.permiso?"checked":""} style="width:auto;margin-top:3px"><span>Autorizo a Rogelio a compartir mi opinión, con mi nombre y mi foto, como testimonio del reto.</span></label>
+   ${S.opOk?`<p class="small" style="color:var(--ok)">✓ ¡Gracias! Tu opinión quedó guardada. Podés cambiarla cuando quieras.</p>`:""}
+   <button class="btn" id="opguardar" ${S.busy?"disabled":""}>${S.perfil.opinion?"Actualizar mi opinión":"Enviar mi opinión"}</button></div>`;
 }
 function renderDiploma(){
   const R=resumenReto(S.logs),f=new Date();
@@ -573,6 +593,7 @@ function renderRecorrido(){
   <div class="kpi"><b>${EMO[Math.round(ant)-1]||"–"} → ${EMO[Math.round(des)-1]||"–"}</b><span class="small muted">ánimo antes → después</span></div><div class="kpi"><b>${Math.round(L.reduce((a,x)=>a+(x[1].dur||0),0)/60)} min</b><span class="small muted">entrenando en total</span></div></div>
   <div class="card"><span class="tag">Test</span><h2>Día 1 vs. día 28</h2><div class="compare"><span class="h">Prueba</span><span class="h">Día 1</span><span class="h">Día 28</span><span class="h">Dif.</span>
    ${TEST.map(([t])=>{const a=+t1[t],b=+t28[t];return `<span>${t}</span><b>${t1[t]||"–"}</b><b>${t28[t]||"–"}</b><span style="color:var(--ok)">${a&&b?(b-a>0?"+":"")+(b-a):"—"}</span>`}).join("")}</div></div>
+  ${opinionHTML()}
   <div class="card"><span class="tag">Tus logros</span><h2>${calcLogros(S.logs).filter(x=>x.ok).length} de 9 desbloqueados</h2>
    <div class="logros">${calcLogros(S.logs).map(l=>`<div class="logro ${l.ok?"":"off"}" title="${esc(l.d)}"><b>${l.ok?l.i:"🔒"}</b><span>${esc(l.t)}</span></div>`).join("")}</div>
    <p class="small muted">${S.logs[28]?"":"🎓 Al llegar al día 28 se desbloquea tu diploma con tu mejor día, tu mayor avance y la canción que más te acompañó."}</p>
@@ -623,9 +644,16 @@ function estado(u){
 function renderAdmin(){
   const head=`<div class="brand"><span class="logo">SC</span><div><h1>Panel de Rogelio</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
   if(!S.A) return head+`<div class="card"><p class="muted">Cargando datos…</p></div>`;
-  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["plan","Plan"],["num","Números"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
+  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["opi","Opiniones"],["plan","Plan"],["num","Números"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
   if(S.verUser) return head+tabs+renderUser(S.verUser);
-  return head+tabs+({resumen:aResumen,gente:aGente,plan:aPlan,num:aNum,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
+  return head+tabs+({resumen:aResumen,gente:aGente,opi:aOpi,plan:aPlan,num:aNum,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
+}
+function aOpi(){
+  const O=Object.values(S.A.users).filter(u=>u.opinion?.estrellas||u.opinion?.texto).sort((a,b)=>(b.opinion.ts||0)-(a.opinion.ts||0));
+  const prom=O.length?O.reduce((t,u)=>t+(u.opinion.estrellas||0),0)/O.filter(u=>u.opinion.estrellas).length:0;
+  return `<div class="kpis"><div class="kpi"><b>${O.length?prom.toFixed(1).replace(".",","):"–"} ⭐</b><span class="small muted">promedio</span></div><div class="kpi"><b>${O.length}</b><span class="small muted">opiniones</span></div><div class="kpi"><b>${O.filter(u=>u.opinion.permiso).length}</b><span class="small muted">autorizan usarla como testimonio</span></div></div>
+  <div class="card"><span class="tag">Testimonios</span><p class="small muted">Las que tienen ✓ autorizaron compartirla con nombre y foto. Hacé captura de la tarjeta para usarla en Instagram.</p>
+  ${O.map(u=>`<div class="testi"><div class="who">${avHTML(u)}<div class="grow"><b>${esc(u.nombre)}</b><br><span style="color:#E8A317;letter-spacing:2px">${starsTxt(u.opinion.estrellas)}</span></div><span class="chip ${u.opinion.permiso?"ok":""}">${u.opinion.permiso?"✓ Autoriza":"Privada"}</span></div>${u.opinion.texto?`<p class="quote" style="font-size:1rem;margin:0">"${esc(u.opinion.texto)}"</p>`:""}<p class="small muted" style="margin:0">${esc(PROG.nombre)} · ${PROG.edicion}</p></div>`).join("")||`<p class="muted">Todavía no hay opiniones. Se cargan desde "Mi recorrido".</p>`}</div>`;
 }
 function aPlan(){
   const [y,m,dd]=PROG.inicio.split("-").map(Number), DS=["dom","lun","mar","mié","jue","vie","sáb"];
@@ -664,7 +692,7 @@ function aResumen(){
 function aGente(){
   const U=Object.entries(S.A.users).sort((a,b)=>Object.keys(b[1].logs).length-Object.keys(a[1].logs).length);
   const noEntraron=Object.keys(S.A.hab).filter(t=>!S.A.users[t]);
-  return `<div class="card"><h2>${U.length} participantes</h2><div class="list">${U.map(([t,u])=>{const e=estado(u);return `<button class="person" data-u="${t}"><span class="av">${ini(u.nombre)}</span><span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.edad||"?"} años · ${Object.keys(u.logs).length} días</span></span><span class="chip ${e[0]}">${e[1]}</span></button>`}).join("")||"<p class='muted'>Todavía nadie entró.</p>"}</div></div>
+  return `<div class="card"><h2>${U.length} participantes</h2><div class="list">${U.map(([t,u])=>{const e=estado(u);return `<button class="person" data-u="${t}">${avHTML(u)}<span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.edad||"?"} años · ${Object.keys(u.logs).length} días</span></span><span class="chip ${e[0]}">${e[1]}</span></button>`}).join("")||"<p class='muted'>Todavía nadie entró.</p>"}</div></div>
   ${noEntraron.length?`<div class="card"><h3>Habilitados que todavía no entraron (${noEntraron.length})</h3><p class="small">${noEntraron.map(t=>(S.A.hab[t].nombre?esc(S.A.hab[t].nombre)+" · ":"")+verTel(t)).join("<br>")}</p></div>`:""}`;
 }
 function renderUser(t){
@@ -716,6 +744,7 @@ document.addEventListener("input",e=>{
   const t=e.target,d=S.draft;
   if(t.dataset.ex&&d){(d.ej[t.dataset.ex]=d.ej[t.dataset.ex]||[])[+t.dataset.s]=t.value.replace(/\D/g,"");}
   if(t.dataset.test&&d){(d.test=d.test||{})[t.dataset.test]=t.value.replace(/\D/g,"")}
+  if(t.id==="optxt"){S.op=S.op||{};S.op.texto=t.value;S.opOk=false}
   if(!d) return;
   if(t.id==="pal") d.palabraAntes=t.value; if(t.id==="cancion") d.cancion=t.value; if(t.id==="resp") d.resp=t.value; if(t.id==="hecho") d.hecho=t.checked;
   if(t.id==="esf"){d.esfuerzo=+t.value;$("#esfv").textContent=t.value}
@@ -725,7 +754,9 @@ document.addEventListener("input",()=>setTimeout(saveLocal,0));
 document.addEventListener("click",()=>setTimeout(saveLocal,50));
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")saveLocal()});
 window.addEventListener("pagehide",saveLocal);
-document.addEventListener("change",e=>{if(e.target.id==="dsel"){S.diaCont=+e.target.value;S.ok="";render()}});
+document.addEventListener("change",async e=>{if(e.target.id==="dsel"){S.diaCont=+e.target.value;S.ok="";render()}
+  if(e.target.id==="opperm"){S.op=S.op||{};S.op.permiso=e.target.checked}
+  if(e.target.id==="fotoin"&&e.target.files[0]){try{const f=await achicarFoto(e.target.files[0]);await setDoc(doc(db,"usuarios",S.tel),{foto:f},{merge:true});S.perfil.foto=f;render()}catch(err){alert("No se pudo cargar la foto. Probá con otra.")}}});
 document.addEventListener("click",async e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.id==="go") return entrar();
@@ -764,6 +795,10 @@ document.addEventListener("click",async e=>{
   if(b.id==="editar"){S.nuevos=null;S.draft=JSON.parse(JSON.stringify(S.logs[DIA]));delete S.draft.ts;return render()}
   if(b.id==="guardar") return guardarDia();
   if(b.id==="imprimir"){S.imprimir=true;return render()}
+  if(b.dataset.star){S.op=S.op||{};S.op.estrellas=+b.dataset.star;S.opOk=false;return render()}
+  if(b.id==="opguardar"){const o={estrellas:S.op?.estrellas||0,texto:($("#optxt").value||"").trim().slice(0,600),permiso:$("#opperm").checked,ts:Date.now()};
+    if(!o.estrellas&&!o.texto){S.opOk=false;return}
+    S.busy=true;render();try{await setDoc(doc(db,"usuarios",S.tel),{opinion:o},{merge:true});S.perfil.opinion=o;S.op={...o};S.opOk=true}catch(e){alert("No se pudo guardar. Probá de nuevo.")}S.busy=false;return render()}
   if(b.id==="verdip"){S.diploma=true;scrollTo({top:0});return render()}
   if(b.id==="cerrardip"){S.diploma=false;return render()}
   if(b.id==="imprimirdip"){return window.print()}
@@ -780,7 +815,7 @@ document.addEventListener("click",async e=>{
 
 getRedirectResult(auth).catch(e=>{S.adminMsg="No se pudo entrar con Google ("+e.code+").";render()});
 onAuthStateChanged(auth,async user=>{
-  if(S.vista!=="adminlogin"){S.msg="";S.ok="";}S.draft=null;S.imprimir=false;S.diploma=false;S.nuevos=null;
+  if(S.vista!=="adminlogin"){S.msg="";S.ok="";}S.draft=null;S.imprimir=false;S.diploma=false;S.nuevos=null;S.op=null;S.opOk=false;
   if(!user){S.vista=S.vista==="adminlogin"?"adminlogin":"login";S.tel=null;S.A=null;S.busy=false;return render()}
   if(user.email===ADMIN_EMAIL){
     if(!user.emailVerified){try{await sendEmailVerification(user)}catch(e){} await signOut(auth);S.vista="adminlogin";S.busy=false;S.msg="";S.ok="Falta un paso: te mandamos un mail para verificar tu Gmail. Abrí el link y volvé a entrar con tu contraseña.";return render()}
