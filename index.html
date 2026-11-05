@@ -200,9 +200,9 @@ const avisoMuneca=ex=>`<p class="small" style="background:#FFF1D6;color:#7A4B00;
 const nivDe=v=>v==="Más fácil"?"Fácil":v==="Más difícil"?"Difícil":v==="Base"?"Base":"";
 const W={on:false,i:0,end:0,left:0,paused:false,iv:null,done:false};
 const WDUR=[30,30,40,40,60,40,60];
-function wStart(){if(T.start)return;W.on=true;W.i=0;W.paused=false;W.end=Date.now()+WDUR[0]*1000;clearInterval(W.iv);W.iv=setInterval(wTick,250);render()}
+function wStart(seguir){if(T.start)return;W.seguir=!!seguir;W.on=true;W.i=0;W.paused=false;W.end=Date.now()+WDUR[0]*1000;clearInterval(W.iv);W.iv=setInterval(wTick,250);render()}
 function wNext(){beep();if(W.i>=CAL.length-1)return wStop(true);W.i++;W.paused=false;W.end=Date.now()+WDUR[W.i]*1000;drawBar()}
-function wStop(ok){W.on=false;clearInterval(W.iv);if(ok)W.done=true;render()}
+function wStop(ok){W.on=false;clearInterval(W.iv);if(ok)W.done=true;if(W.seguir){W.seguir=false;return startWorkout()}render()}
 function wPause(){if(W.paused){W.paused=false;W.end=Date.now()+W.left*1000}else{W.paused=true;W.left=Math.max(0,(W.end-Date.now())/1000)}drawBar()}
 function wTick(){if(!W.on||W.paused)return;const left=(W.end-Date.now())/1000;const r=document.getElementById("wleft");if(r)r.textContent=fmt(Math.max(0,left));const pb=document.getElementById("wprog");if(pb)pb.style.width=Math.min(100,(1-left/WDUR[W.i])*100)+"%";if(left<=0)wNext()}
 function wInner(){const [n,t,c]=CAL[W.i],left=W.paused?W.left:Math.max(0,(W.end-Date.now())/1000),nx=CAL[W.i+1];
@@ -211,7 +211,7 @@ function wInner(){const [n,t,c]=CAL[W.i],left=W.paused?W.left:Math.max(0,(W.end-
  <div class="row"><span class="grow"><span class="big" style="font-size:1.15rem">${esc(n)}</span></span><span class="big" id="wleft">${fmt(left)}</span></div>
  <p class="small" style="opacity:.85;margin:0">${esc(c)}</p>
  ${nx?`<p class="small" style="opacity:.6;margin:0">Sigue: ${esc(nx[0])}</p>`:""}
- <div class="row"><button id="wpause">${W.paused?"▶ Seguir":"⏸ Pausa"}</button><button id="wnext">Siguiente ⏭</button><span class="grow"></span><button id="wfin">Terminar</button></div>`}
+ <div class="row"><button id="wpause">${W.paused?"▶ Seguir":"⏸ Pausa"}</button><button id="wnext">Siguiente ⏭</button><span class="grow"></span><button id="wfin">${W.seguir?"Ir al entrenamiento ⏭":"Terminar"}</button></div>`}
 function beep(){try{const A=new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(o=>{const g=A.createGain(),k=A.createOscillator();k.frequency.value=880;g.gain.value=.25;k.connect(g);g.connect(A.destination);k.start(A.currentTime+o);k.stop(A.currentTime+o+.15)})}catch(e){} try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
 function buildSteps(p){
   const ex=SES[p.ses][1].map(x=>x[0]),n=p.series,st=[];
@@ -492,9 +492,11 @@ function renderHoy(){
       ${d.bloque?.hecho?`<span class="chip ok" style="align-self:flex-start">✓ Bloque hecho${d.tiempos?.[ex]?" · "+fmt(d.tiempos[ex]):""}</span>`:""}${guiaHTML(ex,d)}</div>`:`<div class="ex"><div class="row"><h3 class="grow">${esc(ex)}</h3><span class="small muted">${rng}</span></div>
       ${d.tiempos?.[ex]?`<span class="small muted tnum">⏱ Tiempo: ${fmt(d.tiempos[ex])}</span>`:""}
       ${MUNECA(ex)?avisoMuneca(ex):""}<div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.nivS||{})[ex]?.some(Boolean)?`<span class="small muted">Nivel: ${(d.nivS[ex]).map((n,k)=>n?`S${k+1} ${esc(n)}`:"").filter(Boolean).join(" · ")}</span>`:((d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:"")}${guiaHTML(ex,d)}</div>`).join("");
-    ej=`${esTest?"":musicaBtn()}<div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`)}</div>
-    ${!T.start&&!d.dur?`<p class="small muted">${esTest?"Ya calentaste para el test, así que podés arrancar directo.":"Hacé primero el calentamiento."} Después tocá Empezar: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}
-    ${esTest?"":`${calBtn}<details class="how"><summary>Primero: calentamiento · 5 minutos ▾</summary><div class="how-body">${calBody}</div></details>`}`+ej+estiramiento(p);
+    ej=`${esTest?"":musicaBtn()}
+    ${!esTest&&!T.start&&!W.on&&!d.dur?`<button class="btn" id="tstartall">▶ Empezar: calentamiento + entrenamiento</button><p class="small muted">La app te guía de punta a punta: primero 5 minutos de calentamiento con cronómetro y, al terminar, arranca sola el entrenamiento. En cada serie anotás cuántas hiciste y la pausa empieza sola con aviso.</p>`:""}
+    ${esTest?"":`<p class="tag" style="margin:6px 0 0">1 · Calentamiento · 5 minutos</p>${W.on?calBtn:(W.done?calBtn:"")}<details class="how"><summary>Ver cómo se hace cada ejercicio del calentamiento ▾</summary><div class="how-body">${calBody}</div></details><p class="tag" style="margin:6px 0 0">2 · Entrenamiento</p>`}
+    <div class="row">${T.start?`<span class="chip ok">⏱ Entrenamiento en curso: seguí las indicaciones de abajo</span>`:(d.dur?`<span class="chip ok">✓ Entrenamiento hecho en ${fmt(d.dur)}</span><button class="tbtn" id="tstart">▶ Hacerlo de nuevo</button>`:(esTest?`<button class="btn" id="tstart" style="flex:1">▶ Empezar entrenamiento guiado</button>`:(W.on?"":`<button class="btn ghost small" id="tstart" style="flex:1">Ya calenté: empezar solo el entrenamiento</button>`)))}</div>
+    ${esTest&&!T.start&&!d.dur?`<p class="small muted">Ya calentaste para el test, así que podés arrancar directo: la app te va diciendo qué ejercicio y qué serie toca, anotás cuántas hiciste y arranca sola la pausa con aviso.</p>`:""}`+ej+estiramiento(p);
   } else if(p.tipo!=="testfin") ej=`<p>${esc(p.titulo)}</p><div class="row"><input type="checkbox" id="hecho" style="width:auto" ${d.hecho?"checked":""}><label for="hecho" style="margin:0">Lo hice</label></div>`;
   const test=(p.tipo==="test"||p.tipo==="testfin")?`<div class="card"><span class="tag">${p.tipo==="test"?"Test inicial":"Test final"}</span><h2>${p.tipo==="test"?"Tu punto de partida":"¿Cuánto avanzaste?"}</h2>
     <p class="small muted">Hacé cada prueba con la misma variante${p.tipo==="testfin"?" que usaste el día 1":" que vas a usar en el reto"}. Este número no es una nota: es tu punto de partida.</p>
@@ -782,6 +784,7 @@ document.addEventListener("click",async e=>{
   if(b.parentElement?.classList.contains("moods")&&S.draft){S.draft[b.parentElement.dataset.k]=+b.dataset.v;b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
   if(b.dataset.niv&&S.draft){(S.draft.niv=S.draft.niv||{})[b.dataset.niv]=b.dataset.v;b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
   if(b.id==="wstart") return wStart();
+  if(b.id==="tstartall"&&S.draft) return wStart(true);
   if(b.id==="wnext") return wNext();
   if(b.id==="wpause") return wPause();
   if(b.id==="wfin") return wStop(false);
