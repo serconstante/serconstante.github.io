@@ -426,6 +426,7 @@ async function entrar(){
   try{
     const h=await getDoc(doc(db,"habilitados",tel));
     if(!h.exists()){S.busy=false;S.msg="Este número no está inscripto. Escribile a Rogelio.";return render()}
+    if(h.data().baja){S.busy=false;S.msg="Este número quedó fuera del reto. Si querés volver, escribile a Rogelio.";return render()}
     try{await signInWithEmailAndPassword(auth,emailDe(tel,h.data().ver),passDe(tel,pin));}
     catch(e){S.busy=false;S.pend={tel,pin,ver:h.data().ver||0};S.vista="registro";S.msg="";return render()}
   }catch(e){S.busy=false;S.msg="No pudimos conectarnos. Revisá tu internet y probá de nuevo.";render()}
@@ -530,6 +531,7 @@ function renderHoy(){
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="con sueño, con ganas, dudando…"></div></div>
+  <div class="card" style="border-left:4px solid var(--accent)"><span class="tag">🧭 Pregunta del día · para llevarte al entrenamiento</span><p style="font-size:1.1rem;font-weight:600;margin:6px 0">${esc(preg(DIA))}</p><p class="small muted" style="margin:0">No la contestes ahora: pensala mientras entrenás. Al final, si querés, escribís una línea.</p></div>
   ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás. Tocá el botón y la app te va marcando el tiempo de cada ejercicio, con aviso al terminar.</p>${musicaBtn()}${calBtn}<details class="how"><summary>Ver cómo se hace cada ejercicio ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
@@ -539,7 +541,7 @@ function renderHoy(){
     <div><label for="esf">¿Cuánto te costó? <b id="esfv">${d.esfuerzo}</b>/10</label><input type="range" id="esf" min="1" max="10" value="${d.esfuerzo}"></div></div>
   ${p.ses||p.tipo==="activo"?despues(p):""}
   <div class="card"><span class="tag">4 · Desde el coaching</span><p class="quote">${esc(frase(DIA))}</p>
-    <div><label for="resp">${esc(preg(DIA))}</label><textarea id="resp" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
+    <div><label for="resp">${esc(preg(DIA))}</label><p class="small muted" style="margin:2px 0 6px">La pregunta de esta mañana. Una línea alcanza, y si hoy no te sale, no pasa nada.</p><textarea id="resp" rows="2" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
   <div class="card"><span class="tag">5 · Extra (opcional)</span><h2>¿Hiciste otra actividad?</h2>
     <div class="row"><select id="xt" class="grow"><option value="">Nada extra hoy</option>${EXTRA.map(x=>`<option ${d.extra?.tipo===x?"selected":""}>${x}</option>`).join("")}</select>
     <input id="xm" inputmode="numeric" placeholder="min" style="width:90px" value="${d.extra?.min??""}"></div>
@@ -657,6 +659,7 @@ async function cargarAdmin(){
   h.forEach(x=>A.hab[x.id]=x.data());
   u.forEach(x=>A.users[x.id]={...x.data(),logs:{}});
   dias.forEach(x=>{const v=x.data(),tel=x.ref.parent.parent.id; if(v.prog!==PROG.id) return; (A.users[tel]=A.users[tel]||{nombre:"(sin nombre)",logs:{}}).logs[v.d]=v});
+  A.bajas={};Object.keys(A.hab).forEach(t=>{if(A.hab[t].baja){A.bajas[t]={nombre:A.users[t]?.nombre||A.hab[t].nombre||"",dias:Object.keys(A.users[t]?.logs||{}).length};delete A.hab[t];delete A.users[t]}});
   S.cont=c.exists()?c.data():{}; S.A=A; render();
 }
 function estado(u){
@@ -721,13 +724,14 @@ function aGente(){
   const U=Object.entries(S.A.users).sort((a,b)=>Object.keys(b[1].logs).length-Object.keys(a[1].logs).length);
   const noEntraron=Object.keys(S.A.hab).filter(t=>!S.A.users[t]);
   return `<div class="card"><h2>${U.length} participantes</h2><div class="list">${U.map(([t,u])=>{const e=estado(u);return `<button class="person" data-u="${t}">${avHTML(u)}<span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.edad||"?"} años · ${Object.keys(u.logs).length} días</span></span><span class="chip ${e[0]}">${e[1]}</span></button>`}).join("")||"<p class='muted'>Todavía nadie entró.</p>"}</div></div>
-  ${noEntraron.length?`<div class="card"><h3>Habilitados que todavía no entraron (${noEntraron.length})</h3><p class="small">${noEntraron.map(t=>(S.A.hab[t].nombre?esc(S.A.hab[t].nombre)+" · ":"")+verTel(t)).join("<br>")}</p></div>`:""}`;
+  ${noEntraron.length?`<div class="card"><h3>Habilitados que todavía no entraron (${noEntraron.length})</h3><div class="list">${noEntraron.map(t=>`<div class="row"><span class="grow small">${(S.A.hab[t].nombre?esc(S.A.hab[t].nombre)+" · ":"")+verTel(t)}</span><button class="btn ghost small" data-baja="${t}">Dar de baja</button></div>`).join("")}</div></div>`:""}
+  ${Object.keys(S.A.bajas).length?`<div class="card"><h3>Dados de baja (${Object.keys(S.A.bajas).length})</h3><p class="small muted">No cuentan en las estadísticas ni pueden entrar. Lo que cargaron queda guardado por si vuelven.</p><div class="list">${Object.entries(S.A.bajas).map(([t,v])=>`<div class="row"><span class="grow small">${v.nombre?esc(v.nombre)+" · ":""}${verTel(t)}${v.dias?` · ${v.dias} días cargados`:""}</span><button class="btn ghost small" data-alta="${t}">Reactivar</button></div>`).join("")}</div></div>`:""}`;
 }
 function renderUser(t){
   const u=S.A.users[t]; const L=Object.entries(u.logs).sort((a,b)=>a[0]-b[0]);
   return `<button class="btn ghost small" id="volver">← Volver</button>
   <div class="card"><div class="hero">${ring(L.map(x=>+x[0]),HOY,96)}<div class="grow"><h2>${esc(u.nombre)}</h2><p class="small muted">${u.edad||"?"} años · ${verTel(t)}</p><p class="small">${totalReps(u.logs).toLocaleString("es-AR")} reps en total</p></div></div>
-   <button class="btn ghost small" data-reset="${t}">Resetear PIN</button></div>
+   <button class="btn ghost small" data-reset="${t}">Resetear PIN</button><button class="btn ghost small" data-baja="${t}">Dar de baja</button></div>
   <div class="card"><span class="tag">Día por día</span>${L.reverse().map(([d,l])=>`<div class="ex"><div class="row"><b class="grow">Día ${d}</b><span>${EMO[l.antes-1]||""} → ${EMO[l.despues-1]||""}</span><span class="small muted">esfuerzo ${l.esfuerzo}/10</span></div>
     ${l.dur?`<p class="small tnum">⏱ ${fmt(l.dur)} en total${l.tiempos?" · "+Object.entries(l.tiempos).map(([e,x])=>`${esc(e.split(" (")[0].split(":")[0])} ${fmt(x)}`).join(" · "):""}</p>`:""}
     ${l.niv&&Object.keys(l.niv).length?`<p class="small muted">Niveles: ${Object.entries(l.niv).map(([e,n])=>`${esc(e.split(" (")[0].split(":")[0])}: ${n}`).join(" · ")}</p>`:""}
@@ -754,7 +758,7 @@ async function habilitar(){
   const lines=$("#nuevos").value.split("\n").map(x=>x.trim()).filter(Boolean); let n=0,bad=[];
   S.msg="";S.ok="";
   for(const l of lines){const [num,...nom]=l.split(",");const t=normTel(num);if(t.length!==10){bad.push(l);continue}
-    await setDoc(doc(db,"habilitados",t),{prog:PROG.id,nombre:nom.join(",").trim(),ver:S.A.hab[t]?.ver||0,creado:serverTimestamp()},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),nombre:nom.join(",").trim(),ver:S.A.hab[t]?.ver||0};n++}
+    await setDoc(doc(db,"habilitados",t),{prog:PROG.id,nombre:nom.join(",").trim(),ver:S.A.hab[t]?.ver||0,baja:false,creado:serverTimestamp()},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),nombre:nom.join(",").trim(),ver:S.A.hab[t]?.ver||0};n++}
   S.ok=n?`${n} número${n>1?"s":""} habilitado${n>1?"s":""}.`:""; if(bad.length) S.msg="No entendí estos números: "+bad.map(esc).join(" · "); render();
 }
 function descargarCSV(){
@@ -842,6 +846,8 @@ document.addEventListener("click",async e=>{
   if(b.id==="volver"){S.verUser=null;return render()}
   if(b.id==="recargar") return cargarAdmin();
   if(b.id==="csv") return descargarCSV();
+  if(b.dataset.baja){const t=b.dataset.baja,nom=S.A.users[t]?.nombre||S.A.hab[t]?.nombre||verTel(t);if(!confirm(`¿Dar de baja a ${nom}? Deja de contar en las estadísticas y no puede entrar. Lo podés reactivar cuando quieras.`))return;await setDoc(doc(db,"habilitados",t),{baja:true},{merge:true});S.verUser=null;return cargarAdmin()}
+  if(b.dataset.alta){await setDoc(doc(db,"habilitados",b.dataset.alta),{baja:false},{merge:true});return cargarAdmin()}
   if(b.dataset.reset){const t=b.dataset.reset,v=(S.A.hab[t]?.ver||0)+1;await setDoc(doc(db,"habilitados",t),{ver:v},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ver:v};b.textContent="PIN reseteado: la próxima vez elige uno nuevo";b.disabled=true;return}
   if(b.id==="agregar") return habilitar();
   if(b.id==="gcont"){const c=S.cont||{};const P=[...(c.preg||PREG)],F=[...(c.frases||FRASES)];P[S.diaCont-1]=$("#cpre").value;F[S.diaCont-1]=$("#cfra").value;await setDoc(doc(db,"contenido",PROG.id),{preg:P,frases:F});S.cont={preg:P,frases:F};S.ok="Guardado el día "+S.diaCont;return render()}
