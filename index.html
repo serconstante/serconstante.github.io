@@ -1270,6 +1270,7 @@ function renderPart(){
   if(!S.perfil?.nombre) return `<div class="card"><h2>Completá tus datos</h2><div><label for="nom">Nombre y apellido</label><input id="nom"></div><div><label for="eda">Edad</label><input id="eda" inputmode="numeric"></div><button class="btn" id="guardarperfil">Guardar</button></div>`;
   if(!S.prog) return renderProgramas(done);
   if(S.prog==="ingles") return S.engOk?ENG.page():renderProgramas(done);
+  if(S.prog==="cuentas") return renderCuentas();
   const estadoTxt=HOY<1?`Arranca el martes 3 de noviembre`:HOY>28?`Reto terminado`:`Día ${HOY} de 28`;
   const head=`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
   <div class="card"><div class="hero">${ring(done,HOY)}<div class="grow"><span class="tag">${esc(PROG.nombre)}</span><h1>${estadoTxt}</h1><p class="muted small">${done.length} días cargados${HOY>=1&&HOY<=28?` · ${28-HOY} por delante`:""}</p></div></div></div>
@@ -1287,7 +1288,28 @@ function renderProgramas(done){
   ${S.engOk?`<button class="card prog" id="ping"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Hablar y entender inglés para la vida diaria · ${ENG.total} lecciones</p><span class="chip ok">${ENG.aprobadas()?`${ENG.aprobadas()} de ${ENG.total} aprobadas`:"Habilitado · empezá cuando quieras"}</span></div></div></button>`
   :`<div class="card lock"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem;background:var(--line);color:var(--muted)">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Aprendé a hablar y entender inglés para la vida diaria: saludar, comprar, viajar, pedir ayuda. Escuchás, repetís y la app te corrige.</p></div></div>
   ${S.perfil.inglesPide?`<p class="chip warn" style="align-self:flex-start">Pedido enviado · Rogelio te habilita en breve</p>`:`<button class="btn" id="pideing">Quiero probarlo gratis</button>`}</div>`}
+  <p class="tag">Herramientas · Regalo para participantes</p>
+  <div class="card"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.6rem;background:#2c4fb8">$</span><div class="grow"><h2>Cuentas del hogar</h2><p class="small muted">Anotá gastos, ingresos, tarjetas y ahorros de tu casa en segundos, hasta hablando. Gratis para participantes.</p></div></div>
+  <button class="btn" id="pcuentas">Quiero saber más</button></div>
   <button class="btn ghost" id="salir">Salir</button>`;
+}
+function renderCuentas(){
+  return `<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
+  <div class="card"><span class="tag">Herramientas · Regalo para participantes</span><h1>Cuentas del hogar</h1>
+  <p>Una app gratuita para ordenar la plata de tu casa desde el celular. Ordenar la plata también es un hábito: alcanza con anotar cada gasto en el momento y mirar el resumen una vez por semana.</p></div>
+  <div class="card"><h2>Qué podés hacer</h2>
+  <div class="ex"><b>Cargar gastos de tres formas</b><p class="small muted">Hablando (“Gasté 15 mil en el súper en efectivo”), con la foto de un ticket o comprobante, o a mano.</p></div>
+  <div class="ex"><b>Ver el mes completo</b><p class="small muted">Cuánto entró y cuánto salió, y qué cuentas fijas están pendientes o pagadas.</p></div>
+  <div class="ex"><b>Tarjetas y cuotas</b><p class="small muted">Calcula el valor de cada cuota y en qué mes cae.</p></div>
+  <div class="ex"><b>Ahorros</b><p class="small muted">Pesos, dólares, plazos fijos y billeteras virtuales, en un solo lugar.</p></div>
+  <div class="ex"><b>Para toda la casa</b><p class="small muted">Varias personas pueden cargar y ver lo mismo, actualizado.</p></div></div>
+  <div class="card" style="background:var(--warn-soft);border-color:transparent"><h3>Tus datos son solo tuyos</h3><p class="small">Se guardan cifrados con una clave familiar que eligen ustedes: nadie más puede verlos, ni Rogelio. Si se olvidan esa clave, los datos no se recuperan, así que anotala en un lugar seguro.</p></div>
+  <a class="btn ghost" href="guia-cuentas-del-hogar.pdf" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">📄 Ver la guía completa (PDF)</a>
+  <a class="btn" href="https://cuentas-domesticas.netlify.app" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Descargar y empezar</a>
+  <details class="how"><summary>¿Cómo la instalo en el celular?</summary><div class="how-body small">
+  <p><b>Android (Chrome):</b> abrila con “Descargar y empezar”, tocá el menú de los tres puntos ⋮ y elegí “Instalar app” o “Agregar a la pantalla principal”.</p>
+  <p><b>iPhone (Safari):</b> abrila, tocá el botón Compartir y elegí “Agregar a inicio”.</p>
+  <p>Queda como una app más en tu celular.</p></div></details>`;
 }
 function renderHoy(){
   if(HOY<1) return `<div class="card"><span class="tag">Antes de arrancar</span><h2>Faltan ${1-HOY} días</h2>
@@ -1609,6 +1631,7 @@ document.addEventListener("click",async e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.eact) return ENG.click(b);
   if(b.id==="ping"){S.prog="ingles";return render()}
+  if(b.id==="pcuentas"){S.prog="cuentas";scrollTo(0,0);return render()}
   if(b.id==="pideing"){b.disabled=true;try{await setDoc(doc(db,"usuarios",S.tel),{inglesPide:serverTimestamp()},{merge:true});S.perfil.inglesPide=true;}catch(err){b.disabled=false;alert("No se pudo enviar el pedido. Revisá tu internet y probá de nuevo.");}return render()}
   if(b.dataset.ingon||b.dataset.ingoff){const t=b.dataset.ingon||b.dataset.ingoff,on=!!b.dataset.ingon;b.disabled=true;await setDoc(doc(db,"habilitados",t),{ingles:on},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ingles:on};return render()}
   if(b.id==="ingpedidos"){b.disabled=true;const P=ingPedidos();for(const t of P){await setDoc(doc(db,"habilitados",t),{ingles:true},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ingles:true}}return render()}
