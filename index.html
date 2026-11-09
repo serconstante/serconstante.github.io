@@ -135,6 +135,67 @@ input[type=range]{padding:0;accent-color:var(--accent)}
 .print h2{margin-top:16px}
 @media print{.noprint{display:none!important}body{background:#fff;color:#000}}
 
+
+/* ---------- Inglés paso a paso (complemento) ---------- */
+.eng{--surface:var(--card);--accent-ink:#fff;--sun:#F2B33D;--sun-ink:#3A2A05;display:flex;flex-direction:column;gap:14px}
+.eng button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.eng button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.eng .btn.ghost{border:1.5px solid var(--line);font:600 .85rem var(--display);padding:9px 14px;border-radius:12px}
+.eng .top{display:flex;align-items:center;gap:12px}
+.eng .back{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);flex:none}
+.eng .bar{flex:1;height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.eng .bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.eng .hello{display:flex;flex-direction:column;gap:6px}
+.eng .hello h1{font-size:1.9rem}
+.eng .hello p{color:var(--muted)}
+.eng .lvl{display:flex;flex-direction:column;gap:2px;padding:14px 4px 2px}
+.eng .lvl b{font-family:var(--display);font-size:1.4rem;color:var(--accent)}
+.eng .lvl span{font-size:.9rem;color:var(--muted)}
+.eng .count{font-weight:700;color:var(--accent)!important}
+.eng .lessons{display:flex;flex-direction:column;gap:10px}
+.eng .lesson{display:flex;align-items:center;gap:14px;padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);text-align:left;width:100%}
+.eng .lesson .num{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.3rem;background:var(--line);color:var(--muted);flex:none}
+.eng .lesson.open{border:2px solid var(--accent)}
+.eng .lesson.open .num{background:var(--accent);color:var(--accent-ink)}
+.eng .lesson.done .num{background:var(--ok);color:var(--accent-ink)}
+.eng .lesson .t{font-weight:700}
+.eng .lesson .s{font-size:.9rem;color:var(--muted)}
+.eng .lesson[disabled]{opacity:.6;cursor:default}
+.eng .lesson .end{margin-left:auto;color:var(--muted);flex:none}
+.eng .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.eng .es{color:var(--muted)}
+.eng .en{font-family:var(--display);font-size:2.3rem;color:var(--fg);line-height:1.1}
+.eng .tip{background:var(--sun);color:var(--sun-ink);padding:4px 12px;border-radius:99px;font-size:.95rem;font-weight:700}
+.eng .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.eng .pill{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-weight:700;min-height:48px}
+.eng .mic{width:104px;height:104px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 6px 0 color-mix(in srgb, var(--accent) 60%, #000)}
+.eng .mic:active{transform:translateY(3px);box-shadow:0 3px 0 color-mix(in srgb, var(--accent) 60%, #000)}
+.eng .mic.on{background:var(--bad);animation:engpulse 1.2s infinite}
+@keyframes engpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb, var(--bad) 50%, transparent)}100%{box-shadow:0 0 0 22px transparent}}
+@media (prefers-reduced-motion: reduce){.eng .mic.on{animation:none}.eng .bar i{transition:none}}
+.eng .use{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 14px;font-size:.95rem;text-align:left;width:100%}
+.eng .use b{color:var(--accent)}
+.eng .hint{color:var(--muted);font-size:.95rem;min-height:1.4em}
+.eng .result{width:100%;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.eng .result.good{background:var(--ok-soft)}
+.eng .result.bad{background:var(--bad-soft)}
+.eng .words{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-family:var(--display);font-size:1.5rem}
+.eng .w-ok{color:var(--ok)} .eng .w-bad{color:var(--bad);text-decoration:underline wavy}
+.eng .heard{font-size:.85rem;color:var(--muted)}
+.eng .next{width:100%;min-height:58px;border-radius:18px;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:600;font-size:1.3rem}
+.eng .next[disabled]{background:var(--line);color:var(--muted);cursor:not-allowed}
+.eng .opts{display:flex;flex-direction:column;gap:10px;width:100%}
+.eng .opt{min-height:58px;border-radius:16px;background:var(--bg);border:2px solid var(--line);font-weight:700;font-size:1.1rem;padding:10px}
+.eng .opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.eng .opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.eng .big-play{width:96px;height:96px;border-radius:50%;background:var(--sun);color:var(--sun-ink);display:grid;place-items:center}
+.eng .note{font-size:.85rem;color:var(--muted);text-align:center}
+.eng .trophy{font-family:var(--display);font-size:4rem;color:var(--sun);line-height:1}
+.eng .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.eng .stat{background:var(--bg);border-radius:14px;padding:12px}
+.eng .stat b{display:block;font-family:var(--display);font-size:1.7rem;font-variant-numeric:tabular-nums}
+.eng .stat span{font-size:.85rem;color:var(--muted)}
+.lock{opacity:.85}
 </style></head>
 <body><div class="wrap"><main id="app" class="wrap" style="padding:0"></main></div>
 <script type="module">
@@ -169,8 +230,8 @@ function plan(d){
   if(k===6) return {tipo:"activo",titulo:"Descanso activo: caminata de "+[30,35,40][w-1]+" minutos"};
   return {tipo:"descanso",titulo:"Descanso total"};
 }
-const PREG=["¿Para qué querés hacer este reto?", "¿Qué te dijiste hoy antes de empezar?", "Hoy, ¿pensaste «no puedo» o «yo no soy de los que…»? ¿Eso es un hecho o una opinión tuya sobre vos?", "¿Qué hecho de hoy, algo que se pueda contar o medir, te sorprendió de vos?", "¿Qué excusa apareció hoy? ¿Estaba en tu círculo de influencia (lo que depende de vos) o en el de preocupación (lo que no)?", "¿Cómo mirás hoy tu cuerpo: desde lo que le falta o desde lo que puede?", "Un hábito es saber qué hacer, saber cómo y querer hacerlo. ¿Cuál de los tres te está costando más?", "Se terminó la novedad. ¿Qué promesa te hiciste a vos y cómo la estás cumpliendo?", "¿Qué no salió como esperabas esta semana? ¿Qué posibilidad nueva te abre?", "¿Qué emoción apareció hoy al terminar?", "¿En qué momento te descubriste pensando «para qué, si igual…»?", "¿Qué «no puedo» se convirtió en «todavía»?", "Hoy, ¿dijiste «tengo que» o «elijo»? ¿Qué cambia cuando lo decís distinto?", "Mitad del camino: ¿qué hiciste estas dos semanas que antes te parecía imposible?", "¿Qué te dice tu cuerpo hoy, si lo escuchás sin apurarte?", "¿Cómo te parás cuando algo te cuesta? ¿Qué cambia si te parás distinto?", "¿Cómo te hablás cuando algo no sale?", "¿Qué ayuda te estás guardando de pedir?", "¿A quién le podrías prometer algo concreto para la semana que viene? ¿Qué y para cuándo?", "¿Quién te acompaña en esto, aunque no lo sepa?", "¿Qué querés declarar para la última semana?", "¿Qué cosa urgente te sacó hoy de lo importante? ¿A qué le tendrías que decir «no»?", "¿A qué le dijiste «sí» en estas semanas que antes evitabas?", "¿Qué no sabés todavía de vos y te gustaría aprender?", "¿Qué te perdonarías hoy? Un día que faltaste, algo que no salió…", "¿A quién le querés dar las gracias por estos días? ¿Y a vos?", "Cuando termine el reto, ¿cómo vas a seguir cuidando tu cuerpo, tu cabeza y tu ánimo?", "¿Quién sos hoy que no eras hace 28 días?"];
-const FRASES=["Empezá con lo que podés.", "Hoy cuenta aunque sea poco.", "«No puedo» no es un hecho. Es un juicio.", "Los hechos se cuentan. Los juicios se revisan.", "No elegís el día que te toca. Sí elegís qué hacés con él.", "«No sabemos cómo las cosas son. Sólo sabemos cómo las observamos.» R. Echeverría", "Una semana. Ya no sos el mismo que empezó.", "Cumplir una pequeña promesa con vos mismo también es entrenar.", "Cuando algo se corta, aparece una pregunta. No un final.", "Las ganas llegan caminando.", "Un día que faltás no arruina nada. El «ya fue» sí.", "«Todavía no puedo» es una puerta abierta.", "«No puedo» → «Elijo». «Tengo que» → «Prefiero». Así habla la proactividad (S. Covey).", "Mitad del camino. ¿Cómo querés llegar al día 28?", "Tu cuerpo también habla. Escuchalo.", "Cambiá la postura y cambia la conversación.", "Hablate como le hablarías a alguien que querés.", "Pedir no es debilidad. Es animarse a no hacerlo solo.", "Una promesa clara tiene qué, a quién y para cuándo.", "Nadie llega solo.", "Última semana: vos decidís cómo la terminás.", "Moverse nunca es urgente. Por eso hay que ponerlo primero.", "Ya no estás empezando: estás sosteniendo.", "Decir «no sé» es el primer paso para aprender.", "Perdonarte también es seguir.", "Dar las gracias también es cerrar bien.", "Afilar la sierra: cuidarte hoy para poder seguir mañana (S. Covey).", "«No sólo actuamos de acuerdo a como somos, también somos de acuerdo a como actuamos.» R. Echeverría"];
+const PREG=["¿Para qué querés hacer este reto?", "¿Qué te dijiste hoy antes de empezar?", "Hoy, ¿pensaste «no puedo» o «yo no soy de los que…»? ¿Eso es un hecho o una opinión tuya sobre vos?", "¿Qué hecho de hoy, algo que se pueda contar o medir, te sorprendió de vos?", "¿Qué excusa apareció hoy y qué hiciste con ella?", "¿Cómo mirás hoy tu cuerpo: desde lo que le falta o desde lo que puede?", "¿Qué juicio sobre vos empezaste a mirar distinto esta semana?", "Se terminó la novedad. ¿Qué te está sosteniendo ahora?", "¿Qué no salió como esperabas esta semana? ¿Qué posibilidad nueva te abre?", "¿Qué emoción apareció hoy al terminar?", "¿En qué momento te descubriste pensando «para qué, si igual…»?", "¿Qué «no puedo» se convirtió en «todavía»?", "Si tu ánimo de hoy fuera un clima, ¿cuál sería? ¿Qué te ayuda a cambiarlo?", "Mitad del camino: ¿qué hiciste estas dos semanas que antes te parecía imposible?", "¿Qué te dice tu cuerpo hoy, si lo escuchás sin apurarte?", "¿Cómo te parás cuando algo te cuesta? ¿Qué cambia si te parás distinto?", "¿Cómo te hablás cuando algo no sale?", "¿Qué ayuda te estás guardando de pedir?", "¿A quién le podrías prometer algo concreto para la semana que viene? ¿Qué y para cuándo?", "¿Quién te acompaña en esto, aunque no lo sepa?", "¿Qué querés declarar para la última semana?", "¿A qué le tenés que decir «no» para poder decirle «sí» a esto?", "¿A qué le dijiste «sí» en estas semanas que antes evitabas?", "¿Qué no sabés todavía de vos y te gustaría aprender?", "¿Qué te perdonarías hoy? Un día que faltaste, algo que no salió…", "¿A quién le querés dar las gracias por estos días? ¿Y a vos?", "¿Qué no querés perder cuando termine el reto?", "¿Quién sos hoy que no eras hace 28 días?"];
+const FRASES=["Empezá con lo que podés.", "Hoy cuenta aunque sea poco.", "«No puedo» no es un hecho. Es un juicio.", "Los hechos se cuentan. Los juicios se revisan.", "No hace falta tener ganas. Hace falta empezar.", "«No sabemos cómo las cosas son. Sólo sabemos cómo las observamos.» R. Echeverría", "Una semana. Ya no sos el mismo que empezó.", "La novedad se terminó. Empieza el compromiso.", "Cuando algo se corta, aparece una pregunta. No un final.", "Las ganas llegan caminando.", "Un día que faltás no arruina nada. El «ya fue» sí.", "«Todavía no puedo» es una puerta abierta.", "El ánimo también se mueve caminando.", "Mitad del camino. Seguís acá.", "Tu cuerpo también habla. Escuchalo.", "Cambiá la postura y cambia la conversación.", "Hablate como le hablarías a alguien que querés.", "Pedir no es debilidad. Es animarse a no hacerlo solo.", "Una promesa clara tiene qué, a quién y para cuándo.", "Nadie llega solo.", "Última semana: vos decidís cómo la terminás.", "Cada «no» que decís cuida un «sí».", "Ya no estás empezando: estás sosteniendo.", "Decir «no sé» es el primer paso para aprender.", "Perdonarte también es seguir.", "Dar las gracias también es cerrar bien.", "Lo que construiste es tuyo.", "«No sólo actuamos de acuerdo a como somos, también somos de acuerdo a como actuamos.» R. Echeverría"];
 const EXTRA=["Caminata","Bici","Baile","Pileta","Yoga","Fútbol","Otra"];
 const EMO=["😣","😕","😐","🙂","😄"];
 function ring(done,today,size=120){
@@ -387,6 +448,743 @@ function render(){
   document.body.classList.toggle("has-bar",!!bar); if(bar&&T.start) tick();
 }
 
+
+/* ================== INGLÉS PASO A PASO (complemento) ================== */
+const ENG=(()=>{
+const ICON = {
+  back:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  spk:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  spkBig:'<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  slow:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>',
+  mic:'<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  lock:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  check:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5 9-10"/></svg>',
+  go:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 5l7 7-7 7"/></svg>'
+};
+
+const ph = a => a.map(([en,es,tip,use,x])=>Object.assign({en,es,tip,use},x||{}));
+const LESSONS = [
+ {title:'Saludos y cortesía', sub:'21 frases para saludar, presentarte y despedirte',
+  phrases:[
+    {en:'Hello', es:'Hola', tip:'jeló', use:'El saludo general. Sirve a cualquier hora y con cualquier persona.'},
+    {en:'Hi', es:'Hola', tip:'jái', use:'Más informal que Hello. Con amigos, familia o compañeros.', accept:['high','hey','hi there']},
+    {en:'Good morning', es:'Buen día', tip:'gud mórning', use:'Para saludar desde que te levantás hasta el mediodía.'},
+    {en:'Good afternoon', es:'Buenas tardes', tip:'gud áfternun', use:'Para saludar desde el mediodía hasta que oscurece.'},
+    {en:'Good evening', es:'Buenas noches (al llegar)', tip:'gud ívning', use:'Para saludar cuando llegás a un lugar de noche.'},
+    {en:'Good night', es:'Buenas noches (al irte)', tip:'gud náit', use:'Solo para despedirte de noche o antes de ir a dormir. Nunca para saludar al llegar.'},
+    {en:'How are you?', es:'¿Cómo estás?', tip:'jáu ar iú', use:'Va después del saludo, para preguntar cómo está la otra persona.'},
+    {en:'I am fine, thank you', es:'Estoy bien, gracias', tip:'ái am fáin, zénk iú', use:'La respuesta más común cuando te preguntan How are you?'},
+    {en:'And you?', es:'¿Y vos?', tip:'end iú', use:'Para devolver la pregunta después de contestar cómo estás.'},
+    {en:'What is your name?', es:'¿Cómo te llamás?', tip:'uát is iór néim', use:'Cuando conocés a alguien y querés saber su nombre.'},
+    {en:'My name is…', es:'Mi nombre es… (decí tu nombre)', tip:'mái néim is', target:'my name is', use:'Para presentarte. Después de is decís tu nombre.'},
+    {en:'Nice to meet you', es:'Encantado de conocerte', tip:'náis tu mít iú', use:'Solo la primera vez que conocés a alguien, después de presentarse.'},
+    {en:'Please', es:'Por favor', tip:'plís', use:'Al pedir cualquier cosa. Se pone al principio o al final del pedido.', accept:['pleas']},
+    {en:'Thank you', es:'Gracias', tip:'zénk iú', use:'Para agradecer. Entre amigos también se dice Thanks.', accept:['thanks','thank you very much']},
+    {en:'You are welcome', es:'De nada', tip:'iú ar uélcam', use:'Cuando alguien te dice Thank you.'},
+    {en:'Excuse me', es:'Disculpe / permiso', tip:'ekskiús mí', use:'Para llamar la atención de alguien, hacer una pregunta o pasar entre la gente.'},
+    {en:'I am sorry', es:'Perdón / lo siento', tip:'ái am sórri', use:'Cuando te equivocás, llegás tarde o molestás a alguien.'},
+    {en:'See you later', es:'Nos vemos', tip:'sí iú léiter', use:'Para despedirte de alguien que vas a volver a ver ese día o pronto.'},
+    {en:'See you tomorrow', es:'Hasta mañana', tip:'sí iú tumórrou', use:'Para despedirte de alguien que ves al día siguiente, como en el trabajo.'},
+    {en:'Goodbye', es:'Adiós', tip:'gudbái', use:'Despedida general, un poco más formal.', accept:['good bye']},
+    {en:'Bye', es:'Chau', tip:'bái', use:'Despedida informal, la más usada en el día a día.', accept:['by','buy','bye bye']}
+  ],
+  quiz:[
+    {say:'Good morning', opts:['Buenas noches','Buen día','Gracias'], ok:1},
+    {say:'Good night', opts:['Buenas noches, al irme','Buenas tardes','Buenas noches, al llegar'], ok:0},
+    {say:'Nice to meet you', opts:['Encantado de conocerte','Nos vemos','¿Cómo estás?'], ok:0},
+    {say:'What is your name?', opts:['¿Dónde vivís?','¿Cómo te llamás?','¿Cómo estás?'], ok:1},
+    {say:'You are welcome', opts:['Bienvenido','Perdón','De nada'], ok:2},
+    {say:'Excuse me', opts:['Disculpe','Gracias','Hasta mañana'], ok:0},
+    {say:'See you tomorrow', opts:['Nos vemos más tarde','Hasta mañana','Buen día'], ok:1}
+  ],
+  win:'Ya podés saludar a cualquier hora, presentarte, pedir con cortesía y despedirte en inglés.'},
+ {title:'Números del 1 al 20', sub:'Contar y decir cantidades',
+  phrases:[
+    {en:'One, two, three', es:'Uno, dos, tres', tip:'uán, tú, zrí', use:'Para contar. Two suena igual que to y too, por el contexto se entiende.'},
+    {en:'Four, five, six', es:'Cuatro, cinco, seis', tip:'for, fáiv, siks', use:'Four suena igual que for (para).'},
+    {en:'Seven, eight, nine, ten', es:'Siete, ocho, nueve, diez', tip:'séven, éit, náin, ten', use:'Con estos ya podés decir cualquier número de teléfono, de a uno.'},
+    {en:'Eleven, twelve', es:'Once, doce', tip:'iléven, tuélv', use:'Del 11 al 12 son palabras propias, hay que aprenderlas de memoria.'},
+    {en:'Thirteen, fourteen, fifteen', es:'Trece, catorce, quince', tip:'zertín, fortín, fiftín', use:'Del 13 al 19 terminan en teen. Remarcá el final: tín.'},
+    {en:'Sixteen, seventeen', es:'Dieciséis, diecisiete', tip:'sikstín, seventín', use:'Ojo: sixteen (16) no es sixty (60). La diferencia está en el final.'},
+    {en:'Eighteen, nineteen, twenty', es:'Dieciocho, diecinueve, veinte', tip:'eitín, naintín, tuénti', use:'Twenty es 20. Las edades y precios se dicen igual: twenty dollars.'},
+    {en:'I have two children', es:'Tengo dos hijos', tip:'ái jav tú chíldren', use:'Para decir cantidades. Un solo hijo es one child.'}
+  ],
+  quiz:[
+    {say:'Fifteen', opts:['5','15','50'], ok:1},
+    {say:'Twelve', opts:['12','20','2'], ok:0},
+    {say:'Eighteen', opts:['8','80','18'], ok:2},
+    {say:'Nineteen', opts:['19','9','90'], ok:0}
+  ],
+  win:'Ya podés contar hasta 20 y entender números cuando te los dicen.'}
+ ,{title:'Cuando no entendés', sub:'Frases para salvarte en cualquier charla',
+  phrases:ph([
+   ["I don't understand",'No entiendo','ái dont anderstánd','Cuando no entendiste lo que te dijeron. Es la frase más útil del curso.'],
+   ['Can you repeat, please?','¿Podés repetir, por favor?','ken iú ripít, plís','Para que te digan lo mismo otra vez.'],
+   ['Slowly, please','Más despacio, por favor','slóuli, plís','Cuando te hablan muy rápido.'],
+   ['I speak a little English','Hablo un poco de inglés','ái spík e lítel ínglish','Para avisar tu nivel. La gente te va a hablar más simple.'],
+   ['Do you speak Spanish?','¿Hablás español?','du iú spík spánish','Para saber si la otra persona habla tu idioma.'],
+   ['What does it mean?','¿Qué significa?','uát das it mín','Cuando escuchás una palabra que no conocés.'],
+   ['How do you say it in English?','¿Cómo se dice en inglés?','jáu du iú séi it in ínglish','Cuando querés decir algo y no sabés la palabra. Podés señalar la cosa.'],
+   ['Can you write it, please?','¿Me lo podés escribir?','ken iú ráit it, plís','Cuando no entendés de oído, por ejemplo una dirección o un nombre.'],
+   ['Yes','Sí','iés','Para responder que sí.',{accept:['yeah','yep','yes yes']}],
+   ['No','No','nóu','Para responder que no. Con cortesía se dice No, thank you.',{accept:['know','nope','no no']}],
+   ["I don't know",'No sé','ái dont nóu','Cuando no sabés la respuesta.'],
+   ['One moment, please','Un momento, por favor','uán móument, plís','Para pedir que te esperen mientras pensás o buscás algo.']
+  ]),
+  quiz:[
+   {say:"I don't understand", opts:['No sé','No entiendo','No hablo'], ok:1},
+   {say:'Slowly, please', opts:['Más fuerte, por favor','Otra vez, por favor','Más despacio, por favor'], ok:2},
+   {say:"I don't know", opts:['No sé','No quiero','No puedo'], ok:0},
+   {say:'Can you write it, please?', opts:['¿Me lo podés escribir?','¿Me lo podés leer?','¿Me lo podés repetir?'], ok:0},
+   {say:'One moment, please', opts:['Una vez más','Un momento, por favor','Un poco, por favor'], ok:1}
+  ],
+  win:'Ya sabés qué decir cuando no entendés. Con esto podés seguir cualquier charla.'}
+ ,{title:'Hablar de vos', sub:'De dónde sos, qué hacés y qué te gusta',
+  phrases:ph([
+   ['Where are you from?','¿De dónde sos?','uér ar iú from','Para preguntar de dónde es alguien. Es muy común al conocer gente.'],
+   ['I am from Argentina','Soy de Argentina','ái am from arjentína','Cuando te preguntan de dónde sos.'],
+   ['I live in…','Vivo en… (decí tu ciudad)','ái liv in','Para contar dónde vivís. Después de in decís la ciudad.',{target:'i live in'}],
+   ['How old are you?','¿Cuántos años tenés?','jáu óuld ar iú','Para preguntar la edad. Con adultos que recién conocés puede sonar invasivo.'],
+   ['I am … years old','Tengo … años (decí tu edad)','ái am … íers óuld','Para decir tu edad. En el medio va tu número.',{target:'i am years old', say:'I am forty years old'}],
+   ['What do you do?','¿A qué te dedicás?','uát du iú du','Para preguntar en qué trabaja alguien.'],
+   ['I am a student','Soy estudiante','ái am e stiúdent','Si estudiás. Si trabajás podés decir I work in an office (trabajo en una oficina).'],
+   ['I am married','Estoy casado','ái am márrid','Para contar tu estado civil. Si no estás casado: I am single.'],
+   ['I have a dog','Tengo un perro','ái jav e dog','Para hablar de tus mascotas. Gato se dice cat.'],
+   ['I like music','Me gusta la música','ái láik miúsik','Para contar tus gustos. Cambiá music por lo que te guste: football, movies, books.'],
+   ["I don't like it",'No me gusta','ái dont láik it','Cuando algo no te gusta.'],
+   ['My phone number is…','Mi número de teléfono es…','mái fóun námber is','Para pasar tu número. Después decís los números de a uno.',{target:'my phone number is', say:'My phone number is three four three, five six seven'}]
+  ]),
+  quiz:[
+   {say:'Where are you from?', opts:['¿Dónde vivís?','¿De dónde sos?','¿Adónde vas?'], ok:1},
+   {say:'How old are you?', opts:['¿Cuántos años tenés?','¿Cómo estás?','¿Cuánto cuesta?'], ok:0},
+   {say:'What do you do?', opts:['¿Qué querés?','¿Qué te gusta?','¿A qué te dedicás?'], ok:2},
+   {say:'I am married', opts:['Estoy cansado','Estoy casado','Estoy contento'], ok:1},
+   {say:"I don't like it", opts:['No me gusta','No lo tengo','No lo sé'], ok:0}
+  ],
+  win:'Ya podés presentarte bien: de dónde sos, qué hacés y qué te gusta.'}
+ ,{title:'Mi familia', sub:'Presentar a los tuyos',
+  phrases:ph([
+   ['This is my wife','Ella es mi esposa','dis is mái uáif','Para presentar a tu esposa. This is sirve para presentar a cualquier persona.'],
+   ['This is my husband','Él es mi esposo','dis is mái jásband','Para presentar a tu esposo.'],
+   ['This is my son','Él es mi hijo','dis is mái san','Para presentar a tu hijo.'],
+   ['This is my daughter','Ella es mi hija','dis is mái dóter','Para presentar a tu hija.'],
+   ['My mother and my father','Mi mamá y mi papá','mái máder end mái fáder','Para hablar de tus padres. Entre familia se dice mom y dad.'],
+   ['My brother and my sister','Mi hermano y mi hermana','mái bráder end mái síster','Para hablar de tus hermanos.'],
+   ['My parents','Mis padres','mái pérents','Ojo: parents no es parientes, es papá y mamá juntos.'],
+   ['My grandmother','Mi abuela','mái grénmader','Para hablar de tu abuela. Cariñosamente se dice grandma.'],
+   ['My grandfather','Mi abuelo','mái grénfader','Para hablar de tu abuelo. Cariñosamente se dice grandpa.'],
+   ['Do you have children?','¿Tenés hijos?','du iú jav chíldren','Para preguntar si alguien tiene hijos. Children es hijos en general.'],
+   ['My family is big','Mi familia es grande','mái fémili is big','Para contar cómo es tu familia. Chica se dice small.'],
+   ['I love my family','Amo a mi familia','ái lav mái fémili','Para expresar cariño por los tuyos.']
+  ]),
+  quiz:[
+   {say:'My daughter', opts:['Mi hija','Mi hijo','Mi hermana'], ok:0},
+   {say:'My brother', opts:['Mi papá','Mi hermano','Mi abuelo'], ok:1},
+   {say:'My parents', opts:['Mis parientes','Mis amigos','Mis padres'], ok:2},
+   {say:'My grandfather', opts:['Mi abuelo','Mi abuela','Mi tío'], ok:0},
+   {say:'This is my husband', opts:['Él es mi hijo','Él es mi esposo','Él es mi hermano'], ok:1}
+  ],
+  win:'Ya podés presentar a tu familia y hablar de ella en inglés.'}
+ ,{title:'La hora y los días', sub:'Preguntar la hora y hablar de cuándo',
+  phrases:ph([
+   ['What time is it?','¿Qué hora es?','uát táim is it','Para preguntar la hora. Antes podés decir Excuse me.'],
+   ["It is three o'clock",'Son las tres en punto','it is zrí oklók','Para decir una hora en punto. Cambiá three por el número que corresponda.',{target:'it is three'}],
+   ['It is four thirty','Son las cuatro y media','it is for zérti','Para decir la hora y media: el número y después thirty (treinta).'],
+   ['See you at eight','Nos vemos a las ocho','sí iú at éit','Para quedar a una hora con alguien.'],
+   ['It is late','Es tarde','it is léit','Cuando se hizo tarde. Temprano se dice early.'],
+   ['Today','Hoy','tudéi','Para hablar del día de hoy.',{accept:['to day']}],
+   ['Tomorrow','Mañana','tumórrou','Para hablar del día siguiente. Ojo: la mañana se dice morning.'],
+   ['Yesterday','Ayer','iésterdei','Para hablar del día anterior.'],
+   ['Monday, Tuesday, Wednesday','Lunes, martes, miércoles','mándei, tiúsdei, uénsdei','Los días se escriben siempre con mayúscula en inglés.'],
+   ['Thursday, Friday','Jueves, viernes','zérsdei, fráidei','Friday es el día más esperado de la semana.'],
+   ['Saturday, Sunday','Sábado, domingo','sáterdei, sándei','El fin de semana se dice weekend.'],
+   ['What day is today?','¿Qué día es hoy?','uát déi is tudéi','Para preguntar el día de la semana.']
+  ]),
+  quiz:[
+   {say:'Tuesday', opts:['Jueves','Martes','Miércoles'], ok:1},
+   {say:'Tomorrow', opts:['Mañana','Hoy','Ayer'], ok:0},
+   {say:'What time is it?', opts:['¿Qué día es hoy?','¿Cuánto tiempo?','¿Qué hora es?'], ok:2},
+   {say:'Yesterday', opts:['Ayer','Mañana','Siempre'], ok:0},
+   {say:'It is four thirty', opts:['Son las cuatro y cuarto','Son las cuatro y media','Son las tres y media'], ok:1}
+  ],
+  win:'Ya podés preguntar la hora, decirla y hablar de los días.'}
+ ,{title:'De compras', sub:'Preguntar precios, talles y pagar',
+  phrases:ph([
+   ['How much is it?','¿Cuánto cuesta?','jáu mach is it','Para preguntar el precio de algo. Podés señalarlo.'],
+   ['It is too expensive','Es muy caro','it is tu ekspénsiv','Cuando algo cuesta más de lo que querés pagar.'],
+   ['It is cheap','Es barato','it is chíp','Cuando algo tiene buen precio.'],
+   ['I am just looking','Solo estoy mirando','ái am yast lúking','Cuando el vendedor te ofrece ayuda y solo querés mirar.'],
+   ['I want this one','Quiero este','ái uónt dis uán','Para elegir algo mientras lo señalás.'],
+   ['Can I try it on?','¿Me lo puedo probar?','ken ái trái it on','Para probarte ropa o calzado.'],
+   ['Do you have a smaller size?','¿Tenés un talle más chico?','du iú jav e smóler sáis','Cuando la ropa te queda grande.'],
+   ['A bigger size, please','Un talle más grande, por favor','e bíguer sáis, plís','Cuando la ropa te queda chica.'],
+   ['Can I pay by card?','¿Puedo pagar con tarjeta?','ken ái péi bái kard','Para preguntar si aceptan tarjeta.'],
+   ['Cash','Efectivo','kash','Para decir que pagás en efectivo: I pay cash.',{accept:['catch','cache']}],
+   ['I will take it','Me lo llevo','ái uil téik it','Cuando decidiste comprar algo.'],
+   ['A bag, please','Una bolsa, por favor','e bag, plís','Para pedir una bolsa al pagar.']
+  ]),
+  quiz:[
+   {say:'How much is it?', opts:['¿Cuánto cuesta?','¿Cuántos hay?','¿Dónde está?'], ok:0},
+   {say:'It is cheap', opts:['Es caro','Es barato','Es chico'], ok:1},
+   {say:'Cash', opts:['Tarjeta','Bolsa','Efectivo'], ok:2},
+   {say:'I am just looking', opts:['Solo estoy mirando','Estoy buscando algo','Estoy esperando'], ok:0},
+   {say:'I will take it', opts:['Lo voy a pensar','Me lo llevo','Me lo pruebo'], ok:1}
+  ],
+  win:'Ya podés comprar: preguntar precios, probarte ropa y pagar.'}
+ ,{title:'En el restaurante', sub:'Pedir, preguntar y pagar la cuenta',
+  phrases:ph([
+   ['A table for two, please','Una mesa para dos, por favor','e téibol for tú, plís','Al entrar a un restaurante. Cambiá two por la cantidad de personas.'],
+   ['The menu, please','La carta, por favor','de méniu, plís','Para pedir la carta.'],
+   ['I would like…','Quisiera…','ái uúd láik','La forma educada de pedir. Después decís lo que querés.',{target:'i would like'}],
+   ['Water, please','Agua, por favor','uóter, plís','Para pedir agua.'],
+   ['A coffee with milk','Un café con leche','e cófi uíz milk','Para pedir un café con leche.'],
+   ['What do you recommend?','¿Qué me recomendás?','uát du iú rekoménd','Cuando no sabés qué pedir.'],
+   ['Is it spicy?','¿Es picante?','is it spáisi','Para saber si una comida pica.'],
+   ['No ice, please','Sin hielo, por favor','nóu áis, plís','Cuando pedís una bebida y no querés hielo.'],
+   ['It is delicious','Está riquísimo','it is delíshas','Para decir que la comida está muy rica.'],
+   ['Where is the bathroom?','¿Dónde está el baño?','uér is de bázrum','Para preguntar por el baño. También se dice restroom.'],
+   ['The bill, please','La cuenta, por favor','de bil, plís','Para pedir la cuenta al final. En Estados Unidos dicen The check.',{accept:['the check please']}],
+   ['Enjoy your meal','Buen provecho','enyói iór míl','Para desear buen provecho, o lo que te dice el mozo al servir.']
+  ]),
+  quiz:[
+   {say:'The bill, please', opts:['La carta, por favor','La cuenta, por favor','La mesa, por favor'], ok:1},
+   {say:'Water, please', opts:['Agua, por favor','Vino, por favor','Café, por favor'], ok:0},
+   {say:'Where is the bathroom?', opts:['¿Dónde está la mesa?','¿Dónde está la salida?','¿Dónde está el baño?'], ok:2},
+   {say:'Is it spicy?', opts:['¿Es picante?','¿Es caro?','¿Es grande?'], ok:0},
+   {say:'Enjoy your meal', opts:['Que te mejores','Buen provecho','Buen viaje'], ok:1}
+  ],
+  win:'Ya podés ir a comer afuera: pedir, preguntar y pagar.'}
+ ,{title:'¿Dónde queda?', sub:'Pedir y entender direcciones',
+  phrases:ph([
+   ['Where is the bank?','¿Dónde está el banco?','uér is de bank','Para preguntar por un lugar. Cambiá bank por el lugar que buscás.'],
+   ['Is it far?','¿Queda lejos?','is it far','Para saber si conviene ir caminando.'],
+   ['It is near','Queda cerca','it is níar','Cuando un lugar está cerca.'],
+   ['Go straight','Seguí derecho','góu stréit','Una indicación muy común. Straight es derecho, sin doblar.'],
+   ['Turn left','Doblá a la izquierda','tern left','Left es izquierda.'],
+   ['Turn right','Doblá a la derecha','tern ráit','Right es derecha.',{accept:['turn write']}],
+   ['Two blocks','Dos cuadras','tú bloks','Para hablar de distancias en cuadras.'],
+   ['It is on the corner','Está en la esquina','it is on de kórner','Para ubicar algo en una esquina.'],
+   ['Next to the pharmacy','Al lado de la farmacia','nekst tu de fármasi','Para ubicar un lugar al lado de otro.'],
+   ['I am lost','Estoy perdido','ái am lost','Cuando no sabés dónde estás. Es buena forma de pedir ayuda.'],
+   ['How can I get to the station?','¿Cómo llego a la estación?','jáu ken ái guet tu de stéishon','Para preguntar cómo llegar a un lugar.'],
+   ['Can you show me on the map?','¿Me lo mostrás en el mapa?','ken iú shóu mi on de map','Cuando no entendés la explicación de oído.']
+  ]),
+  quiz:[
+   {say:'Turn left', opts:['Doblá a la derecha','Doblá a la izquierda','Seguí derecho'], ok:1},
+   {say:'Go straight', opts:['Seguí derecho','Volvé atrás','Pará acá'], ok:0},
+   {say:'Is it far?', opts:['¿Queda cerca?','¿Está abierto?','¿Queda lejos?'], ok:2},
+   {say:'I am lost', opts:['Estoy perdido','Estoy cansado','Estoy llegando'], ok:0},
+   {say:'Two blocks', opts:['Dos calles','Dos cuadras','Dos esquinas'], ok:1}
+  ],
+  win:'Ya podés preguntar cómo llegar a un lugar y entender la respuesta.'}
+ ,{title:'De viaje', sub:'Aeropuerto, migraciones y transporte',
+  phrases:ph([
+   ['Here is my passport','Acá está mi pasaporte','jíer is mái pásport','Cuando te piden el pasaporte en el aeropuerto.'],
+   ['I am here on vacation','Estoy de vacaciones','ái am jíer on vakéishon','Cuando en migraciones te preguntan el motivo del viaje.'],
+   ['For one week','Por una semana','for uán uík','Cuando te preguntan cuánto tiempo te quedás.'],
+   ['Where is gate five?','¿Dónde está la puerta cinco?','uér is guéit fáiv','Para buscar la puerta de embarque.'],
+   ['Is the flight on time?','¿El vuelo sale a horario?','is de fláit on táim','Para saber si tu vuelo está atrasado. Atrasado se dice delayed.'],
+   ['My suitcase is lost','Se perdió mi valija','mái sútkeis is lost','Si tu valija no aparece al llegar.'],
+   ['Where is the bus stop?','¿Dónde está la parada del colectivo?','uér is de bas stop','Para encontrar la parada.'],
+   ['What time does the bus leave?','¿A qué hora sale el colectivo?','uát táim das de bas lív','Para saber el horario de salida.'],
+   ['A ticket to the city center, please','Un pasaje al centro, por favor','e tíket tu de síti sénter, plís','Para comprar un pasaje. Cambiá city center por tu destino.'],
+   ['A taxi, please','Un taxi, por favor','e táksi, plís','Para pedir un taxi.'],
+   ['To this address, please','A esta dirección, por favor','tu dis adrés, plís','Mientras mostrás la dirección escrita al taxista.'],
+   ['Have a nice trip','Buen viaje','jav e náis trip','Para desearle buen viaje a alguien.']
+  ]),
+  quiz:[
+   {say:'I am here on vacation', opts:['Estoy de vacaciones','Estoy trabajando','Estoy de paso'], ok:0},
+   {say:'For one week', opts:['Por un mes','Por un día','Por una semana'], ok:2},
+   {say:'My suitcase is lost', opts:['Mi pasaporte se perdió','Se perdió mi valija','Perdí el vuelo'], ok:1},
+   {say:'Where is the bus stop?', opts:['¿Dónde está la parada?','¿Dónde está el aeropuerto?','¿Dónde está el taxi?'], ok:0},
+   {say:'Have a nice trip', opts:['Buen provecho','Buen viaje','Buen día'], ok:1}
+  ],
+  win:'Ya podés moverte de viaje: aeropuerto, migraciones, colectivo y taxi.'}
+ ,{title:'En el hotel', sub:'Llegar, pedir cosas y resolver problemas',
+  phrases:ph([
+   ['I have a reservation','Tengo una reserva','ái jav e reservéishon','Lo primero que decís al llegar a la recepción.'],
+   ['A room for two nights','Una habitación por dos noches','e rum for tú náits','Para pedir habitación si no tenés reserva.'],
+   ['The key, please','La llave, por favor','de kí, plís','Para pedir la llave de tu habitación.'],
+   ['Room number ten','Habitación diez','rum námber ten','Para decir tu número de habitación.'],
+   ['What time is breakfast?','¿A qué hora es el desayuno?','uát táim is brékfast','Para saber el horario del desayuno.'],
+   ['What is the wifi password?','¿Cuál es la clave del wifi?','uát is de uáifai pásuord','Para conectarte a internet.',{target:'what is the password'}],
+   ['Can I have a towel?','¿Me das una toalla?','ken ái jav e táuel','Para pedir algo que te falta. Cambiá towel por lo que necesites.'],
+   ["The shower doesn't work",'La ducha no funciona','de sháuer dásent uérk','Para avisar que algo anda mal. Cambiá shower por lo que no funcione.'],
+   ['What time is checkout?','¿A qué hora hay que dejar la habitación?','uát táim is chekáut','Para saber hasta qué hora podés quedarte el último día.',{accept:['what time is check out']}],
+   ['Can you call a taxi?','¿Me pedís un taxi?','ken iú col e táksi','Para que en recepción te pidan un taxi.'],
+   ['It is very clean','Está muy limpio','it is véri klín','Para decir que la habitación está bien.'],
+   ['Thank you for everything','Gracias por todo','zénk iú for évrizing','Para despedirte al irte del hotel.']
+  ]),
+  quiz:[
+   {say:'I have a reservation', opts:['Tengo una reserva','Tengo una pregunta','Tengo un problema'], ok:0},
+   {say:'The key, please', opts:['La cuenta, por favor','La llave, por favor','La toalla, por favor'], ok:1},
+   {say:'What time is breakfast?', opts:['¿A qué hora es la cena?','¿Dónde es el desayuno?','¿A qué hora es el desayuno?'], ok:2},
+   {say:"The shower doesn't work", opts:['La ducha no funciona','La luz no funciona','No hay agua'], ok:0},
+   {say:'Thank you for everything', opts:['Gracias igual','Gracias por todo','Muchas gracias'], ok:1}
+  ],
+  win:'Ya podés hospedarte: hacer el ingreso, pedir lo que necesitás y avisar problemas.'}
+ ,{title:'Salud y ayuda', sub:'Para pedir ayuda cuando hace falta',
+  phrases:ph([
+   ['Help!','¡Ayuda!','jelp','Solo en una emergencia, cuando necesitás ayuda urgente.'],
+   ['Can you help me?','¿Me podés ayudar?','ken iú jelp mi','Para pedir ayuda en cualquier situación, sin urgencia.'],
+   ['I need a doctor','Necesito un médico','ái níd e dóktor','Cuando te sentís mal y necesitás atención.'],
+   ['Call an ambulance','Llamen a una ambulancia','col an ámbiulans','En una emergencia médica.'],
+   ['I feel sick','Me siento mal','ái fíl sik','Para decir que no te sentís bien.'],
+   ['I have a headache','Me duele la cabeza','ái jav e jédeik','Para un dolor de cabeza.'],
+   ['My stomach hurts','Me duele la panza','mái stómak jerts','Para un dolor de estómago. Hurts sirve con cualquier parte del cuerpo.'],
+   ['Where is the pharmacy?','¿Dónde está la farmacia?','uér is de fármasi','Para buscar una farmacia.'],
+   ['I am allergic to penicillin','Soy alérgico a la penicilina','ái am alérchik tu penisílin','Para avisar una alergia. Cambiá penicillin por lo que corresponda.'],
+   ['Call the police','Llamen a la policía','col de polís','Si pasa algo grave y necesitás a la policía.'],
+   ['I lost my phone','Perdí mi celular','ái lost mái fóun','Si perdiste algo. Cambiá phone por wallet (billetera) o bag (bolso).'],
+   ['I am okay','Estoy bien','ái am okéi','Para tranquilizar a alguien que te pregunta si estás bien.',{accept:['i am ok','i am fine']}]
+  ]),
+  quiz:[
+   {say:'I need a doctor', opts:['Necesito un médico','Necesito un taxi','Necesito ayuda'], ok:0},
+   {say:'I feel sick', opts:['Me siento bien','Me siento mal','Tengo sueño'], ok:1},
+   {say:'Where is the pharmacy?', opts:['¿Dónde está el hospital?','¿Dónde está la policía?','¿Dónde está la farmacia?'], ok:2},
+   {say:'I have a headache', opts:['Me duele la cabeza','Me duele la panza','Me duele la espalda'], ok:0},
+   {say:'I lost my phone', opts:['Encontré un celular','Perdí mi celular','Se me rompió el celular'], ok:1}
+  ],
+  win:'Ya sabés pedir ayuda, explicar qué te pasa y avisar una emergencia.'}
+ ,{lvl:2, title:'Mi rutina', sub:'Contar qué hacés todos los días',
+  phrases:ph([
+   ['I get up at seven','Me levanto a las siete','ái guet ap at séven','Para contar a qué hora te levantás. Cambiá seven por tu hora.'],
+   ['I have breakfast','Desayuno','ái jav brékfast','Have sirve para las comidas: have lunch (almorzar), have dinner (cenar).'],
+   ['I go to work by bus','Voy al trabajo en colectivo','ái góu tu uérk bái bas','Para contar cómo viajás. By car es en auto; on foot, caminando.'],
+   ['I work from eight to five','Trabajo de ocho a cinco','ái uérk from éit tu fáiv','From… to… sirve para cualquier horario.'],
+   ['I usually cook at night','Normalmente cocino a la noche','ái iúshuali kuk at náit','Usually (normalmente) va antes del verbo.'],
+   ['I always drink mate','Siempre tomo mate','ái ólueis drink máte','Always es siempre. Nunca se dice never.'],
+   ['I never smoke','Nunca fumo','ái néver smóuk','Never ya es negativo, no hace falta agregar don’t.'],
+   ['On weekends I rest','Los fines de semana descanso','on uíkends ái rest','Para hablar de lo que hacés sábado y domingo.'],
+   ['What time do you go to bed?','¿A qué hora te acostás?','uát táim du iú góu tu bed','Para preguntar por la rutina de otra persona.'],
+   ['She works in a hospital','Ella trabaja en un hospital','shi uérks in e jóspital','Con he y she el verbo lleva una s al final: works, lives, likes.']
+  ]),
+  quiz:[
+   {say:'I get up at seven', opts:['Me acuesto a las siete','Me levanto a las siete','Desayuno a las siete'], ok:1},
+   {say:'I never smoke', opts:['Nunca fumo','Siempre fumo','A veces fumo'], ok:0},
+   {say:'I go to work by bus', opts:['Voy al trabajo en auto','Voy al trabajo caminando','Voy al trabajo en colectivo'], ok:2},
+   {say:'On weekends I rest', opts:['Los fines de semana descanso','Los lunes trabajo','A la noche descanso'], ok:0}
+  ],
+  win:'Ya podés contar tu día a día y preguntar por el de los demás.'}
+ ,{lvl:2, title:'Lo que pasó', sub:'Hablar del pasado: ayer, el fin de semana',
+  phrases:ph([
+   ['Yesterday I worked a lot','Ayer trabajé mucho','iésterdei ái uérkt e lot','El pasado de muchos verbos termina en ed: worked, cooked, played.'],
+   ['I went to the supermarket','Fui al supermercado','ái uent tu de supermárket','Went es el pasado de go (ir). Es irregular, hay que aprenderlo.'],
+   ['I saw a good movie','Vi una buena película','ái so e gud múvi','Saw es el pasado de see (ver).'],
+   ['We had dinner with friends','Cenamos con amigos','uí jad díner uíz frends','Had es el pasado de have.'],
+   ['I was tired','Estaba cansado','ái uós táierd','Was es el pasado de am e is.'],
+   ['Last weekend I visited my mother','El fin de semana pasado visité a mi mamá','last uíkend ái vísited mái máder','Last es pasado: last week, last month, last year.'],
+   ['Did you sleep well?','¿Dormiste bien?','did iú slíp uél','Para preguntar en pasado se empieza con Did.'],
+   ["I didn't go",'No fui','ái dídent góu','Para negar en pasado: didn’t más el verbo normal.'],
+   ['What did you do yesterday?','¿Qué hiciste ayer?','uát did iú du iésterdei','La pregunta típica del lunes en el trabajo.'],
+   ['It was great','Estuvo buenísimo','it uós gréit','Para decir que algo salió muy bien. Si salió mal: It was terrible.']
+  ]),
+  quiz:[
+   {say:'I went to the supermarket', opts:['Voy al supermercado','Fui al supermercado','Voy a ir al supermercado'], ok:1},
+   {say:'Did you sleep well?', opts:['¿Dormiste bien?','¿Comiste bien?','¿Estás bien?'], ok:0},
+   {say:'I was tired', opts:['Estoy cansado','Voy a estar cansado','Estaba cansado'], ok:2},
+   {say:'What did you do yesterday?', opts:['¿Qué hiciste ayer?','¿Qué hacés hoy?','¿Qué vas a hacer mañana?'], ok:0}
+  ],
+  win:'Ya podés contar lo que hiciste y preguntar qué hicieron los demás.'}
+ ,{lvl:2, title:'Planes', sub:'Hablar del futuro y organizar',
+  phrases:ph([
+   ["I am going to travel",'Voy a viajar','ái am góing tu trável','Going to sirve para planes que ya decidiste.'],
+   ['Tomorrow I will call you','Mañana te llamo','tumórrou ái uil col iú','Will sirve para decisiones del momento y promesas.'],
+   ['What are you doing tonight?','¿Qué hacés esta noche?','uát ar iú dúing tunáit','Para preguntar por planes cercanos.'],
+   ['Are you free on Saturday?','¿Estás libre el sábado?','ar iú frí on sáterdei','Antes de invitar a alguien.'],
+   ['Next week I start a new job','La semana que viene empiezo un trabajo nuevo','nekst uík ái start e niú yob','Next es lo que viene: next month, next year.'],
+   ['Maybe','Puede ser / tal vez','méibi','Cuando todavía no estás seguro.'],
+   ['I am not sure','No estoy seguro','ái am not shúr','Para no comprometerte todavía.'],
+   ["Let's meet at six",'Encontrémonos a las seis','lets mít at siks','Let’s sirve para proponer algo juntos.'],
+   ['I will be there','Ahí voy a estar','ái uil bi déer','Para confirmar que vas.'],
+   ['I have to work','Tengo que trabajar','ái jaf tu uérk','Have to es tener que. Sirve para explicar por qué no podés.']
+  ]),
+  quiz:[
+   {say:'Are you free on Saturday?', opts:['¿Estás libre el sábado?','¿Trabajás el sábado?','¿Venís el sábado?'], ok:0},
+   {say:'Maybe', opts:['Seguro','Nunca','Tal vez'], ok:2},
+   {say:'I have to work', opts:['Quiero trabajar','Tengo que trabajar','Trabajé mucho'], ok:1},
+   {say:'Next week', opts:['La semana pasada','Esta semana','La semana que viene'], ok:2}
+  ],
+  win:'Ya podés hablar de tus planes y quedar con alguien.'}
+ ,{lvl:2, title:'Invitar y hacer amigos', sub:'Proponer, aceptar y rechazar con cortesía',
+  phrases:ph([
+   ['Do you want to have a coffee?','¿Querés tomar un café?','du iú uónt tu jav e cófi','La forma más simple de invitar.'],
+   ['Would you like to come?','¿Te gustaría venir?','uúd iú láik tu kam','Una invitación más educada.'],
+   ['I would love to','Me encantaría','ái uúd lav tu','Para aceptar con entusiasmo.'],
+   ['Sounds good','Me parece bien','sáunds gud','Para aceptar una propuesta. Muy usado entre amigos.'],
+   ["Sorry, I can't",'Perdón, no puedo','sórri, ái kent','Para rechazar con cortesía. Conviene dar un motivo.'],
+   ['Maybe another day','Quizás otro día','méibi anáder déi','Para dejar la puerta abierta después de decir que no.'],
+   ['Can I have your number?','¿Me pasás tu número?','ken ái jav iór námber','Para seguir en contacto.'],
+   ['Text me','Mandame un mensaje','tekst mi','Text es mandar un mensaje de texto o de WhatsApp.'],
+   ['It was nice talking to you','Fue un gusto charlar con vos','it uós náis tóking tu iú','Para cerrar una charla con alguien que recién conociste.'],
+   ['Welcome to my house','Bienvenido a mi casa','uélcam tu mái jáus','Para recibir a alguien en tu casa.']
+  ]),
+  quiz:[
+   {say:'Sounds good', opts:['Me parece bien','Suena fuerte','No me gusta'], ok:0},
+   {say:"Sorry, I can't", opts:['Perdón, no entiendo','Perdón, no puedo','Perdón, no sé'], ok:1},
+   {say:'Text me', opts:['Llamame','Escribime una carta','Mandame un mensaje'], ok:2},
+   {say:'I would love to', opts:['Me encantaría','Me gustaría saber','Lo voy a pensar'], ok:0}
+  ],
+  win:'Ya podés invitar, aceptar o rechazar planes y seguir en contacto.'}
+ ,{lvl:2, title:'Por teléfono', sub:'Llamadas y mensajes',
+  phrases:ph([
+   ['Hello, this is Rogelio','Hola, habla Rogelio','jeló, dis is rojélio','Al teléfono no se dice I am, se dice This is. Cambiá el nombre por el tuyo.',{target:'hello this is'}],
+   ['Can I speak to Mary?','¿Puedo hablar con Mary?','ken ái spík tu méri','Para pedir hablar con alguien.',{target:'can i speak to'}],
+   ['Who is calling?','¿Quién habla?','jú is cóling','Lo que te preguntan cuando atendés por alguien.'],
+   ['Hold on, please','Un momento, no cortes','jóuld on, plís','Para que esperen en la línea.'],
+   ['She is not here','Ella no está','shi is not jíer','Cuando buscan a alguien que no está.'],
+   ['Can I leave a message?','¿Puedo dejar un mensaje?','ken ái lív e mésech','Cuando la persona que buscás no está.'],
+   ['I will call you back','Te llamo después','ái uil col iú bak','Call back es devolver la llamada.'],
+   ["I can't hear you",'No te escucho','ái kent jíer iú','Cuando la llamada se escucha mal.'],
+   ['The line is busy','Da ocupado','de láin is bísi','Cuando llamás y da ocupado.'],
+   ['Send me an email','Mandame un mail','send mi an ímeil','Para pedir algo por escrito.']
+  ]),
+  quiz:[
+   {say:'Who is calling?', opts:['¿Quién habla?','¿A quién llamás?','¿Quién está?'], ok:0},
+   {say:'Hold on, please', opts:['Cortá, por favor','Un momento, no cortes','Hablá más fuerte'], ok:1},
+   {say:'I will call you back', opts:['Te llamé ayer','No te puedo llamar','Te llamo después'], ok:2},
+   {say:"I can't hear you", opts:['No te escucho','No te entiendo','No te veo'], ok:0}
+  ],
+  win:'Ya podés hacer y atender llamadas en inglés.'}
+ ,{lvl:2, title:'El clima y la ropa', sub:'Hablar del tiempo y qué ponerse',
+  phrases:ph([
+   ["What's the weather like?",'¿Cómo está el tiempo?','uáts de uéder láik','Para preguntar por el clima. Es un tema de charla muy común.'],
+   ['It is hot','Hace calor','it is jot','Para el calor. Templado se dice warm.'],
+   ['It is cold','Hace frío','it is kóuld','Para el frío.'],
+   ['It is raining','Está lloviendo','it is réining','Para la lluvia en este momento.'],
+   ['It is sunny','Está soleado','it is sáni','Para un día de sol.'],
+   ['It is windy','Hay viento','it is uíndi','Para un día ventoso.'],
+   ['Take an umbrella','Llevá un paraguas','téik an ambréla','Un consejo cuando va a llover.'],
+   ['Put on a jacket','Ponete una campera','put on e yáket','Put on es ponerse ropa. Sacarse es take off.'],
+   ['I need new shoes','Necesito zapatos nuevos','ái níd niú shús','Shoes son zapatos. Zapatillas: sneakers.'],
+   ['It will rain tomorrow','Mañana va a llover','it uil réin tumórrou','Para hablar del pronóstico.']
+  ]),
+  quiz:[
+   {say:'It is raining', opts:['Está nublado','Está lloviendo','Hay viento'], ok:1},
+   {say:'It is cold', opts:['Hace frío','Hace calor','Está fresco'], ok:0},
+   {say:'Take an umbrella', opts:['Llevá una campera','Llevá agua','Llevá un paraguas'], ok:2},
+   {say:'It is sunny', opts:['Está soleado','Está nublado','Está oscuro'], ok:0}
+  ],
+  win:'Ya podés charlar del clima y decir qué ropa llevar.'}
+ ,{lvl:2, title:'En el trabajo', sub:'Frases para el día a día laboral',
+  phrases:ph([
+   ['I work in a laboratory','Trabajo en un laboratorio','ái uérk in e labóratori','Cambiá laboratory por tu lugar: office, shop, school, factory.'],
+   ['I am in a meeting','Estoy en una reunión','ái am in e míting','Para avisar que no podés atender.'],
+   ['Can you help me with this?','¿Me ayudás con esto?','ken iú jelp mi uíz dis','Para pedir ayuda a un compañero.'],
+   ['I finished the report','Terminé el informe','ái fínisht de ripórt','Para avisar que algo está listo.'],
+   ['When is the deadline?','¿Para cuándo es la entrega?','uén is de dédlain','Deadline es la fecha límite.'],
+   ['I will send it today','Lo mando hoy','ái uil send it tudéi','Para comprometerte con una entrega.'],
+   ["I'm sorry I'm late",'Perdón por llegar tarde','ái am sórri ái am léit','Para disculparte si llegás tarde.'],
+   ['Good job!','¡Buen trabajo!','gud yob','Para felicitar a alguien.'],
+   ['Do you have a minute?','¿Tenés un minuto?','du iú jav e mínit','Antes de interrumpir a alguien.'],
+   ['Let me check','Dejame fijarme','let mi chek','Cuando no sabés algo y lo vas a revisar.']
+  ]),
+  quiz:[
+   {say:'I am in a meeting', opts:['Estoy en una reunión','Estoy en la oficina','Estoy ocupado'], ok:0},
+   {say:'When is the deadline?', opts:['¿Cuándo empieza?','¿Para cuándo es la entrega?','¿Cuándo es la reunión?'], ok:1},
+   {say:'Good job!', opts:['¡Buen día!','¡Buena suerte!','¡Buen trabajo!'], ok:2},
+   {say:'Let me check', opts:['Dejame fijarme','Dejame pensar','Dejame ayudarte'], ok:0}
+  ],
+  win:'Ya podés manejarte en situaciones básicas de trabajo.'}
+ ,{lvl:2, title:'En el médico', sub:'Explicar síntomas y entender indicaciones',
+  phrases:ph([
+   ['I have an appointment','Tengo un turno','ái jav an apóintment','Al llegar al consultorio.'],
+   ['I have a fever','Tengo fiebre','ái jav e fíver','Para decir que tenés fiebre.'],
+   ['I have a cough','Tengo tos','ái jav e kof','Para la tos.'],
+   ['My back hurts','Me duele la espalda','mái bak jerts','Cambiá back por la parte que te duela: leg, arm, throat.'],
+   ['Since yesterday','Desde ayer','sins iésterdei','Para decir desde cuándo te pasa.'],
+   ['I take this medicine','Tomo este medicamento','ái téik dis médisin','Para contar qué medicación tomás. Mostrá la caja.'],
+   ['Take one pill every eight hours','Tomá una pastilla cada ocho horas','téik uán pil évri éit áuers','Una indicación típica del médico.'],
+   ['Is it serious?','¿Es grave?','is it sírius','Para preguntar si es algo importante.'],
+   ['I feel better','Me siento mejor','ái fíl béter','Para contar que mejoraste. Peor se dice worse.'],
+   ['Get well soon','Que te mejores','guet uél sún','Para desearle a alguien que se recupere.']
+  ]),
+  quiz:[
+   {say:'I have a fever', opts:['Tengo tos','Tengo fiebre','Tengo frío'], ok:1},
+   {say:'Is it serious?', opts:['¿Es grave?','¿Es caro?','¿Es contagioso?'], ok:0},
+   {say:'I feel better', opts:['Me siento peor','Me siento igual','Me siento mejor'], ok:2},
+   {say:'Get well soon', opts:['Que te mejores','Nos vemos pronto','Volvé pronto'], ok:0}
+  ],
+  win:'Ya podés ir al médico y explicar qué te pasa.'}
+ ,{lvl:2, title:'Opiniones y sentimientos', sub:'Decir lo que pensás y cómo te sentís',
+  phrases:ph([
+   ['I think so','Creo que sí','ái zink sóu','Para estar de acuerdo sin estar del todo seguro.'],
+   ["I don't think so",'Creo que no','ái dont zink sóu','Para no estar de acuerdo con suavidad.'],
+   ['I agree','Estoy de acuerdo','ái agrí','Para coincidir con alguien.'],
+   ["I don't agree",'No estoy de acuerdo','ái dont agrí','Para disentir con respeto.'],
+   ['In my opinion…','En mi opinión…','in mái opínion','Para empezar a dar tu punto de vista.',{target:'in my opinion'}],
+   ['I am happy','Estoy contento','ái am jápi','Para decir cómo te sentís. Triste se dice sad.'],
+   ['I am worried','Estoy preocupado','ái am uórrid','Cuando algo te preocupa.'],
+   ["Don't worry",'No te preocupes','dont uórri','Para tranquilizar a alguien.'],
+   ['That is a good idea','Es una buena idea','dat is e gud aidía','Para apoyar una propuesta.'],
+   ['I am proud of you','Estoy orgulloso de vos','ái am práud of iú','Para reconocer el logro de alguien.']
+  ]),
+  quiz:[
+   {say:'I agree', opts:['Estoy de acuerdo','No sé','Me gusta'], ok:0},
+   {say:"Don't worry", opts:['No te vayas','No te preocupes','No te olvides'], ok:1},
+   {say:'I am worried', opts:['Estoy cansado','Estoy enojado','Estoy preocupado'], ok:2},
+   {say:"I don't think so", opts:['Creo que no','No lo sé','No me gusta'], ok:0}
+  ],
+  win:'Ya podés dar tu opinión y expresar cómo te sentís.'}
+ ,{lvl:2, title:'Trámites y servicios', sub:'Banco, correo, peluquería y arreglos',
+  phrases:ph([
+   ['I would like to open an account','Quisiera abrir una cuenta','ái uúd láik tu óupen an akáunt','En el banco, para abrir una cuenta.'],
+   ['Where can I change money?','¿Dónde puedo cambiar dinero?','uér ken ái chéinch máni','Para cambiar pesos o dólares.'],
+   ['The ATM is not working','El cajero no funciona','de ei ti em is not uérking','ATM es el cajero automático.',{accept:['the atm is not working']}],
+   ['I need to send a package','Necesito mandar un paquete','ái níd tu send e pákech','En el correo.'],
+   ['Do I need an appointment?','¿Necesito turno?','du ái níd an apóintment','Antes de ir a cualquier lugar de atención.'],
+   ['How long does it take?','¿Cuánto tarda?','jáu long das it téik','Para saber cuánto vas a esperar o cuándo está listo.'],
+   ['Just a haircut, please','Solo un corte, por favor','yast e jéerkat, plís','En la peluquería.'],
+   ['Can you fix it?','¿Lo podés arreglar?','ken iú fiks it','Cuando llevás algo roto a arreglar.'],
+   ['When will it be ready?','¿Cuándo va a estar listo?','uén uil it bi rédi','Para saber cuándo volver a buscarlo.'],
+   ['Do I have to sign here?','¿Tengo que firmar acá?','du ái jaf tu sáin jíer','Cuando te dan un papel para firmar.']
+  ]),
+  quiz:[
+   {say:'How long does it take?', opts:['¿Cuánto cuesta?','¿Cuánto tarda?','¿Cuánto mide?'], ok:1},
+   {say:'Can you fix it?', opts:['¿Lo podés arreglar?','¿Lo podés cambiar?','¿Lo podés mandar?'], ok:0},
+   {say:'When will it be ready?', opts:['¿Dónde lo busco?','¿Cuánto sale?','¿Cuándo va a estar listo?'], ok:2},
+   {say:'Do I need an appointment?', opts:['¿Necesito turno?','¿Necesito pagar?','¿Necesito firmar?'], ok:0}
+  ],
+  win:'Ya podés resolver trámites y pedir servicios en inglés.'}
+
+
+];
+const PASS = 100;       // hay que decir todas las palabras
+const MIN_CONF = 0.7;   // claridad mínima que informa Chrome
+LESSONS.forEach(l=>{ l.lvl = l.lvl||1; });
+const LEVELS = {1:['Nivel 1','Para arrancar: lo básico para defenderte'],2:['Nivel 2','Para conversar: rutina, pasado, planes y trabajo'],3:['Nivel 3','Para desenvolverte con soltura']};
+const UPCOMING = [
+  ['Contar una historia','Narrar algo que te pasó, con detalles'],
+  ['Resolver problemas','Reclamar, devolver y negociar'],
+  ['Entrevista de trabajo','Hablar de tu experiencia'],
+  ['Comparar y elegir','Mejor, peor, más barato, el más lindo'],
+  ['Charlas de todos los días','Deportes, series, noticias']
+];
+
+let saved = {done:{}};
+function save(){
+  try{ localStorage.setItem('sc_ingles_'+S.tel, JSON.stringify(saved)); }catch(e){}
+  const n=Object.keys(saved.done).filter(k=>saved.done[k]).length;
+  if(S.tel) setDoc(doc(db,"usuarios",S.tel),{ingles:{done:saved.done,aprobadas:n,ult:serverTimestamp()}},{merge:true}).catch(()=>{});
+}
+function load(perfil){
+  saved={done:{...(perfil?.ingles?.done||{})}};
+  try{ const l=JSON.parse(localStorage.getItem('sc_ingles_'+S.tel)||'null'); if(l&&l.done) Object.assign(saved.done,l.done); }catch(e){}
+  Object.assign(ES,{screen:'home',L:0,i:0,result:null,msg:''});
+}
+const ES = {screen:'home', L:0, i:0, passed:false, result:null, listening:false, msg:'', q:0, picked:null, qFirstTry:0, qMiss:false, scores:[]};
+let LESSON = LESSONS[0];
+/* ---------- voz ---------- */
+let voice = null;
+function pickVoice(){
+  const vs = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+  voice = vs.find(v=>/en[-_]US/i.test(v.lang) && /google|samantha|natural/i.test(v.name)) || vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+}
+if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text, rate){
+  if(!window.speechSynthesis){ ES.msg='Este navegador no puede reproducir audio.'; render(); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace('…',''));
+  u.lang='en-US'; u.rate=rate||0.9; if(voice) u.voice=voice;
+  speechSynthesis.speak(u);
+}
+
+/* ---------- reconocimiento ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const NUM=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+const TENS={30:'thirty',40:'forty',50:'fifty'};
+const WNUM=w=>{const n=NUM.indexOf(w); if(n>=0) return n; for(const k in TENS) if(TENS[k]===w) return +k; return null;};
+function norm(t){
+  return t.toLowerCase().replace(/[’‘]/g,"'")
+    .replace(/\b(1\d|20)(1\d|20)(1\d|20)?\b/g,(m,a,b,c)=>[a,b,c].filter(Boolean).join(' '))
+    .replace(/\b\d+\b/g,n=>NUM[+n]||TENS[+n]||n)
+    .replace(/can't/g,'cannot').replace(/won't/g,'will not').replace(/n't\b/g,' not')
+    .replace(/'m\b/g,' am').replace(/'re\b/g,' are').replace(/'ll\b/g,' will').replace(/'ve\b/g,' have').replace(/'d\b/g,' would')
+    .replace(/\b(it|what|where|that|there|he|she|how|who)'s\b/g,'$1 is')
+    .replace(/[^a-z ]/g,' ').replace(/\s+/g,' ').trim();
+}
+function dist(a,b){
+  const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i]);
+  for(let j=1;j<=n;j++)d[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[m][n];
+}
+const EQ = {two:['to','too'], four:['for','fore'], eight:['ate'], one:['won'], ten:['tin'], six:['sex','sixth']};
+function grade(target, heard, accept){
+  const g1 = gradeWords(target, heard, accept);
+  if(!/\d/.test(heard)) return g1;
+  // El reconocedor a veces junta los números ("456", "1617"): los comparamos cifra por cifra
+  const digits = heard.replace(/\D/g,'');
+  const hw = norm(heard.replace(/\d+/g,' ')).split(' ');
+  const used = new Set(); let pos = 0;
+  const words = norm(target).split(' ').map(w=>{
+    const n = WNUM(w);
+    if(n!==null){
+      const d = String(n);
+      if(digits.startsWith(d,pos)){ pos += d.length; return {w,ok:true}; }
+      return {w,ok:false};
+    }
+    const k = hw.findIndex((h,idx)=>!used.has(idx) && (h===w || (EQ[w]||[]).includes(h)));
+    if(k>=0){ used.add(k); return {w,ok:true}; }
+    return {w,ok:false};
+  });
+  const pct = Math.round(100*words.filter(x=>x.ok).length/words.length);
+  return pct > g1.pct ? {words, pct} : g1;
+}
+function gradeWords(target, heard, accept){
+  if((accept||[]).map(norm).includes(norm(heard))) return {words:norm(target).split(' ').map(w=>({w,ok:true})), pct:100};
+  const tw = norm(target).split(' '), hw = norm(heard).split(' ');
+  if(norm(target).replace(/ /g,'') === norm(heard).replace(/ /g,'')) return {words:tw.map(w=>({w,ok:true})), pct:100};
+  const used = new Set();
+  const words = tw.map(w=>{
+    const k = hw.findIndex((h,idx)=>!used.has(idx) && (h===w || (EQ[w]||[]).includes(h)));
+    if(k>=0){ used.add(k); return {w,ok:true}; }
+    return {w,ok:false};
+  });
+  return {words, pct:Math.round(100*words.filter(x=>x.ok).length/words.length)};
+}
+function listen(){
+  const p = LESSON.phrases[ES.i];
+  if(!SR){ ES.msg='El micrófono no funciona en esta vista. Abrí el archivo en Chrome para probar la corrección.'; render(); return; }
+  if(ES.listening) return;
+  const r = new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
+  ES.listening=true; ES.msg='Te escucho… decilo ahora'; render();
+  r.onresult = e=>{
+    // Solo la primera interpretación de Chrome: no buscamos la que más nos convenga
+    const alt = e.results[0][0];
+    const g = grade(p.target||p.en, alt.transcript, p.accept);
+    g.heard = alt.transcript;
+    g.conf = alt.confidence>0 ? Math.round(alt.confidence*100) : null;
+    g.unclear = g.conf!==null && g.conf < MIN_CONF*100;
+    g.ok = g.pct>=PASS && !g.unclear;
+    ES.result = g;
+    if(g.ok){ ES.passed=true; ES.scores[ES.i]=Math.max(ES.scores[ES.i]||0, g.conf ?? 100); }
+  };
+  r.onerror = e=>{
+    ES.msg = e.error==='not-allowed' || e.error==='service-not-allowed'
+      ? 'No hay permiso para usar el micrófono. Abrí el archivo en Chrome y aceptá el permiso.'
+      : e.error==='no-speech' ? 'No te escuché. Tocá el micrófono y hablá un poco más fuerte.' : 'Algo falló con el micrófono. Probá otra vez.';
+  };
+  r.onend = ()=>{ ES.listening=false; if(ES.msg.startsWith('Te escucho')) ES.msg=''; render(); };
+  try{ r.start(); }catch(e){ ES.listening=false; ES.msg='El micrófono no está disponible en esta vista.'; render(); }
+}
+
+/* ---------- pantallas ---------- */
+function progress(){
+  const total = LESSON.phrases.length + LESSON.quiz.length;
+  const done = ES.screen==='quiz' ? LESSON.phrases.length + ES.q : ES.i;
+  return Math.round(100*done/total);
+}
+function home(){
+  const open = k => k===0 || !!saved.done[k-1];
+  const head = (n,extra) => `<div class="lvl"><b>${LEVELS[n][0]}</b><span>${LEVELS[n][1]}${extra||''}</span></div>`;
+  const done = LESSONS.filter((l,k)=>saved.done[k]).length;
+  return `<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
+  <div class="hello"><span class="tag">Idiomas · Complemento</span><h1>Inglés paso a paso</h1><p>Escuchá, repetí y avanzá. Cada lección se abre cuando aprobás la anterior. Con 20 minutos por día alcanza.</p><p class="count">${done} de ${LESSONS.length} lecciones aprobadas</p>
+  <p class="small muted">Para el micrófono usá Chrome y aceptá el permiso cuando te lo pida.</p></div>
+  <div class="lessons">
+    ${LESSONS.map((l,k)=>{
+      const d=!!saved.done[k], o=open(k);
+      const h = (k===0 || LESSONS[k-1].lvl!==l.lvl) ? head(l.lvl) : '';
+      return `${h}<button class="lesson ${o?'open':''} ${d?'done':''}" data-eact="start" data-l="${k}" ${o?'':'disabled'}>
+      <span class="num">${d?ICON.check:k+1}</span>
+      <span><span class="t">${l.title}</span><br><span class="s">${d?'Aprobada · podés repasarla':o?l.sub:'Aprobá la lección '+k+' para abrirla'}</span></span>
+      <span class="end">${o?ICON.go:ICON.lock}</span></button>`;}).join('')}
+    ${UPCOMING.length?head(3,' · próximamente'):''}
+    ${UPCOMING.map((u,k)=>`<button class="lesson" disabled>
+      <span class="num">${LESSONS.length+k+1}</span>
+      <span><span class="t">${u[0]}</span><br><span class="s">${u[1]}</span></span>
+      <span class="end">${ICON.lock}</span></button>`).join('')}
+  </div>`;
+}
+function topbar(){
+  return `<div class="top"><button class="back" data-eact="home" aria-label="Volver">${ICON.back}</button><div class="bar"><i style="width:${progress()}%"></i></div></div>`;
+}
+function phrase(){
+  const p = LESSON.phrases[ES.i], r = ES.result;
+  return `${topbar()}
+  <div class="card">
+    <p class="es">${p.es}</p>
+    <h2 class="en">${p.en}</h2>
+    <span class="tip">Se dice: ${p.tip}</span>
+    ${p.use?`<p class="use"><b>¿Cuándo se usa?</b> ${p.use}</p>`:''}
+    <div class="row">
+      <button class="pill" data-eact="say">${ICON.spk} Escuchar</button>
+      <button class="pill" data-eact="slow">${ICON.slow} Lento</button>
+    </div>
+    <button class="mic ${ES.listening?'on':''}" data-eact="mic" aria-label="Hablar">${ICON.mic}</button>
+    <p class="hint">${ES.msg || (r ? '' : 'Tocá el micrófono y repetí la frase')}</p>
+    ${r ? `<div class="result ${r.ok?'good':'bad'}">
+      <div class="words">${r.words.map(x=>`<span class="${x.ok?'w-ok':'w-bad'}">${x.w}</span>`).join(' ')}</div>
+      <strong>${r.ok ? '¡Muy bien!' : r.pct<PASS ? 'Faltan o están mal las palabras en rojo. Escuchá en lento y probá de nuevo' : 'Se entendió a medias. Decila más clara y un poco más despacio'}</strong>
+      ${r.conf!==null?`<span class="heard">Claridad: ${r.conf}% (necesitás ${MIN_CONF*100}%)</span>`:''}
+      <span class="heard">Entendí: “${r.heard}”</span>
+    </div>` : ''}
+  </div>
+  <button class="next" data-eact="next" ${ES.passed?'':'disabled'}>${ES.i===LESSON.phrases.length-1?'Ir a escuchar':'Siguiente'}</button>
+  <p class="note">Para avanzar tenés que decir todas las palabras, claras.</p>`;
+}
+function quiz(){
+  const q = LESSON.quiz[ES.q];
+  return `${topbar()}
+  <div class="card">
+    <p class="es">Parte 2 · Entender al escuchar</p>
+    <h2 class="en" style="font-size:30px">¿Qué escuchaste?</h2>
+    <button class="big-play" data-eact="qsay" aria-label="Escuchar">${ICON.spkBig}</button>
+    <div class="opts">${q.opts.map((o,k)=>{
+      const cls = ES.picked===null ? '' : k===q.ok && ES.picked===q.ok ? 'right' : k===ES.picked ? 'wrong' : '';
+      return `<button class="opt ${cls}" data-eact="pick" data-k="${k}">${o}</button>`;}).join('')}</div>
+    <p class="hint">${ES.picked===null?'Tocá el parlante las veces que necesites':ES.picked===q.ok?'¡Correcto!':'Esa no es. Escuchá otra vez y elegí de nuevo.'}</p>
+  </div>
+  <button class="next" data-eact="qnext" ${ES.picked===q.ok?'':'disabled'}>${ES.q===LESSON.quiz.length-1?'Terminar':'Siguiente'}</button>`;
+}
+function finish(){
+  const avg = Math.round(ES.scores.reduce((a,b)=>a+(b||0),0)/LESSON.phrases.length);
+  return `
+  <div class="card">
+    <div class="trophy">★</div>
+    <h2 class="en" style="font-size:32px">¡Lección ${ES.L+1} aprobada!</h2>
+    <p class="es">${LESSON.win}</p>
+    <div class="stats">
+      <div class="stat"><b>${avg}%</b><span>Claridad promedio</span></div>
+      <div class="stat"><b>${ES.qFirstTry}/${LESSON.quiz.length}</b><span>Al primer intento</span></div>
+    </div>
+  </div>
+  ${LESSONS[ES.L+1]?`<button class="next" data-eact="start" data-l="${ES.L+1}">Empezar lección ${ES.L+2}</button>`:''}
+  <button class="pill" style="justify-content:center" data-eact="home">Volver a las lecciones</button>`;
+}
+function page(){
+  return `<div class="eng">${ES.screen==='home'?home():ES.screen==='phrase'?phrase():ES.screen==='quiz'?quiz():finish()}</div>`;
+}
+function click(b){
+  if(b.disabled) return;
+  const a = b.dataset.eact, p = LESSON.phrases[ES.i];
+  if(a==='home'){ if(window.speechSynthesis) speechSynthesis.cancel(); ES.screen='home'; }
+  if(a==='start'){ ES.L=+b.dataset.l; LESSON=LESSONS[ES.L]; Object.assign(ES,{screen:'phrase',i:0,passed:false,result:null,msg:'',q:0,picked:null,qFirstTry:0,qMiss:false,scores:[]}); }
+  if(a==='say') speak(p.say||p.en, 0.9);
+  if(a==='slow') speak(p.say||p.en, 0.55);
+  if(a==='mic'){ ES.result=null; listen(); return; }
+  if(a==='next'){
+    if(ES.i<LESSON.phrases.length-1){ ES.i++; ES.passed=false; ES.result=null; ES.msg=''; }
+    else { ES.screen='quiz'; ES.q=0; ES.picked=null; ES.qMiss=false; }
+  }
+  if(a==='qsay') speak(LESSON.quiz[ES.q].say, 0.85);
+  if(a==='pick'){
+    const k = +b.dataset.k, q = LESSON.quiz[ES.q];
+    ES.picked = k;
+    if(k===q.ok && !ES.qMiss) ES.qFirstTry++;
+    if(k!==q.ok) ES.qMiss = true;
+  }
+  if(a==='qnext'){
+    if(ES.q<LESSON.quiz.length-1){ ES.q++; ES.picked=null; ES.qMiss=false; }
+    else { ES.screen='done'; saved.done[ES.L]=true; save(); }
+  }
+  render();
+}
+function stop(){ try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
+return {page, click, load, stop, total:LESSONS.length, aprobadas:()=>Object.keys(saved.done).filter(k=>saved.done[k]).length};
+})();
+
 /* ---------- Ingreso ---------- */
 function renderLogin(){
   return `<div class="brand"><span class="logo">SC</span><div><h1>Ser Constante</h1><p class="small muted">por Rogelio Coach</p></div></div>
@@ -450,13 +1248,15 @@ async function crearCuenta(){
 async function cargarParticipante(user){
   const tel=user.email.split("-v")[0];
   S.tel=tel; S.busy=false;
-  const [p,c,l]=await Promise.all([getDoc(doc(db,"usuarios",tel)),getDoc(doc(db,"contenido",PROG.id)).catch(()=>null),getDocs(collection(db,"usuarios",tel,"dias"))]);
+  const [p,c,l,hb]=await Promise.all([getDoc(doc(db,"usuarios",tel)),getDoc(doc(db,"contenido",PROG.id)).catch(()=>null),getDocs(collection(db,"usuarios",tel,"dias")),getDoc(doc(db,"habilitados",tel)).catch(()=>null)]);
+  S.engOk=!!(hb&&hb.exists()&&hb.data().ingles===true);
   S.perfil=p.exists()?p.data():null;
   if(!S.perfil){ // cuenta recreada tras reseteo pero sin perfil
     S.perfil={nombre:"",edad:""};
   }
   S.cont=c&&c.exists()?c.data():{};
   S.logs={}; l.forEach(x=>{const v=x.data(); if(v.prog===PROG.id) S.logs[v.d]=v});
+  ENG.load(S.perfil);
   S.vista="part"; S.prog=null; render();
 }
 const preg=d=>(S.cont?.preg?.[d-1])||PREG[d-1];
@@ -469,6 +1269,8 @@ function renderPart(){
   const done=Object.keys(S.logs).map(Number);
   if(!S.perfil?.nombre) return `<div class="card"><h2>Completá tus datos</h2><div><label for="nom">Nombre y apellido</label><input id="nom"></div><div><label for="eda">Edad</label><input id="eda" inputmode="numeric"></div><button class="btn" id="guardarperfil">Guardar</button></div>`;
   if(!S.prog) return renderProgramas(done);
+  if(S.prog==="ingles") return S.engOk?ENG.page():renderProgramas(done);
+  if(S.prog==="cuentas") return renderCuentas();
   const estadoTxt=HOY<1?`Arranca el martes 3 de noviembre`:HOY>28?`Reto terminado`:`Día ${HOY} de 28`;
   const head=`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
   <div class="card"><div class="hero">${ring(done,HOY)}<div class="grow"><span class="tag">${esc(PROG.nombre)}</span><h1>${estadoTxt}</h1><p class="muted small">${done.length} días cargados${HOY>=1&&HOY<=28?` · ${28-HOY} por delante`:""}</p></div></div></div>
@@ -482,7 +1284,32 @@ function renderProgramas(done){
   <button class="card prog" id="p28"><div class="hero">${ring(done,HOY,84)}<div class="grow"><h2>${esc(PROG.nombre)}</h2><p class="small muted">${PROG.edicion} · ${sub}</p><span class="chip ok">${HOY<1?"Inscripción confirmada":"En curso"}</span></div></div></button>
   <p class="tag">Hábitos</p>
   <div class="card" style="opacity:.6"><h2>Reto de hábitos</h2><p class="small muted">Próximamente</p></div>
+  <p class="tag">Idiomas · Complemento</p>
+  ${S.engOk?`<button class="card prog" id="ping"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Hablar y entender inglés para la vida diaria · ${ENG.total} lecciones</p><span class="chip ok">${ENG.aprobadas()?`${ENG.aprobadas()} de ${ENG.total} aprobadas`:"Habilitado · empezá cuando quieras"}</span></div></div></button>`
+  :`<div class="card lock"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem;background:var(--line);color:var(--muted)">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Aprendé a hablar y entender inglés para la vida diaria: saludar, comprar, viajar, pedir ayuda. Escuchás, repetís y la app te corrige.</p></div></div>
+  ${S.perfil.inglesPide?`<p class="chip warn" style="align-self:flex-start">Pedido enviado · Rogelio te habilita en breve</p>`:`<button class="btn" id="pideing">Quiero probarlo gratis</button>`}</div>`}
+  <p class="tag">Herramientas · Regalo para participantes</p>
+  <div class="card"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.6rem;background:#2c4fb8">$</span><div class="grow"><h2>Cuentas del hogar</h2><p class="small muted">Anotá gastos, ingresos, tarjetas y ahorros de tu casa en segundos, hasta hablando. Gratis para participantes.</p></div></div>
+  <button class="btn" id="pcuentas">Quiero saber más</button></div>
   <button class="btn ghost" id="salir">Salir</button>`;
+}
+function renderCuentas(){
+  return `<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
+  <div class="card"><span class="tag">Herramientas · Regalo para participantes</span><h1>Cuentas del hogar</h1>
+  <p>Una app gratuita para ordenar la plata de tu casa desde el celular. Ordenar la plata también es un hábito: alcanza con anotar cada gasto en el momento y mirar el resumen una vez por semana.</p></div>
+  <div class="card"><h2>Qué podés hacer</h2>
+  <div class="ex"><b>Cargar gastos de tres formas</b><p class="small muted">Hablando (“Gasté 15 mil en el súper en efectivo”), con la foto de un ticket o comprobante, o a mano.</p></div>
+  <div class="ex"><b>Ver el mes completo</b><p class="small muted">Cuánto entró y cuánto salió, y qué cuentas fijas están pendientes o pagadas.</p></div>
+  <div class="ex"><b>Tarjetas y cuotas</b><p class="small muted">Calcula el valor de cada cuota y en qué mes cae.</p></div>
+  <div class="ex"><b>Ahorros</b><p class="small muted">Pesos, dólares, plazos fijos y billeteras virtuales, en un solo lugar.</p></div>
+  <div class="ex"><b>Para toda la casa</b><p class="small muted">Varias personas pueden cargar y ver lo mismo, actualizado.</p></div></div>
+  <div class="card" style="background:var(--warn-soft);border-color:transparent"><h3>Tus datos son solo tuyos</h3><p class="small">Se guardan cifrados con una clave familiar que eligen ustedes: nadie más puede verlos, ni Rogelio. Si se olvidan esa clave, los datos no se recuperan, así que anotala en un lugar seguro.</p></div>
+  <a class="btn ghost" href="guia-cuentas-del-hogar.pdf" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">📄 Ver la guía completa (PDF)</a>
+  <a class="btn" href="https://cuentas-domesticas.netlify.app" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Descargar y empezar</a>
+  <details class="how"><summary>¿Cómo la instalo en el celular?</summary><div class="how-body small">
+  <p><b>Android (Chrome):</b> abrila con “Descargar y empezar”, tocá el menú de los tres puntos ⋮ y elegí “Instalar app” o “Agregar a la pantalla principal”.</p>
+  <p><b>iPhone (Safari):</b> abrila, tocá el botón Compartir y elegí “Agregar a inicio”.</p>
+  <p>Queda como una app más en tu celular.</p></div></details>`;
 }
 function renderHoy(){
   if(HOY<1) return `<div class="card"><span class="tag">Antes de arrancar</span><h2>Faltan ${1-HOY} días</h2>
@@ -675,9 +1502,9 @@ function estado(u){
 function renderAdmin(){
   const head=`<div class="brand"><span class="logo">SC</span><div><h1>Panel de Rogelio</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
   if(!S.A) return head+`<div class="card"><p class="muted">Cargando datos…</p></div>`;
-  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["opi","Opiniones"],["plan","Plan"],["num","Números"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
+  const tabs=`<div class="tabs">${[["resumen","Resumen"],["gente","Participantes"],["opi","Opiniones"],["plan","Plan"],["num","Números"],["ing","Inglés"],["cont","Contenido"]].map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
   if(S.verUser) return head+tabs+renderUser(S.verUser);
-  return head+tabs+({resumen:aResumen,gente:aGente,opi:aOpi,plan:aPlan,num:aNum,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
+  return head+tabs+({resumen:aResumen,gente:aGente,opi:aOpi,plan:aPlan,num:aNum,ing:aIng,cont:aCont}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
 }
 function aOpi(){
   const O=Object.values(S.A.users).filter(u=>u.opinion?.estrellas||u.opinion?.texto).sort((a,b)=>(b.opinion.ts||0)-(a.opinion.ts||0));
@@ -737,6 +1564,17 @@ function renderUser(t){
     ${l.niv&&Object.keys(l.niv).length?`<p class="small muted">Niveles: ${Object.entries(l.niv).map(([e,n])=>`${esc(e.split(" (")[0].split(":")[0])}: ${n}`).join(" · ")}</p>`:""}
     ${l.palabraAntes?`<p class="small muted">Antes: “${esc(l.palabraAntes)}”</p>`:""}${l.resp?`<p class="small">“${esc(l.resp)}”</p>`:""}${l.extra?`<p class="small muted">Extra: ${esc(l.extra.tipo)} ${l.extra.min} min</p>`:""}</div>`).join("")||"<p class='muted'>Todavía no cargó días.</p>"}</div>`;
 }
+const ingPedidos=()=>Object.keys(S.A.hab).filter(t=>S.A.users[t]?.inglesPide&&!S.A.hab[t].ingles);
+function aIng(){
+  const H=Object.entries(S.A.hab).sort((a,b)=>(+!!b[1].ingles)-(+!!a[1].ingles)||(S.A.users[b[0]]?.ingles?.aprobadas||0)-(S.A.users[a[0]]?.ingles?.aprobadas||0));
+  const on=H.filter(([t,v])=>v.ingles).length, P=ingPedidos();
+  const nom=t=>esc(S.A.users[t]?.nombre||S.A.hab[t]?.nombre||verTel(t));
+  return `<div class="card"><h2>Inglés paso a paso</h2><p class="small muted">Complemento gratuito para quienes están en el reto. Cada participante lo ve en su inicio; si no está habilitado, puede pedirlo con un botón.</p>
+  <div class="kpis"><div class="kpi"><b>${on}</b><span class="small muted">habilitados para inglés</span></div><div class="kpi"><b>${P.length}</b><span class="small muted">pedidos sin responder</span></div></div></div>
+  ${P.length?`<div class="card"><h3>Lo pidieron (${P.length})</h3><div class="list">${P.map(t=>`<div class="row"><span class="grow small">${nom(t)} · ${verTel(t)}</span><button class="btn small" data-ingon="${t}">Habilitar</button></div>`).join("")}</div><button class="btn" id="ingpedidos">Habilitar a todos los que lo pidieron</button></div>`:""}
+  <div class="card"><h3>Todos los participantes</h3><div class="list">${H.map(([t,v])=>{const u=S.A.users[t],n=u?.ingles?.aprobadas||0;
+    return `<div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span class="grow small"><b>${nom(t)}</b><br><span class="muted">${v.ingles?`${n} de ${ENG.total} lecciones`:u?.inglesPide?"Lo pidió":"No habilitado"}</span></span>${v.ingles?`<button class="btn ghost small" data-ingoff="${t}">Quitar</button>`:`<button class="btn small" data-ingon="${t}">Habilitar</button>`}</div>`}).join("")||"<p class='muted'>Todavía no hay números habilitados.</p>"}</div></div>`;
+}
 function aNum(){
   const H=Object.entries(S.A.hab);
   return `<div class="card"><h2>Habilitar números</h2><p class="small muted">Pegá uno o varios números (uno por línea). Podés poner el nombre después de una coma: <i>343 154 123456, Carla</i>.</p>
@@ -791,6 +1629,12 @@ document.addEventListener("change",async e=>{if(e.target.id==="dsel"){S.diaCont=
   if(e.target.id==="fotoin"&&e.target.files[0]){try{const f=await achicarFoto(e.target.files[0]);await setDoc(doc(db,"usuarios",S.tel),{foto:f},{merge:true});S.perfil.foto=f;render()}catch(err){alert("No se pudo cargar la foto. Probá con otra.")}}});
 document.addEventListener("click",async e=>{
   const b=e.target.closest("button"); if(!b) return;
+  if(b.dataset.eact) return ENG.click(b);
+  if(b.id==="ping"){S.prog="ingles";return render()}
+  if(b.id==="pcuentas"){S.prog="cuentas";scrollTo(0,0);return render()}
+  if(b.id==="pideing"){b.disabled=true;try{await setDoc(doc(db,"usuarios",S.tel),{inglesPide:serverTimestamp()},{merge:true});S.perfil.inglesPide=true;}catch(err){b.disabled=false;alert("No se pudo enviar el pedido. Revisá tu internet y probá de nuevo.");}return render()}
+  if(b.dataset.ingon||b.dataset.ingoff){const t=b.dataset.ingon||b.dataset.ingoff,on=!!b.dataset.ingon;b.disabled=true;await setDoc(doc(db,"habilitados",t),{ingles:on},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ingles:on};return render()}
+  if(b.id==="ingpedidos"){b.disabled=true;const P=ingPedidos();for(const t of P){await setDoc(doc(db,"habilitados",t),{ingles:true},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ingles:true}}return render()}
   if(b.id==="go") return entrar();
   if(b.id==="crear") return crearCuenta();
   if(b.id==="volverlogin"){S.vista="login";S.msg="";return render()}
@@ -807,7 +1651,7 @@ document.addEventListener("click",async e=>{
   if(b.id==="salir"){T.start=0;clearInterval(T.iv);W.on=false;clearInterval(W.iv);await signOut(auth);return}
   if(b.id==="guardarperfil"){const nom=$("#nom").value.trim(),eda=+$("#eda").value;if(!nom)return;await setDoc(doc(db,"usuarios",S.tel),{nombre:nom,edad:eda,tel:S.tel,creado:serverTimestamp()},{merge:true});S.perfil={nombre:nom,edad:eda};return render()}
   if(b.id==="p28"){S.prog=PROG.id;return render()}
-  if(b.id==="aprog"){S.prog=null;return render()}
+  if(b.id==="aprog"){ENG.stop();S.prog=null;return render()}
   if(b.dataset.tab){S.tab=b.dataset.tab;return render()}
   if(b.parentElement?.classList.contains("moods")&&S.draft){S.draft[b.parentElement.dataset.k]=+b.dataset.v;b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
   if(b.dataset.niv&&S.draft){(S.draft.niv=S.draft.niv||{})[b.dataset.niv]=b.dataset.v;b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));return}
