@@ -217,16 +217,16 @@ const SES={
 };
 const TEST=[["Flexiones máximas sin pausa","reps","Todas las que puedas sin parar, con el cuerpo recto de cabeza a talones. Si en el piso no te sale ninguna, hacelas con las manos en la mesa o en la pared."],["Remo máximo (mesa o mochila)","reps","Todas las que puedas sin parar: bajo la mesa con las rodillas flexionadas, o con la mochila (contá un solo brazo). Tirá hasta juntar los omóplatos y bajá lento."],["Sentadillas en 60 segundos","reps","Poné un cronómetro de 1 minuto y contá cuántas hacés bajando hasta tocar apenas una silla con la cola. Si necesitás, frená un segundo y seguí."],["Sentadilla búlgara máxima, pierna más débil","reps","Pie de atrás apoyado en la silla, bajá hasta que la rodilla de atrás quede cerca del piso. Contá las que puedas con la pierna que sentís más débil. Si te cuesta el equilibrio, apoyate en una pared."]];
 function plan(d){
-  const w=Math.ceil(d/7), k=(d-1)%7+1, series=3, opc=w>=2&&d!==26;
+  const w=Math.ceil(d/7), k=(d-1)%7+1, series=3;
   if(d===1) return {tipo:"test",titulo:"Test inicial + Tren superior A",ses:"A_sup",series:2};
   if(d===28) return {tipo:"testfin",titulo:"Test final y cierre"};
   if(w===4){
     const m={22:["A_sup",3],23:["A_inf",3],24:["CORE",3],25:["B_sup",3],26:["A_sup",2]};
-    if(m[d]) return {tipo:"fuerza",opc:opc&&m[d][0]!=="CORE",ses:m[d][0],series:m[d][1],titulo:SES[m[d][0]][0]+(d===26?" (descarga suave)":"")};
+    if(m[d]) return {tipo:"fuerza",ses:m[d][0],series:m[d][1],titulo:SES[m[d][0]][0]+(d===26?" (descarga suave)":"")};
     return {tipo:"activo",titulo:"Caminata de 30 minutos + 10 de movilidad"};
   }
   const s=[null,"A_sup","A_inf","CORE","B_sup","B_inf"][k];
-  if(s) return {tipo:"fuerza",opc:opc&&s!=="CORE",ses:s,series:s==="CORE"?3:series,titulo:SES[s][0]};
+  if(s) return {tipo:"fuerza",ses:s,series:s==="CORE"?3:series,titulo:SES[s][0]};
   if(k===6) return {tipo:"activo",titulo:"Descanso activo: caminata de "+[30,35,40][w-1]+" minutos"};
   return {tipo:"descanso",titulo:"Descanso total"};
 }
@@ -1341,7 +1341,7 @@ function renderHoy(){
       <p class="small muted" style="margin:0">Una sola vuelta a 5 estaciones · ${BLQ().tr} s de trabajo y ${BLQ().pa} s de pausa. La app te marca el tiempo.</p>
       ${d.bloque?.hecho?`<span class="chip ok" style="align-self:flex-start">✓ Bloque hecho${d.tiempos?.[ex]?" · "+fmt(d.tiempos[ex]):""}</span>`:""}${guiaHTML(ex,d)}</div>`:`<div class="ex"><div class="row"><h3 class="grow">${esc(ex)}</h3><span class="small muted">${rng}</span></div>
       ${d.tiempos?.[ex]?`<span class="small muted tnum">⏱ Tiempo: ${fmt(d.tiempos[ex])}</span>`:""}
-      ${MUNECA(ex)?avisoMuneca(ex):""}${/por (lado|pierna)/.test(rng)?`<p class="small muted" style="margin:0">↔️ Hacé los dos lados y anotá ${/\d\s*s\b/.test(rng)?"los segundos":"las repeticiones"} de un solo lado (ej.: 10 por lado → anotá 10).</p>`:/\d\s*s\b/.test(rng)?`<p class="small muted" style="margin:0">⏱️ Anotá los segundos que aguantaste. En el entrenamiento guiado tenés cronómetro.</p>`:""}<div class="sets">${Array.from({length:p.series+(p.opc?1:0)},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}${s>=p.series?" (opcional)":""}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="${s>=p.series?"S4 opc.":"S"+(s+1)}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.nivS||{})[ex]?.some(Boolean)?`<span class="small muted">Nivel: ${(d.nivS[ex]).map((n,k)=>n?`S${k+1} ${esc(n)}`:"").filter(Boolean).join(" · ")}</span>`:((d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:"")}${guiaHTML(ex,d)}</div>`).join("");
+      ${MUNECA(ex)?avisoMuneca(ex):""}${/por (lado|pierna)/.test(rng)?`<p class="small muted" style="margin:0">↔️ Hacé los dos lados y anotá ${/\d\s*s\b/.test(rng)?"los segundos":"las repeticiones"} de un solo lado (ej.: 10 por lado → anotá 10).</p>`:/\d\s*s\b/.test(rng)?`<p class="small muted" style="margin:0">⏱️ Anotá los segundos que aguantaste. En el entrenamiento guiado tenés cronómetro.</p>`:""}<div class="sets">${Array.from({length:p.series},(_,s)=>`<input aria-label="${esc(ex)} serie ${s+1}" id="e${i}s${s}" data-ex="${esc(ex)}" data-s="${s}" inputmode="numeric" placeholder="S${s+1}" class="${(d.ej[ex]||[])[s]?"hecho":""}" value="${(d.ej[ex]||[])[s]??""}">`).join("")}</div>${(d.nivS||{})[ex]?.some(Boolean)?`<span class="small muted">Nivel: ${(d.nivS[ex]).map((n,k)=>n?`S${k+1} ${esc(n)}`:"").filter(Boolean).join(" · ")}</span>`:((d.niv||{})[ex]?`<span class="chip ok" style="align-self:flex-start">Nivel: ${esc(d.niv[ex])}</span>`:"")}${guiaHTML(ex,d)}</div>`).join("");
     ej=`${esTest?"":musicaBtn()}
     ${!esTest&&!T.start&&!W.on?(()=>{const st=buildSteps(p),k=pasoPendiente(st,d),empezado=st.some(x=>x.bloque?d.bloque?.hecho:(d.ej[x.ex]||[])[x.s]);
       return empezado&&k>=0?`<button class="btn" id="tstartall" data-resume="1">▶ Calentar y seguir donde quedé</button><p class="small muted" style="margin:0">Retomás en: <b>${esc(st[k].ex)}</b>${st[k].bloque?"":` · serie ${st[k].s+1}`} (paso ${k+1} de ${st.length}). Lo que ya anotaste queda guardado.</p><button class="btn ghost small" id="treset">↺ Empezar todo de cero</button>`
@@ -1378,7 +1378,7 @@ function renderHoy(){
   ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás. Tocá el botón y la app te va marcando el tiempo de cada ejercicio, con aviso al terminar.</p>${musicaBtn()}${calBtn}<details class="how"><summary>Ver cómo se hace cada ejercicio ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
-    ${p.ses?`<p class="small muted">${p.series} series${p.opc?" (y una cuarta opcional, si te sentís con energía)":""} · anotá las repeticiones (o segundos) de cada serie</p><p class="small" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0"><b>¿Cuántas hago?</b> El número de cada ejercicio es la meta. Elegí el nivel donde llegues al mínimo con buena técnica y terminá cada serie sintiendo que te quedaban 1 o 2 más. Si ni en el nivel fácil llegás al mínimo, hacé las que puedas: la próxima vez sumá una.</p>`:""}${ej}</div>`:""}
+    ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p><p class="small" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0"><b>¿Cuántas hago?</b> El número de cada ejercicio es la meta. Elegí el nivel donde llegues al mínimo con buena técnica y terminá cada serie sintiendo que te quedaban 1 o 2 más. Si ni en el nivel fácil llegás al mínimo, hacé las que puedas: la próxima vez sumá una.</p>`:""}${ej}</div>`:""}
   <div class="card"><span class="tag">3 · Al terminar</span><h2>¿Cómo te sentís ahora?</h2>
     <div class="moods" data-k="despues">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.despues===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="esf">¿Cuánto te costó? <b id="esfv">${d.esfuerzo}</b>/10</label><input type="range" id="esf" min="1" max="10" value="${d.esfuerzo}"></div></div>
