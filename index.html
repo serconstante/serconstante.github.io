@@ -397,6 +397,18 @@ function guiaHTML(ex,d){
 const PROG={id:"r28-2026-11",nombre:"28 Días: Lo que puedo",area:"Cuerpo",edicion:"Edición noviembre 2026",inicio:"2026-11-03",dias:28};
 const ADMIN_EMAIL="rogelioframirezcoach@gmail.com";
 const DOM="@serconstante.app";
+/* Rubros del equipo. Cada uno ve solo sus pestañas y sus consultas.
+   Para sumar un rubro nuevo, agregá una línea acá. tel:true = ve los teléfonos. */
+const RUBROS={
+  fisica:{nombre:"Profe de educación física",corto:"Entrenamiento",pide:"Ejercicios y entrenamiento",tabs:["resumen","gente","plan","cons","ideas"]},
+  ingles:{nombre:"Profe de inglés",corto:"Inglés",pide:"Inglés",tabs:["ing","cons","ideas"],soloIngles:true},
+  coach:{nombre:"Coach",corto:"Coaching",pide:"Coaching, emociones o motivación",tabs:["resumen","gente","cons","ideas"]},
+  admin:{nombre:"Administración",corto:"Administración",pide:"Inscripción, app o pagos",tabs:["resumen","gente","cons"],tel:true}
+};
+const rubroDe=k=>RUBROS[k]?k:"fisica";
+const rub=()=>S.profe?RUBROS[rubroDe(S.profe.rubro)]:null;
+const ocTel=()=>!!S.profe&&!rub().tel;
+const TABN={resumen:"Resumen",gente:"Participantes",cons:"Consultas",opi:"Opiniones",plan:"Plan",ideas:"Ideas",num:"Números",ing:"Inglés",cont:"Contenido",equipo:"Equipo"};
 
 const fb=initializeApp({apiKey:"AIzaSyBZcKNF2obDljnfzP4-sGwMRY-7EFimdso",authDomain:"serconstante-73723.firebaseapp.com",projectId:"serconstante-73723",storageBucket:"serconstante-73723.firebasestorage.app",messagingSenderId:"805230853330",appId:"1:805230853330:web:8670aec510d0ea4fc1410b"});
 const auth=getAuth(fb); const db=getFirestore(fb);
@@ -1195,11 +1207,11 @@ function renderLogin(){
     ${S.msg?`<p class="err">${S.msg}</p>`:""}
     <button class="btn" id="go" ${S.busy?"disabled":""}>${S.busy?"Entrando…":"Entrar"}</button>
     <p class="small muted">¿Te olvidaste el PIN? Escribile a Rogelio por WhatsApp y te lo resetea.</p></div>
-  <button class="link" id="soyadmin">Panel de Rogelio</button><button class="link" id="soyequipo">Soy del equipo (profe)</button>${S.adminMsg?`<p class="err" style="text-align:center">${S.adminMsg}</p>`:""}`;
+  <button class="link" id="soyadmin">Panel de Rogelio</button><button class="link" id="soyequipo">Soy del equipo</button>${S.adminMsg?`<p class="err" style="text-align:center">${S.adminMsg}</p>`:""}`;
 }
 function renderAdminLogin(){
   const eq=S.loginRol==="equipo";
-  return `<div class="brand"><span class="logo">SC</span><div><h1>${eq?"Panel del equipo":"Panel de Rogelio"}</h1><p class="small muted">${eq?"Para los profes que acompañan el reto":"Solo para "+ADMIN_EMAIL}</p></div></div>
+  return `<div class="brand"><span class="logo">SC</span><div><h1>${eq?"Panel del equipo":"Panel de Rogelio"}</h1><p class="small muted">${eq?"Profes, coaches y administración":"Solo para "+ADMIN_EMAIL}</p></div></div>
   <div class="card">${eq?`<div><label for="aemail">Tu mail</label><input id="aemail" type="email" autocomplete="email" value="${esc(S.aemail)}"></div>`:""}<div><label for="apass">Contraseña del panel</label><input id="apass" type="password" autocomplete="current-password"></div>
     ${S.msg?`<p class="err">${S.msg}</p>`:""}${S.ok?`<p class="small" style="color:var(--ok)">${S.ok}</p>`:""}
     <button class="btn" id="aentrar" ${S.busy?"disabled":""}>Entrar</button>
@@ -1269,38 +1281,39 @@ const fechaC=ts=>ts?new Date(ts).toLocaleString("es-AR",{day:"numeric",month:"nu
 const respHTML=c=>(c.respuestas||[]).map(r=>`<div class="ex" style="margin-top:8px"><p class="small" style="margin:0"><b>${esc(r.quien)}</b> <span class="muted">· ${fechaC(r.ts)}</span></p><p style="margin:4px 0 0">${esc(r.texto)}</p></div>`).join("");
 function renderConsultasPart(){
   const C=S.consultas||[];
-  return `<div class="card"><span class="tag">Consultas</span><h2>¿Tenés una duda?</h2><p class="small muted">Preguntá lo que quieras sobre los ejercicios, la técnica o cómo adaptar algo. Te responde Rogelio o el profe de educación física que acompaña el reto.</p>
+  return `<div class="card"><span class="tag">Consultas</span><h2>¿Tenés una duda?</h2><p class="small muted">Preguntá lo que quieras sobre los ejercicios, la técnica o cómo adaptar algo. Te responde Rogelio o la persona del equipo que se ocupa de ese tema.</p>
+  <div><label for="crub">¿Sobre qué es?</label><select id="crub">${Object.entries(RUBROS).filter(([k,r])=>!r.soloIngles||S.engOk).map(([k,r])=>`<option value="${k}">${esc(r.pide)}</option>`).join("")}</select></div>
   <div><label for="ctxt">Tu consulta</label><textarea id="ctxt" maxlength="800" placeholder="Ej: en las sentadillas me molesta la rodilla, ¿cómo las adapto?"></textarea></div>
   ${S.ok?`<p class="small" style="color:var(--ok)">${S.ok}</p>`:""}
   <button class="btn" id="cenviar" ${S.busy?"disabled":""}>${S.busy?"Enviando…":"Enviar consulta"}</button>
   <p class="small muted">Si sentís dolor fuerte o algo que te preocupa, pará y consultá a un médico.</p></div>
-  ${C.length?`<div class="card"><h3>Mis consultas</h3>${C.map(c=>`<div class="ex"><p class="small muted" style="margin:0">${fechaC(c.ts)} · ${c.respuestas?.length?"Respondida":"Esperando respuesta"}</p><p style="margin:4px 0 0">${esc(c.texto)}</p>${respHTML(c)}</div>`).join("")}</div>`:""}`;
+  ${C.length?`<div class="card"><h3>Mis consultas</h3>${C.map(c=>`<div class="ex"><p class="small muted" style="margin:0">${fechaC(c.ts)} · ${esc(RUBROS[rubroDe(c.rubro)].corto)} · ${c.respuestas?.length?"Respondida":"Esperando respuesta"}</p><p style="margin:4px 0 0">${esc(c.texto)}</p>${respHTML(c)}</div>`).join("")}</div>`:""}`;
 }
 async function enviarConsulta(){
   const t=($("#ctxt").value||"").trim().slice(0,800); if(!t) return;
   S.busy=true;S.ok="";render();
-  const c={tel:S.tel,nombre:S.perfil?.nombre||"",texto:t,ts:Date.now(),prog:PROG.id,respuestas:[],leida:false};
+  const c={tel:S.tel,nombre:S.perfil?.nombre||"",rubro:rubroDe($("#crub")?.value),texto:t,ts:Date.now(),prog:PROG.id,respuestas:[],leida:false};
   try{const r=await addDoc(collection(db,"usuarios",S.tel,"consultas"),c);S.consultas.unshift({id:r.id,...c});S.ok="¡Enviada! Cuando te respondan, la ves acá."}catch(e){alert("No se pudo enviar. Revisá tu internet y probá de nuevo.")}
   S.busy=false;render();
 }
 function aCons(){
   const C=S.A.cons, pend=C.filter(c=>!c.respuestas?.length);
-  const card=c=>`<div class="card"><p class="small muted" style="margin:0">${esc(c.nombre||"Participante")} · ${fechaC(c.ts)}</p><p style="margin:6px 0 0"><b>${esc(c.texto)}</b></p>${respHTML(c)}
+  const card=c=>`<div class="card"><p class="small muted" style="margin:0">${esc(c.nombre||"Participante")} · ${fechaC(c.ts)}${S.profe?"":` · <b>${esc(RUBROS[rubroDe(c.rubro)].corto)}</b>`}</p><p style="margin:6px 0 0"><b>${esc(c.texto)}</b></p>${respHTML(c)}
     <div style="margin-top:8px"><textarea id="r_${c.id}" placeholder="Escribí tu respuesta…"></textarea></div><button class="btn small" data-cresp="${c.id}">Responder</button></div>`;
   return `<div class="kpis"><div class="kpi"><b style="color:${pend.length?"var(--bad)":"inherit"}">${pend.length}</b><span class="small muted">sin responder</span></div><div class="kpi"><b>${C.length}</b><span class="small muted">consultas en total</span></div></div>
-  <p class="small muted">Las ven Rogelio y el equipo. La respuesta le aparece al participante en su pestaña "Consultas", firmada con tu nombre.</p>
+  <p class="small muted">${S.profe?`Ves las consultas de ${esc(rub().corto)}. Rogelio también las ve.`:"Ves todas. Cada persona del equipo ve solo las de su rubro."} La respuesta le aparece al participante en su pestaña "Consultas", firmada con tu nombre.</p>
   ${pend.length?`<h3>Sin responder</h3>${pend.map(card).join("")}`:`<div class="card"><p class="muted">No hay consultas pendientes 🎉</p></div>`}
   ${C.length>pend.length?`<details class="how"><summary>Respondidas (${C.length-pend.length})</summary><div class="how-body">${C.filter(c=>c.respuestas?.length).map(card).join("")}</div></details>`:""}`;
 }
 async function responderConsulta(id){
   const c=S.A.cons.find(x=>x.id===id), t=($("#r_"+id).value||"").trim(); if(!c||!t) return;
-  const quien=S.profe?S.profe.nombre||"Profe":"Rogelio";
+  const quien=S.profe?`${S.profe.nombre||"Equipo"} (${rub().nombre})`:"Rogelio";
   const R=[...(c.respuestas||[]),{quien,texto:t.slice(0,1500),ts:Date.now()}];
   try{await setDoc(doc(db,"usuarios",c.tel,"consultas",id),{respuestas:R,leida:false},{merge:true});c.respuestas=R;render()}catch(e){alert("No se pudo guardar la respuesta. Probá de nuevo.")}
 }
 function aIdeas(){
   const I=S.A.ideas;
-  return `<div class="card"><span class="tag">Ideas de rutinas</span><h2>Propuestas para próximas ediciones</h2><p class="small muted">Ejercicios nuevos, variantes, progresiones, cosas que funcionaron o no al probar el día. Rogelio las revisa para armar el próximo reto.</p>
+  return `<div class="card"><span class="tag">Ideas de rutinas</span><h2>Propuestas para próximas ediciones</h2><p class="small muted">Rutinas, ejercicios, actividades o mejoras para los programas. Rogelio las revisa para armar las próximas ediciones.</p>
   <div><label for="itit">Título</label><input id="itit" placeholder="Ej: variante de flexiones para principiantes"></div>
   <div><label for="itxt">Detalle</label><textarea id="itxt" placeholder="Ejercicios, series, para qué día o semana…"></textarea></div>
   <button class="btn" id="iguardar">Guardar idea</button></div>
@@ -1308,12 +1321,14 @@ function aIdeas(){
 }
 function aEquipo(){
   const E=S.A.equipo;
-  return `<div class="card"><h2>Equipo</h2><p class="small muted">Las personas que agregues acá entran desde "Soy del equipo (profe)" con su mail. Ven Resumen, Participantes (sin teléfonos), Plan, Consultas e Ideas. No pueden habilitar números, dar de baja, resetear PIN ni cambiar contenido.</p>
+  return `<div class="card"><h2>Equipo</h2><p class="small muted">Entran desde "Soy del equipo" con su mail. Cada uno ve las pestañas y las consultas de su rubro. Nadie del equipo puede habilitar números, dar de baja, resetear PIN ni cambiar contenido.</p>
+  <div class="small">${Object.values(RUBROS).map(r=>`<p style="margin:4px 0"><b>${esc(r.nombre)}:</b> ${r.tabs.map(k=>TABN[k]).join(", ")}${r.tel?" (con teléfonos)":""}</p>`).join("")}</div>
   <div><label for="eqmail">Mail</label><input id="eqmail" type="email" placeholder="profe@gmail.com"></div>
-  <div><label for="eqnom">Nombre (así firma las respuestas)</label><input id="eqnom" placeholder="Ej: Profe Juan"></div>
+  <div><label for="eqnom">Nombre (así firma las respuestas)</label><input id="eqnom" placeholder="Ej: Juan Pérez"></div>
+  <div><label for="eqrub">Rubro</label><select id="eqrub">${Object.entries(RUBROS).map(([k,r])=>`<option value="${k}">${esc(r.nombre)}</option>`).join("")}</select></div>
   ${S.msg?`<p class="err">${S.msg}</p>`:""}${S.ok?`<p class="small" style="color:var(--ok)">${S.ok}</p>`:""}
   <button class="btn" id="eqadd">Dar acceso</button></div>
-  <div class="card"><h3>Con acceso (${E.length})</h3>${E.map(e=>`<div class="row"><span class="grow small"><b>${esc(e.nombre)}</b><br><span class="muted">${esc(e.id)}</span></span><button class="btn ghost small" data-eqdel="${esc(e.id)}">Quitar acceso</button></div>`).join("")||"<p class='muted'>Nadie todavía.</p>"}</div>`;
+  <div class="card"><h3>Con acceso (${E.length})</h3>${E.map(e=>`<div class="row"><span class="grow small"><b>${esc(e.nombre)}</b> · ${esc(RUBROS[rubroDe(e.rubro)].nombre)}<br><span class="muted">${esc(e.id)}</span></span><button class="btn ghost small" data-eqdel="${esc(e.id)}">Quitar acceso</button></div>`).join("")||"<p class='muted'>Nadie todavía.</p>"}</div>`;
 }
 
 /* ---------- Participante ---------- */
@@ -1561,6 +1576,8 @@ async function cargarAdmin(){
   A.cons=[];A.ideas=[];A.equipo=[];
   const [cs,ids,eq]=await Promise.all([getDocs(collectionGroup(db,"consultas")).catch(()=>null),getDocs(collection(db,"ideas")).catch(()=>null),S.profe?null:getDocs(collection(db,"equipo")).catch(()=>null)]);
   cs&&cs.forEach(x=>{const v=x.data();if(A.hab[v.tel]||A.users[v.tel])A.cons.push({id:x.id,...v})}); A.cons.sort((a,b)=>(b.ts||0)-(a.ts||0));
+  if(S.profe) A.cons=A.cons.filter(c=>rubroDe(c.rubro)===rubroDe(S.profe.rubro));
+  if(S.profe&&rub().soloIngles){Object.keys(A.hab).forEach(t=>{if(!A.hab[t].ingles&&!A.users[t]?.inglesPide)delete A.hab[t]})}
   ids&&ids.forEach(x=>A.ideas.push({id:x.id,...x.data()})); A.ideas.sort((a,b)=>(b.ts||0)-(a.ts||0));
   eq&&eq.forEach(x=>A.equipo.push({id:x.id,...x.data()}));
   S.cont=c.exists()?c.data():{}; S.A=A; render();
@@ -1577,11 +1594,11 @@ function estado(u){
 }
 function renderAdmin(){
   const P=!!S.profe;
-  const head=`<div class="brand"><span class="logo">SC</span><div><h1>${P?"Panel del equipo · "+esc(S.profe.nombre||""):"Panel de Rogelio"}</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
+  const head=`<div class="brand"><span class="logo">SC</span><div><h1>${P?esc(S.profe.nombre||"Equipo")+" · "+esc(rub().nombre):"Panel de Rogelio"}</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
   if(!S.A) return head+`<div class="card"><p class="muted">Cargando datos…</p></div>`;
   const np=S.A.cons.filter(c=>!c.respuestas?.length).length, cT="Consultas"+(np?` (${np})`:"");
-  const TT=P?[["resumen","Resumen"],["gente","Participantes"],["plan","Plan"],["cons",cT],["ideas","Ideas"]]:[["resumen","Resumen"],["gente","Participantes"],["cons",cT],["opi","Opiniones"],["plan","Plan"],["ideas","Ideas"],["num","Números"],["ing","Inglés"],["cont","Contenido"],["equipo","Equipo"]];
-  if(!TT.some(x=>x[0]===S.adminTab)) S.adminTab="resumen";
+  const TT=(P?rub().tabs:["resumen","gente","cons","opi","plan","ideas","num","ing","cont","equipo"]).map(k=>[k,k==="cons"?cT:TABN[k]]);
+  if(!TT.some(x=>x[0]===S.adminTab)) S.adminTab=TT[0][0];
   const tabs=`<div class="tabs">${TT.map(([k,t])=>`<button data-atab="${k}" class="${S.adminTab===k?"on":""}">${t}</button>`).join("")}</div>`;
   if(S.verUser) return head+tabs+renderUser(S.verUser);
   return head+tabs+({resumen:aResumen,gente:aGente,opi:aOpi,plan:aPlan,num:aNum,ing:aIng,cont:aCont,cons:aCons,ideas:aIdeas,equipo:aEquipo}[S.adminTab])()+`<div class="row"><button class="btn ghost small" id="recargar">↻ Actualizar datos</button><button class="btn ghost small" id="salir">Salir</button></div>`;
@@ -1624,7 +1641,7 @@ function aResumen(){
    <div class="axis">${porDia.map((v,i)=>`<span>${i+1}</span>`).join("")}</div></div>
   <div class="card"><span class="tag">Emociones y tiempo</span>
    <div class="compare" style="grid-template-columns:1fr auto"><span>Ánimo antes de entrenar</span><b>${all.length?avg(all.map(l=>l.antes)).toFixed(1):"–"} / 5</b><span>Ánimo después</span><b style="color:var(--ok)">${all.length?avg(all.map(l=>l.despues)).toFixed(1):"–"} / 5</b><span>Esfuerzo percibido</span><b>${all.length?avg(all.map(l=>l.esfuerzo)).toFixed(1):"–"} / 10</b><span>Duración promedio</span><b>${fmt(avg(all.filter(l=>l.dur).map(l=>l.dur)))}</b></div></div>
-  <div class="card"><span class="tag">Para escribirles hoy</span>${Object.entries(S.A.users).filter(([t,u])=>estado(u)[0]!=="ok").map(([t,u])=>{const e=estado(u);return `<div class="row"><span class="grow">${esc(u.nombre)}${S.profe?"":`<br><span class="small muted">${verTel(t)}</span>`}</span><span class="chip ${e[0]}">${e[1]}</span></div>`}).join("")||"<p class='muted'>Todos al día 🎉</p>"}
+  <div class="card"><span class="tag">Para escribirles hoy</span>${Object.entries(S.A.users).filter(([t,u])=>estado(u)[0]!=="ok").map(([t,u])=>{const e=estado(u);return `<div class="row"><span class="grow">${esc(u.nombre)}${ocTel()?"":`<br><span class="small muted">${verTel(t)}</span>`}</span><span class="chip ${e[0]}">${e[1]}</span></div>`}).join("")||"<p class='muted'>Todos al día 🎉</p>"}
    ${S.profe?"":`<button class="btn ghost small" id="csv">Descargar todo en Excel (CSV)</button>`}</div>`;
 }
 function aGente(){
@@ -1637,7 +1654,7 @@ function aGente(){
 function renderUser(t){
   const u=S.A.users[t]; const L=Object.entries(u.logs).sort((a,b)=>a[0]-b[0]);
   return `<button class="btn ghost small" id="volver">← Volver</button>
-  <div class="card"><div class="hero">${ring(L.map(x=>+x[0]),HOY,96)}<div class="grow"><h2>${esc(u.nombre)}</h2><p class="small muted">${u.edad||"?"} años${S.profe?"":" · "+verTel(t)}</p><p class="small">${totalReps(u.logs).toLocaleString("es-AR")} reps en total</p></div></div>
+  <div class="card"><div class="hero">${ring(L.map(x=>+x[0]),HOY,96)}<div class="grow"><h2>${esc(u.nombre)}</h2><p class="small muted">${u.edad||"?"} años${ocTel()?"":" · "+verTel(t)}</p><p class="small">${totalReps(u.logs).toLocaleString("es-AR")} reps en total</p></div></div>
    ${S.profe?"":`<button class="btn ghost small" data-reset="${t}">Resetear PIN</button><button class="btn ghost small" data-baja="${t}">Dar de baja</button>`}</div>
   <div class="card"><span class="tag">Día por día</span>${L.reverse().map(([d,l])=>`<div class="ex"><div class="row"><b class="grow">Día ${d}</b><span>${EMO[l.antes-1]||""} → ${EMO[l.despues-1]||""}</span><span class="small muted">esfuerzo ${l.esfuerzo}/10</span></div>
     ${l.dur?`<p class="small tnum">⏱ ${fmt(l.dur)} en total${l.tiempos?" · "+Object.entries(l.tiempos).map(([e,x])=>`${esc(e.split(" (")[0].split(":")[0])} ${fmt(x)}`).join(" · "):""}</p>`:""}
@@ -1651,9 +1668,9 @@ function aIng(){
   const nom=t=>esc(S.A.users[t]?.nombre||S.A.hab[t]?.nombre||verTel(t));
   return `<div class="card"><h2>Inglés paso a paso</h2><p class="small muted">Complemento gratuito para quienes están en el reto. Cada participante lo ve en su inicio; si no está habilitado, puede pedirlo con un botón.</p>
   <div class="kpis"><div class="kpi"><b>${on}</b><span class="small muted">habilitados para inglés</span></div><div class="kpi"><b>${P.length}</b><span class="small muted">pedidos sin responder</span></div></div></div>
-  ${P.length?`<div class="card"><h3>Lo pidieron (${P.length})</h3><div class="list">${P.map(t=>`<div class="row"><span class="grow small">${nom(t)} · ${verTel(t)}</span><button class="btn small" data-ingon="${t}">Habilitar</button></div>`).join("")}</div><button class="btn" id="ingpedidos">Habilitar a todos los que lo pidieron</button></div>`:""}
+  ${!S.profe&&P.length?`<div class="card"><h3>Lo pidieron (${P.length})</h3><div class="list">${P.map(t=>`<div class="row"><span class="grow small">${nom(t)} · ${verTel(t)}</span><button class="btn small" data-ingon="${t}">Habilitar</button></div>`).join("")}</div><button class="btn" id="ingpedidos">Habilitar a todos los que lo pidieron</button></div>`:""}
   <div class="card"><h3>Todos los participantes</h3><div class="list">${H.map(([t,v])=>{const u=S.A.users[t],n=u?.ingles?.aprobadas||0;
-    return `<div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span class="grow small"><b>${nom(t)}</b><br><span class="muted">${v.ingles?`${n} de ${ENG.total} lecciones`:u?.inglesPide?"Lo pidió":"No habilitado"}</span></span>${v.ingles?`<button class="btn ghost small" data-ingoff="${t}">Quitar</button>`:`<button class="btn small" data-ingon="${t}">Habilitar</button>`}</div>`}).join("")||"<p class='muted'>Todavía no hay números habilitados.</p>"}</div></div>`;
+    return `<div class="row" style="padding:8px 0;border-top:1px solid var(--line)"><span class="grow small"><b>${nom(t)}</b><br><span class="muted">${v.ingles?`${n} de ${ENG.total} lecciones`:u?.inglesPide?"Lo pidió":"No habilitado"}</span></span>${S.profe?"":v.ingles?`<button class="btn ghost small" data-ingoff="${t}">Quitar</button>`:`<button class="btn small" data-ingon="${t}">Habilitar</button>`}</div>`}).join("")||"<p class='muted'>Todavía no hay números habilitados.</p>"}</div></div>`;
 }
 function aNum(){
   const H=Object.entries(S.A.hab);
@@ -1723,12 +1740,12 @@ document.addEventListener("click",async e=>{
   if(b.id==="cenviar") return enviarConsulta();
   if(b.dataset.cresp) return responderConsulta(b.dataset.cresp);
   if(b.id==="iguardar"){const ti=$("#itit").value.trim(),tx=$("#itxt").value.trim();if(!ti&&!tx)return;b.disabled=true;
-    const i={titulo:ti.slice(0,120),texto:tx.slice(0,3000),autor:S.profe?S.profe.nombre||"Profe":"Rogelio",email:auth.currentUser.email,ts:Date.now()};
+    const i={titulo:ti.slice(0,120),texto:tx.slice(0,3000),autor:S.profe?`${S.profe.nombre||"Equipo"} (${rub().nombre})`:"Rogelio",email:auth.currentUser.email,ts:Date.now()};
     try{const r=await addDoc(collection(db,"ideas"),i);S.A.ideas.unshift({id:r.id,...i})}catch(e){alert("No se pudo guardar la idea.")}return render()}
   if(b.dataset.iborrar){if(!confirm("¿Borrar esta idea?"))return;try{await deleteDoc(doc(db,"ideas",b.dataset.iborrar));S.A.ideas=S.A.ideas.filter(x=>x.id!==b.dataset.iborrar)}catch(e){alert("No se pudo borrar.")}return render()}
-  if(b.id==="eqadd"){const m=$("#eqmail").value.trim().toLowerCase(),n=$("#eqnom").value.trim();S.msg="";S.ok="";
+  if(b.id==="eqadd"){const m=$("#eqmail").value.trim().toLowerCase(),n=$("#eqnom").value.trim(),r=rubroDe($("#eqrub").value);S.msg="";S.ok="";
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){S.msg="Revisá el mail.";return render()}
-    await setDoc(doc(db,"equipo",m),{nombre:n||"Profe",rol:"profe",creado:serverTimestamp()});S.A.equipo=S.A.equipo.filter(x=>x.id!==m).concat({id:m,nombre:n||"Profe"});S.ok=`Listo. Pasale el link de la app: entra con "Soy del equipo (profe)", pone ${m} y toca "Recibir link para crear mi contraseña".`;return render()}
+    await setDoc(doc(db,"equipo",m),{nombre:n||"Equipo",rubro:r,creado:serverTimestamp()});S.A.equipo=S.A.equipo.filter(x=>x.id!==m).concat({id:m,nombre:n||"Equipo",rubro:r});S.ok=`Listo. Pasale el link de la app: entra con "Soy del equipo", pone ${m} y toca "Recibir link para crear mi contraseña".`;return render()}
   if(b.dataset.eqdel){if(!confirm("¿Quitarle el acceso al panel?"))return;await deleteDoc(doc(db,"equipo",b.dataset.eqdel));S.A.equipo=S.A.equipo.filter(x=>x.id!==b.dataset.eqdel);return render()}
   if(b.id==="aentrar"){const pw=$("#apass").value,em=S.loginRol==="equipo"?(S.aemail=($("#aemail").value||"").trim().toLowerCase()):ADMIN_EMAIL;S.msg="";S.ok="";S.busy=true;render();
     try{await signInWithEmailAndPassword(auth,em,pw)}catch(err){S.busy=false;S.msg="Contraseña incorrecta. Si es la primera vez, tocá \"Recibir link\".";render()}return}
@@ -1803,7 +1820,7 @@ onAuthStateChanged(auth,async user=>{
     let eq=null;try{eq=await getDoc(doc(db,"equipo",user.email.toLowerCase()))}catch(e){}
     if(eq&&eq.exists()){
       if(!user.emailVerified){try{await sendEmailVerification(user)}catch(e){} await signOut(auth);S.vista="adminlogin";S.loginRol="equipo";S.busy=false;S.msg="";S.ok="Falta un paso: te mandamos un mail para verificar tu correo. Abrí el link y volvé a entrar con tu contraseña.";return render()}
-      S.profe={email:user.email.toLowerCase(),...eq.data()};S.adminTab="resumen";return cargarAdmin()}
+      S.profe={email:user.email.toLowerCase(),...eq.data()};S.adminTab=rub().tabs[0];return cargarAdmin()}
   }
   if(user.email.endsWith(DOM)) return cargarParticipante(user).catch(()=>{S.vista="login";S.msg="No pudimos cargar tus datos. Probá de nuevo.";render()});
   S.vista="noadmin";render();
