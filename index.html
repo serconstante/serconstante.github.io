@@ -223,8 +223,8 @@ function plan(d){
   const w=Math.ceil(d/7), k=(d-1)%7+1, series=3;
   if(d===1) return {tipo:"test",titulo:"Test inicial + Tren superior A",ses:"A_sup",series:2};
   if(d===28) return {tipo:"testfin",titulo:"Test final y cierre"};
-  if(d>=17){ /* desde el día 17: 4 días de cuerpo completo por semana, 2 series, sin bloque de energía */
-    const m={18:"FB_A",19:"FB_B",22:"FB_C",23:"FB_A",25:"FB_B",26:"FB_C"};
+  if(d>=16){ /* desde el día 16: cuerpo completo, 2 series, sin bloque de energía */
+    const m={16:"FB_A",18:"FB_B",19:"FB_C",22:"FB_A",23:"FB_B",25:"FB_C",26:"FB_A"};
     if(m[d]) return {tipo:"fuerza",ses:m[d],series:2,titulo:SES[m[d]][0]};
     if(d===17||d===24) return {tipo:"activo",titulo:"Día liviano: caminata, bici o movilidad",elegir:true};
     return {tipo:"descanso",titulo:"Descanso total"};
@@ -370,7 +370,7 @@ function estiramiento(p){
 function antes(p,d){
   const w=Math.ceil(d/7);
   const rir=["Dejá 3 repeticiones en reserva","Dejá 2 repeticiones en reserva","Dejá 1 repetición en reserva","Última serie hasta el fallo técnico"][w-1]+"";
-  const rirOk=d>=17?"Dejá 2 repeticiones en reserva: terminá cada serie sintiendo que podías hacer 2 más":rir;
+  const rirOk=d>=16?"Dejá 2 repeticiones en reserva: terminá cada serie sintiendo que podías hacer 2 más":rir;
   const nec=["Ropa cómoda y un espacio de 2 x 2 metros","Una silla firme, sin rueditas","Una botella de agua cerca"];
   if(p.ses&&/sup|^FB/.test(p.ses)) nec.push("Para la espalda: una mesa firme o una mochila con libros o botellas","Una toalla grande y un poste firme, si vas a hacer el remo con toalla");
   if(p.ses==="B_inf") nec.push("Una pared libre para apoyarte en el equilibrio");
