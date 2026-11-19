@@ -104,6 +104,8 @@ details.how[open]{padding-bottom:12px}
 .how-body{display:flex;flex-direction:column;gap:10px}
 .figs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .figbox{background:var(--fig-bg);border-radius:10px;padding:4px}
+.figanim{position:relative;max-width:280px;margin:0 auto 6px}.figanim>.figbox+.figbox{position:absolute;inset:0;animation:figmov 2.6s ease-in-out infinite}
+@keyframes figmov{0%,35%{opacity:0}50%,85%{opacity:1}100%{opacity:0}}@media (prefers-reduced-motion:reduce){.figanim>.figbox+.figbox{animation:none;opacity:0}}
 .figbox svg{width:100%;height:auto;display:block}
 .cap{font-size:.75rem;color:var(--muted);text-align:center;margin-top:2px}
 .err-box{background:var(--warn-soft);color:var(--fg);border-radius:10px;padding:8px 10px;font-size:.88rem}
@@ -292,7 +294,7 @@ function wInner(){const [n,t,c]=CAL[W.i],left=W.paused?W.left:Math.max(0,(W.end-
  <div class="row"><button id="wpause">${W.paused?"▶ Seguir":"⏸ Pausa"}</button><button id="wnext">Siguiente ⏭</button><span class="grow"></span><button id="wfin">${W.seguir?"Ir al entrenamiento ⏭":"Terminar"}</button></div>`}
 function beep(){try{const A=new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(o=>{const g=A.createGain(),k=A.createOscillator();k.frequency.value=880;g.gain.value=.25;k.connect(g);g.connect(A.destination);k.start(A.currentTime+o);k.stop(A.currentTime+o+.15)})}catch(e){} try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
 function buildSteps(p){
-  const ex=SES[p.ses][1].map(x=>x[0]),n=p.series,st=[];
+  const ex=SES[p.ses][1].map(x=>x[0]),n=cuidado().vuelve?Math.max(1,p.series-1):p.series,st=[];
   if(p.ses==="CORE"){ex.slice(0,4).forEach(e=>{for(let s=0;s<n;s++)st.push({ex:e,s,rest:30})});st[st.length-1].rest=45;st.push({ex:"Rutina de movilidad",s:0,movil:true,rest:0})}
   else{[[0,1],[2,3]].forEach(([a,b])=>{for(let s=0;s<n;s++){st.push({ex:ex[a],s,rest:30});st.push({ex:ex[b],s,rest:75})}});if(ex[4]==="Bloque de energía")st.push({ex:ex[4],s:0,bloque:true,rest:0});else for(let s=0;s<n;s++)st.push({ex:ex[4],s,rest:60})}
   st[st.length-1].rest=0; return st;
@@ -354,8 +356,9 @@ function barInner(){
      <div class="row"><span class="grow"><span class="big" style="font-size:1.15rem">${w?esc(e.n):"Respirá · sigue: "+esc(nx?.n||"")}</span>${w&&b.ver==="suave"&&e.s?`<br><span class="small" style="opacity:.8">Versión suave: ${esc(e.s)}</span>`:""}</span><span class="big" id="tblqleft">${fmt(left)}</span></div>
      <div class="row"><button id="tblqskip">Saltar ⏭</button><span class="grow"></span><button id="tfin">Terminar</button></div>`}
   const gN=GUIA[st.ex]?.niv?.length;
-  if(gN&&!T.nivSel)T.nivSel=(S.draft.nivS?.[st.ex]||[])[st.s]||(S.draft.nivS?.[st.ex]||[]).filter(Boolean).slice(-1)[0]||nivDe((S.draft.niv||{})[st.ex])||"Base";
-  const nivRow=gN?`<div class="row"><span class="small" style="opacity:.8">Nivel:</span>${NIVS.map(n=>`<button data-nivs="${n}" class="${T.nivSel===n?"go":""}" style="padding:7px 10px">${n}</button>`).join("")}</div>${(()=>{const r=GUIA[st.ex].niv[0],t=r[NIVS.indexOf(T.nivSel)+1];return t?`<p class="small" style="margin:0;opacity:.85">${T.nivSel}: ${esc(t)}</p>`:""})()}`:"";
+  if(gN&&!T.nivSel)T.nivSel=(S.draft.nivS?.[st.ex]||[])[st.s]||(S.draft.nivS?.[st.ex]||[]).filter(Boolean).slice(-1)[0]||nivDe((S.draft.niv||{})[st.ex])||(cuidado().vuelve?"Fácil":"Base");
+  {const cu=cuidado();if(cu.vuelve&&T.nivSel!=="Fácil")T.nivSel="Fácil";if(!cu.difOk&&T.nivSel==="Difícil")T.nivSel="Base"}
+  const nivRow=gN?`<div class="row"><span class="small" style="opacity:.8">Nivel:</span>${NIVS.map(n=>{const cu=cuidado(),lock=(n==="Difícil"&&!cu.difOk)||(cu.vuelve&&n==="Base");return lock?`<button disabled style="padding:7px 10px;opacity:.45">🔒 ${n}</button>`:`<button data-nivs="${n}" class="${T.nivSel===n?"go":""}" style="padding:7px 10px">${n}</button>`}).join("")}</div>${(()=>{const r=GUIA[st.ex].niv[0],t=r[NIVS.indexOf(T.nivSel)+1];return t?`<p class="small" style="margin:0;opacity:.85">${T.nivSel}: ${esc(t)}</p>`:""})()}`:"";
   const rngTxt=(SES[plan(DIA).ses][1].find(x=>x[0]===st.ex)||[])[1]||"",esSeg=/\d\s*s\b|segundo/.test(rngTxt),porLado=/por (lado|pierna)/.test(rngTxt);
   const prev=(S.draft.ej[st.ex]||[])[st.s]??"";
   return head+`<p class="big" style="font-size:1.15rem">${esc(st.ex)}</p><p class="small" style="opacity:.8">Serie ${st.s+1} de ${n} · meta: ${esc((SES[plan(DIA).ses][1].find(x=>x[0]===st.ex)||[])[1]||"")} ${esSeg?"· si no llegás, aguantá lo que puedas":"· si no llegás, las que puedas"}</p>
@@ -416,13 +419,26 @@ function despues(p){
     <li>El cansancio muscular es esperable; el dolor agudo o en una articulación no. Si aparece, frená ese ejercicio y usá la variante más fácil.</li>
     <li>Respetá los días de descanso: son parte del plan, no un día perdido.</li></ul></div></details></div>`;
 }
+function cuidado(){
+  if(!S.logs||S.admin||S.profe)return{nuevo:false,vuelve:false,difOk:true,sin:0};
+  const L=Object.entries(S.logs).filter(([k])=>+k!==DIA).map(([,l])=>l),n=L.length,ds=L.map(l=>l.diaCalendario||l.d).filter(Boolean),ult=ds.length?Math.max(...ds):null,sin=ult==null?0:HOY-ult;
+  const vuelve=ult!=null&&sin>=4,nuevo=n<3,recientes=ds.filter(x=>x>=HOY-6).length,constante=recientes>=2;
+  return{nuevo,vuelve,constante,difOk:!nuevo&&!vuelve&&constante,sin,motivo:nuevo?"Se habilita con 3 días hechos":vuelve?"Hoy retomás suave":"Se habilita con 2 días seguidos"}
+}
+function cuidadoHTML(p){
+  if(!p.ses)return"";const c=cuidado();
+  if(c.vuelve)return `<div class="card" style="border-left:4px solid var(--ok)"><span class="tag">💚 Volver suave</span><h2>¡Qué bueno que volviste!</h2><p>Hacía ${c.sin} días que no cargabas. Hoy retomá despacio para que el cuerpo se vuelva a acostumbrar:</p><ul style="margin:0;padding-left:20px"><li><b>Una serie menos</b> que lo habitual (ya está ajustado).</li><li>Nivel <b>Más fácil</b> en todos los ejercicios.</li><li>Hacé el <b>mínimo</b> de repeticiones de la meta.</li></ul><p class="small muted">Mañana ya podés usar el nivel Base. El nivel Más difícil vuelve cuando tengas 2 días seguidos hechos.</p></div>`;
+  if(c.nuevo)return `<div class="card" style="border-left:4px solid var(--ok)"><span class="tag">🌱 Primeros días</span><p style="margin:0">Arrancá con <b>Más fácil</b> o <b>Base</b>. El nivel <b>Más difícil</b> se habilita cuando tengas 3 días hechos: así el cuerpo se va acostumbrando sin lastimarse.</p></div>`;
+  return"";
+}
 function guiaHTML(ex,d){
   const g=GUIA[ex]; if(!g) return "";
-  const figs=g.figs.map(f=>`${g.figs.length>1?`<p class="optname">${esc(f.t)}</p>`:""}<div class="figs">${f.svg.map((sv,i)=>`<div><div class="figbox">${sv}</div><p class="cap">${i+1} · ${esc(f.cap[i])}</p></div>`).join("")}</div>
+  const figs=g.figs.map(f=>`${g.figs.length>1?`<p class="optname">${esc(f.t)}</p>`:""}${f.svg.length===2?`<div class="figanim" aria-label="Movimiento animado"><div class="figbox">${f.svg[0]}</div><div class="figbox">${f.svg[1]}</div></div><p class="cap" style="text-align:center">▶ Así se mueve</p>`:""}<div class="figs">${f.svg.map((sv,i)=>`<div><div class="figbox">${sv}</div><p class="cap">${i+1} · ${esc(f.cap[i])}</p></div>`).join("")}</div>
     <p>${esc(f.como.charAt(0).toUpperCase()+f.como.slice(1))}</p>${f.err?`<p class="err-box"><b>Error común:</b> ${esc(f.err)}</p>`:""}`).join("");
   const lista=g.lista?`<ol style="margin:0;padding-left:20px">${g.lista.map(x=>`<li>${esc(x)}</li>`).join("")}</ol><p>${esc(g.como)}</p>${g.err?`<p class="err-box">${esc(g.err)}</p>`:""}`:"";
   const sel=(d.niv||{})[ex];
-  const niv=g.niv.length?`<p class="optname">Elegí tu nivel de hoy</p>${g.niv.map(([n,f,b,h])=>`${g.niv.length>1?`<p class="small muted">${esc(n)}</p>`:""}<div class="niv">${[["Más fácil",f],["Base",b],["Más difícil",h]].map(([k,t])=>`<button type="button" data-niv="${esc(ex)}" data-v="${k}" class="${sel===k?"on":""}">${k}<span>${esc(t)}</span></button>`).join("")}</div>`).join("")}`:"";
+  const cu=cuidado(),bloq=k=>k==="Más difícil"&&!cu.difOk||cu.vuelve&&k==="Base";
+  const niv=g.niv.length?`<p class="optname">Elegí tu nivel de hoy</p>${g.niv.map(([n,f,b,h])=>`${g.niv.length>1?`<p class="small muted">${esc(n)}</p>`:""}<div class="niv">${[["Más fácil",f],["Base",b],["Más difícil",h]].map(([k,t])=>bloq(k)?`<button type="button" disabled style="opacity:.45;cursor:not-allowed">🔒 ${k}<span>${cu.motivo}</span></button>`:`<button type="button" data-niv="${esc(ex)}" data-v="${k}" class="${sel===k?"on":""}">${k}<span>${esc(t)}</span></button>`).join("")}</div>`).join("")}${cu.difOk?`<p class="small muted" style="margin:4px 0 0">Si hoy subís de nivel, cambiá solo eso: mismas series y el mínimo de repeticiones de la meta.</p>`:""}`:"";
   return `<details class="how"><summary>Ver cómo se hace ▾</summary><div class="how-body">${figs}${lista}${g.seg?`<p class="err-box"><b>Seguridad:</b> ${esc(g.seg)}</p>`:""}${niv}</div></details>`;
 }
 /* ================= Ser Constante · lógica con Firebase ================= */
@@ -1381,6 +1397,7 @@ function mgIniciar(juego){
   const d=mgDia();MG.juego=juego;MG.dia=d;MG.res="";
   if(juego==="frase"){const f=MG_FRASES[(d-1)%MG_FRASES.length];let w=f.split(" ").map((t,i)=>({t,i}));let m=mgMezclar(w,d+7);if(m.every((x,i)=>x.i===i))m=m.reverse();MG.words=m;MG.ans=[];MG.frase=f}
   else if(juego==="sopa"){MG.sopa=mgSopa(d);MG.sel=null}
+  else if(juego==="sudoku"){MG.sdk=mgSudoku(d)}
   else if(juego==="colores"){const r=mgRand(d*57+11),W=7,H=8;MG.col={W,H,g:Array.from({length:W},()=>Array.from({length:H},()=>Math.floor(r()*MG_COL.length))),pts:0,jug:0}}
   else{MG.cards=mgMezclar(MG_FICHAS.concat(MG_FICHAS),d*3+1).map((e,i)=>({e,i}));MG.open=[];MG.ok=[];MG.moves=0;MG.lock=false}
 }
@@ -1402,17 +1419,27 @@ function mgGrupo(c,x,y){const t=c.g[x]?.[y];if(t==null)return[];const vis=new Se
   while(st.length){const[a,b]=st.pop();out.push([a,b]);for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=a+dx,ny=b+dy,k=nx+","+ny;if(!vis.has(k)&&c.g[nx]&&c.g[nx][ny]===t){vis.add(k);st.push([nx,ny])}}}
   return out}
 function mgQuedan(c){for(let x=0;x<c.g.length;x++)for(let y=0;y<c.g[x].length;y++)if(mgGrupo(c,x,y).length>1)return true;return false}
-function mgHecho(j){return !!MG.guardado["d"+mgDia()+j]}
+function mgSudoku(d){
+  const r=mgRand(d*71+5),sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const dig=sh([1,2,3,4,5,6]),bands=sh([0,1,2]),rows=[].concat(...bands.map(b=>sh([0,1]).map(x=>b*2+x))),stacks=sh([0,1]),cols=[].concat(...stacks.map(st=>sh([0,1,2]).map(x=>st*3+x)));
+  const sol=rows.map(rr=>cols.map(cc=>dig[(3*(rr%2)+Math.floor(rr/2)+cc)%6]));
+  const cuenta=(g,lim)=>{let n=0;const ok=(i,v)=>{const R=Math.floor(i/6),C=i%6;for(let k=0;k<6;k++){if(g[R*6+k]===v||g[k*6+C]===v)return false}const br=R-R%2,bc=C-C%3;for(let a=0;a<2;a++)for(let b=0;b<3;b++)if(g[(br+a)*6+bc+b]===v)return false;return true};
+    const go=()=>{if(n>=lim)return;const i=g.indexOf(0);if(i<0){n++;return}for(let v=1;v<=6;v++)if(ok(i,v)){g[i]=v;go();g[i]=0}};go();return n};
+  const g=[].concat(...sol);for(const i of sh([...Array(36).keys()])){if(g.filter(Boolean).length<=17)break;const v=g[i];g[i]=0;if(cuenta(g.slice(),2)!==1)g[i]=v}
+  return{sol:[].concat(...sol),giv:g.slice(),cur:g.slice(),sel:null}
+}
+function mgHecho(j){const k="d"+mgDia()+"_"+j;return !!(MG.guardado[k]||S.perfil?.mente?.[k])}
 function mgGuardar(juego,extra){
-  const k="d"+mgDia();if(MG.guardado[k+juego])return;MG.guardado[k+juego]=true;
-  try{setDoc(doc(db,"usuarios",S.tel),{mente:{[k]:{juego,...extra,ts:Date.now()}}},{merge:true}).catch(()=>{})}catch(e){}
+  const k="d"+mgDia()+"_"+juego,v={juego,dia:mgDia(),...extra,ts:Date.now()};if(MG.guardado[k])return;MG.guardado[k]=v;
+  if(S.perfil){S.perfil.mente=S.perfil.mente||{};S.perfil.mente[k]=v}
+  try{setDoc(doc(db,"usuarios",S.tel),{mente:{[k]:v}},{merge:true}).catch(()=>{})}catch(e){}
 }
 function renderMente(){
   const d=mgDia();
   if(!MG.juego||MG.dia!==d) mgIniciar("frase");
-  const J=[["frase","🧩 Ordená la frase"],["memoria","🃏 Memoria"],["sopa","🔎 Sopa de letras"],["colores","🍎 Juntá iguales"]],hechos=J.filter(([k])=>mgHecho(k)).length;
+  const J=[["frase","🧩 Ordená la frase"],["memoria","🃏 Memoria"],["sopa","🔎 Sopa de letras"],["colores","🍎 Juntá iguales"],["sudoku","🔢 Sudoku"]],hechos=J.filter(([k])=>mgHecho(k)).length;
   const sel=`<div class="row" style="gap:8px;flex-wrap:wrap">${J.map(([k,t])=>`<button class="btn ${MG.juego===k?"":"ghost"} small" data-mg="j-${k}">${t}${mgHecho(k)?" ✓":""}</button>`).join("")}</div>`;
-  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Cuatro juegos cortos para ejercitar la atención y la memoria. Cambian todos los días. Hoy llevás <b>${hechos} de 4</b>.</p>${sel}</div>`;
+  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Cinco juegos cortos para ejercitar la atención y la memoria. Cambian todos los días. Hoy llevás <b>${hechos} de ${J.length}</b>.</p>${sel}</div>`;
   const chip=(t,extra,attr)=>`<button ${attr} style="border:2px solid var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;font-size:1.05rem;background:${extra};color:var(--ink);cursor:pointer;margin:4px">${esc(t)}</button>`;
   if(MG.juego==="frase"){
     const usados=new Set(MG.ans.map(x=>x.i));
@@ -1424,6 +1451,14 @@ function renderMente(){
       <div style="padding:6px 0">${banco}</div>${msg}
       <div class="row" style="gap:8px;flex-wrap:wrap">${MG.ans.length===MG.words.length&&MG.res!=="ok"?`<button class="btn" data-mg="comprobar">Comprobar</button>`:""}${MG.res!=="ok"?`<button class="btn ghost small" data-mg="ver">Ver la respuesta</button>`:""}<button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div></div>`;
   }
+  if(MG.juego==="sudoku"){const z=MG.sdk,fin=z.cur.every((v,i)=>v===z.sol[i]);
+    const cel=z.cur.map((v,i)=>{const R=Math.floor(i/6),C=i%6,dado=z.giv[i]>0,mal=v&&!dado&&v!==z.sol[i],on=z.sel===i;
+      return `<button data-mg="z-${i}" style="aspect-ratio:1;border:1px solid var(--line);${C%3===2&&C<5?"border-right:3px solid var(--ink);":""}${R%2===1&&R<5?"border-bottom:3px solid var(--ink);":""}font:700 1.35rem var(--display);padding:0;background:${on?"var(--accent-soft)":dado?"#EDE9E3":"var(--card)"};color:${mal?"#C0392B":dado?"var(--ink)":"var(--accent)"};cursor:pointer">${v||""}</button>`}).join("");
+    return intro+`<div class="card"><span class="tag">🔢 Sudoku</span><h2>Completá del 1 al 6</h2><p class="small muted">Cada fila, cada columna y cada bloque de 6 casilleros tiene que tener los números del 1 al 6, sin repetir. Tocá un casillero vacío y después el número. Si uno no va, se pone en rojo.</p>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);max-width:340px;border:3px solid var(--ink);border-radius:8px;overflow:hidden">${cel}</div>
+      <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:10px">${[1,2,3,4,5,6].map(n=>`<button class="btn small" data-mg="n-${n}" style="min-width:44px">${n}</button>`).join("")}<button class="btn ghost small" data-mg="n-0">Borrar</button></div>
+      ${fin?`<p style="background:var(--ok-soft);border-radius:12px;padding:10px 12px"><b>¡Sudoku resuelto!</b> Mañana hay uno nuevo.</p>`:""}
+      <button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div>`}
   if(MG.juego==="colores"){const c=MG.col,quedan=c.g.reduce((a,col)=>a+col.length,0),sigue=mgQuedan(c);
     let cel="";for(let y=c.H-1;y>=0;y--)for(let x=0;x<c.W;x++){const t=c.g[x]?.[y];cel+=t==null?`<div></div>`:`<button data-mg="k-${x}-${y}" aria-label="ficha" style="aspect-ratio:1;border-radius:12px;border:2px solid rgba(0,0,0,.12);background:${MG_COL[t][1]};font-size:1.5rem;padding:0;cursor:pointer">${MG_COL[t][0]}</button>`}
     return intro+`<div class="card"><span class="tag">🍎 Juntá iguales</span><h2>Tocá los grupos iguales</h2><p class="small muted">Tocá un grupo de 2 o más fichas iguales que estén pegadas. Desaparecen y las de arriba bajan. Cuanto más grande el grupo, más puntos.</p>
@@ -1456,7 +1491,9 @@ document.addEventListener("click",e=>{
     while(c.g.length<c.W)c.g.push([]);
     if(!mgQuedan(c))mgGuardar("colores",{puntos:c.pts});
     return render()}
-  if(a==="j-frase"||a==="j-memoria"||a==="j-sopa"||a==="j-colores"){mgIniciar(a.slice(2));return render()}
+  if(MG.juego==="sudoku"&&a.startsWith("z-")){const i=+a.slice(2);if(MG.sdk.giv[i])return;MG.sdk.sel=i;return render()}
+  if(MG.juego==="sudoku"&&a.startsWith("n-")){const z=MG.sdk;if(z.sel==null)return;z.cur[z.sel]=+a.slice(2);if(z.cur.every((v,i)=>v===z.sol[i]))mgGuardar("sudoku",{ok:true});return render()}
+  if(a==="j-frase"||a==="j-memoria"||a==="j-sopa"||a==="j-colores"||a==="j-sudoku"){mgIniciar(a.slice(2));return render()}
   if(MG.juego==="sopa"&&a.startsWith("s-")){const k=a.slice(2),S2=MG.sopa;MG.res="";
     if(!MG.sel){MG.sel=k;return render()}
     if(MG.sel===k){MG.sel=null;return render()}
@@ -1508,7 +1545,7 @@ function renderProgramas(done){
   :`<div class="card lock"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem;background:var(--line);color:var(--muted)">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Aprendé a hablar y entender inglés para la vida diaria: saludar, comprar, viajar, pedir ayuda. Escuchás, repetís y la app te corrige.</p></div></div>
   ${S.perfil.inglesPide?`<p class="chip warn" style="align-self:flex-start">Pedido enviado · Rogelio te habilita en breve</p>`:`<button class="btn" id="pideing">Quiero probarlo gratis</button>`}</div>`}
   <p class="tag">Mente · Juegos para pensar</p>
-  <button class="card prog" id="pmente"><div class="hero"><span class="logo" style="width:64px;height:64px;background:#F7E2D7;padding:8px">${ISO}</span><div class="grow"><h2>Mente</h2><p class="small muted">Cuatro juegos por día para entrenar la atención y la memoria: Ordená la frase, Memoria, Sopa de letras y Juntá iguales.</p><span class="chip ok">Jugar los juegos de hoy</span></div></div></button>
+  <button class="card prog" id="pmente"><div class="hero"><span class="logo" style="width:64px;height:64px;background:#F7E2D7;padding:8px">${ISO}</span><div class="grow"><h2>Mente</h2><p class="small muted">Cinco juegos por día para entrenar la atención y la memoria: Ordená la frase, Memoria, Sopa de letras, Juntá iguales y Sudoku.</p><span class="chip ok">Jugar los juegos de hoy</span></div></div></button>
   <p class="tag">Herramientas · Regalo para participantes</p>
   <div class="card"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.6rem;background:#2c4fb8">$</span><div class="grow"><h2>Cuentas del hogar</h2><p class="small muted">Anotá gastos, ingresos, tarjetas y ahorros de tu casa en segundos, hasta hablando. Gratis para participantes.</p></div></div>
   <button class="btn" id="pcuentas">Quiero saber más</button></div>
@@ -1591,7 +1628,7 @@ function renderHoy(){
     <div><label for="resp">${esc(preg(DIA))}</label><p class="small muted" style="margin:2px 0 6px">Para pensar con calma. Una línea alcanza, y si hoy no te sale, no pasa nada.</p><textarea id="resp" rows="2" placeholder="Escribí lo que te salga. Solo lo lee Rogelio.">${esc(d.resp)}</textarea></div></div>
   ${S.msg?`<p class="err">${S.msg}</p>`:""}
   <button class="btn" id="guardar" ${S.busy?"disabled":""}>${S.busy?"Guardando…":"Listo, estoy preparado ✓"}</button>`}
-  return sel+aviso+antes(p,DIA)+`
+  return sel+aviso+cuidadoHTML(p)+antes(p,DIA)+`
   <div class="card"><span class="tag">1 · Tu ánimo antes de entrenar</span><h2>¿Cómo te sentís?</h2>
     <div class="moods" data-k="antes">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.antes===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="pal">Una palabra que te describa ahora</label><input id="pal" value="${esc(d.palabraAntes)}" placeholder="con sueño, con ganas, dudando…"></div></div>
@@ -1601,7 +1638,7 @@ function renderHoy(){
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
     ${p.ses&&OBJ[p.ses]?`<p style="background:var(--accent-soft);border-radius:12px;padding:10px 12px"><b>🎯 Objetivo de hoy:</b> ${esc(OBJ[p.ses])}</p>`:""}
     ${p.elegir?`<p>Hoy elegís <b>una</b> de estas tres. Las tres valen lo mismo:</p><ul style="margin:0;padding-left:20px"><li>🚶 <b>Caminata · 20 minutos</b> a paso cómodo, que puedas hablar mientras caminás.</li><li>🚲 <b>Bici · 15 a 20 minutos</b> suave y en llano, sin apurarte.</li><li>🧘 <b>Movilidad · 2 vueltas tranquilas</b> de la rutina de movilidad (unos 15 minutos en total).</li></ul><p class="small muted" style="margin:6px 0 0">Cuando termines, anotá cuál hiciste en «Extra», más abajo.</p>${guiaHTML("Rutina de movilidad",d)}`:""}
-    ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p><p class="small" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0"><b>¿Cuántas hago?</b> El número de cada ejercicio es la meta. Elegí el nivel donde llegues al mínimo con buena técnica y terminá cada serie sintiendo que te quedaban 1 o 2 más. Si ni en el nivel fácil llegás al mínimo, hacé las que puedas: la próxima vez sumá una.</p>`:""}${ej}</div>`:""}
+    ${p.ses?`<p class="small muted">${cuidado().vuelve?Math.max(1,p.series-1):p.series} series · anotá las repeticiones (o segundos) de cada serie</p><p class="small" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0"><b>¿Cuántas hago?</b> El número de cada ejercicio es la meta. Elegí el nivel donde llegues al mínimo con buena técnica y terminá cada serie sintiendo que te quedaban 1 o 2 más. Si ni en el nivel fácil llegás al mínimo, hacé las que puedas: la próxima vez sumá una.</p>`:""}${ej}</div>`:""}
   <div class="card"><span class="tag">3 · Al terminar</span><h2>¿Cómo te sentís ahora?</h2>
     <div class="moods" data-k="despues">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.despues===i+1?"on":""}">${e}</button>`).join("")}</div>
     <div><label for="esf">¿Cuánto te costó? <b id="esfv">${d.esfuerzo}</b>/10</label><input type="range" id="esf" min="1" max="10" value="${d.esfuerzo}"></div></div>
@@ -1801,7 +1838,7 @@ function aResumen(){
 function aGente(){
   const U=Object.entries(S.A.users).sort((a,b)=>Object.keys(b[1].logs).length-Object.keys(a[1].logs).length);
   const noEntraron=Object.keys(S.A.hab).filter(t=>!S.A.users[t]);
-  return `<div class="card"><h2>${U.length} participantes</h2><div class="list">${U.map(([t,u])=>{const e=estado(u);return `<button class="person" data-u="${t}">${avHTML(u)}<span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.edad||"?"} años · ${Object.keys(u.logs).length} días</span></span><span class="chip ${e[0]}">${e[1]}</span></button>`}).join("")||"<p class='muted'>Todavía nadie entró.</p>"}</div></div>
+  return `<div class="card"><h2>${U.length} participantes</h2><div class="list">${U.map(([t,u])=>{const e=estado(u);return `<button class="person" data-u="${t}">${avHTML(u)}<span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.edad||"?"} años · ${Object.keys(u.logs).length} días${u.mente&&Object.keys(u.mente).length?` · 🧠 ${Object.keys(u.mente).length}`:""}</span></span><span class="chip ${e[0]}">${e[1]}</span></button>`}).join("")||"<p class='muted'>Todavía nadie entró.</p>"}</div></div>
   ${S.profe?"":noEntraron.length?`<div class="card"><h3>Habilitados que todavía no entraron (${noEntraron.length})</h3><div class="list">${noEntraron.map(t=>`<div class="row"><span class="grow small">${(S.A.hab[t].nombre?esc(S.A.hab[t].nombre)+" · ":"")+verTel(t)}</span><button class="btn ghost small" data-baja="${t}">Dar de baja</button></div>`).join("")}</div></div>`:""}
   ${!S.profe&&Object.keys(S.A.bajas).length?`<div class="card"><h3>Dados de baja (${Object.keys(S.A.bajas).length})</h3><p class="small muted">No cuentan en las estadísticas ni pueden entrar. Lo que cargaron queda guardado por si vuelven.</p><div class="list">${Object.entries(S.A.bajas).map(([t,v])=>`<div class="row"><span class="grow small">${v.nombre?esc(v.nombre)+" · ":""}${verTel(t)}${v.dias?` · ${v.dias} días cargados`:""}</span><button class="btn ghost small" data-alta="${t}">Reactivar</button></div>`).join("")}</div></div>`:""}`;
 }
@@ -1810,6 +1847,10 @@ function renderUser(t){
   return `<button class="btn ghost small" id="volver">← Volver</button>
   <div class="card"><div class="hero">${ring(L.map(x=>+x[0]),HOY,96)}<div class="grow"><h2>${esc(u.nombre)}</h2><p class="small muted">${u.edad||"?"} años${ocTel()?"":" · "+verTel(t)}</p><p class="small">${totalReps(u.logs).toLocaleString("es-AR")} reps en total</p></div></div>
    ${S.profe?"":`<button class="btn ghost small" data-reset="${t}">Resetear PIN</button><button class="btn ghost small" data-baja="${t}">Dar de baja</button>`}</div>
+  ${(()=>{const m=u.mente||{},N={frase:"Ordená la frase",memoria:"Memoria",sopa:"Sopa de letras",colores:"Juntá iguales",sudoku:"Sudoku"},por={};
+    Object.entries(m).forEach(([k,v])=>{const d=v.dia||+(k.match(/^d(\d+)/)||[])[1];if(!d)return;(por[d]=por[d]||[]).push(N[v.juego]+(v.intentos?` (${v.intentos} intentos)`:"")+(v.puntos!=null?` (${v.puntos} pts)`:""))});
+    const ds=Object.keys(por).sort((a,b)=>b-a);
+    return `<div class="card"><span class="tag">🧠 Mente</span><p class="small">${ds.length?`Jugó ${Object.keys(m).length} juegos en ${ds.length} días.`:"Todavía no jugó."}</p>${ds.map(d=>`<p class="small"><b>Día ${d}:</b> ${por[d].join(" · ")}</p>`).join("")}</div>`})()}
   <div class="card"><span class="tag">Día por día</span>${L.reverse().map(([d,l])=>`<div class="ex"><div class="row"><b class="grow">Día ${d}</b><span>${EMO[l.antes-1]||""} → ${EMO[l.despues-1]||""}</span><span class="small muted">esfuerzo ${l.esfuerzo}/10</span></div>
     ${l.dur?`<p class="small tnum">⏱ ${fmt(l.dur)} en total${l.tiempos?" · "+Object.entries(l.tiempos).map(([e,x])=>`${esc(e.split(" (")[0].split(":")[0])} ${fmt(x)}`).join(" · "):""}</p>`:""}
     ${l.niv&&Object.keys(l.niv).length?`<p class="small muted">Niveles: ${Object.entries(l.niv).map(([e,n])=>`${esc(e.split(" (")[0].split(":")[0])}: ${n}`).join(" · ")}</p>`:""}
