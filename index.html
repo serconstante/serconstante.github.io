@@ -1371,7 +1371,8 @@ function progBar(nombre){return `<div class="brand" style="gap:10px">${LOGO}<div
 const MG_FRASES=["Hoy cuenta aunque sea poco","Esto es difícil, pero hoy empiezo igual","Un ladrillo detrás de otro","Todavía no puedo es una puerta abierta","Elijo moverme aunque no tenga ganas","Lo que repetís es lo que construís","Mi cuerpo también habla y lo escucho","Si hoy me corto, mañana retomo","Paso a paso también se llega lejos","Ser constante es volver cada día","Cuido mi cuerpo porque me acompaña siempre","Cumplir lo que me propongo me hace más fuerte","El descanso también es parte del plan","Hoy hago lo que puedo, y eso suma"];
 const MG_FICHAS=["🏃","💪","🧘","🚲","🍎","💧"];
 const MG_SOPA=["CONSTANTE","CUERPO","EMOCION","LENGUAJE","HABITO","ACCION","EMPEZAR","RETO","FUERZA","CAMINAR","DESCANSO","META","ANIMO","PUEDO","VOLVER","AGUA","PASO","CUMPLIR","ELEGIR","MOVERSE"];
-const MG={juego:null,dia:null,sopa:null,sel:null,words:[],ans:[],res:"",cards:[],open:[],ok:[],moves:0,lock:false,guardado:{}};
+const MG_COL=[["🍎","#F6C9C0"],["💧","#C9DDF6"],["💪","#F7DDB8"],["🌿","#CDEBC9"]];
+const MG={juego:null,dia:null,col:null,sopa:null,sel:null,words:[],ans:[],res:"",cards:[],open:[],ok:[],moves:0,lock:false,guardado:{}};
 function mgRand(seed){let x=seed*9301+49297;return()=>{x=(x*9301+49297)%233280;return x/233280}}
 function mgMezclar(arr,seed){const r=mgRand(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function mgNorm(t){return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zñ ]/g,"").trim()}
@@ -1380,6 +1381,7 @@ function mgIniciar(juego){
   const d=mgDia();MG.juego=juego;MG.dia=d;MG.res="";
   if(juego==="frase"){const f=MG_FRASES[(d-1)%MG_FRASES.length];let w=f.split(" ").map((t,i)=>({t,i}));let m=mgMezclar(w,d+7);if(m.every((x,i)=>x.i===i))m=m.reverse();MG.words=m;MG.ans=[];MG.frase=f}
   else if(juego==="sopa"){MG.sopa=mgSopa(d);MG.sel=null}
+  else if(juego==="colores"){const r=mgRand(d*57+11),W=7,H=8;MG.col={W,H,g:Array.from({length:W},()=>Array.from({length:H},()=>Math.floor(r()*MG_COL.length))),pts:0,jug:0}}
   else{MG.cards=mgMezclar(MG_FICHAS.concat(MG_FICHAS),d*3+1).map((e,i)=>({e,i}));MG.open=[];MG.ok=[];MG.moves=0;MG.lock=false}
 }
 function mgSopa(d){
@@ -1396,6 +1398,10 @@ function mgSopa(d){
     return{N,g,pal,pos,found:[]};
   }
 }
+function mgGrupo(c,x,y){const t=c.g[x]?.[y];if(t==null)return[];const vis=new Set([x+","+y]),st=[[x,y]],out=[];
+  while(st.length){const[a,b]=st.pop();out.push([a,b]);for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=a+dx,ny=b+dy,k=nx+","+ny;if(!vis.has(k)&&c.g[nx]&&c.g[nx][ny]===t){vis.add(k);st.push([nx,ny])}}}
+  return out}
+function mgQuedan(c){for(let x=0;x<c.g.length;x++)for(let y=0;y<c.g[x].length;y++)if(mgGrupo(c,x,y).length>1)return true;return false}
 function mgHecho(j){return !!MG.guardado["d"+mgDia()+j]}
 function mgGuardar(juego,extra){
   const k="d"+mgDia();if(MG.guardado[k+juego])return;MG.guardado[k+juego]=true;
@@ -1404,9 +1410,9 @@ function mgGuardar(juego,extra){
 function renderMente(){
   const d=mgDia();
   if(!MG.juego||MG.dia!==d) mgIniciar("frase");
-  const J=[["frase","🧩 Ordená la frase"],["memoria","🃏 Memoria"],["sopa","🔎 Sopa de letras"]],hechos=J.filter(([k])=>mgHecho(k)).length;
+  const J=[["frase","🧩 Ordená la frase"],["memoria","🃏 Memoria"],["sopa","🔎 Sopa de letras"],["colores","🍎 Juntá iguales"]],hechos=J.filter(([k])=>mgHecho(k)).length;
   const sel=`<div class="row" style="gap:8px;flex-wrap:wrap">${J.map(([k,t])=>`<button class="btn ${MG.juego===k?"":"ghost"} small" data-mg="j-${k}">${t}${mgHecho(k)?" ✓":""}</button>`).join("")}</div>`;
-  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Tres juegos cortos para ejercitar la atención y la memoria. Cambian todos los días. Hoy llevás <b>${hechos} de 3</b>.</p>${sel}</div>`;
+  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Cuatro juegos cortos para ejercitar la atención y la memoria. Cambian todos los días. Hoy llevás <b>${hechos} de 4</b>.</p>${sel}</div>`;
   const chip=(t,extra,attr)=>`<button ${attr} style="border:2px solid var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;font-size:1.05rem;background:${extra};color:var(--ink);cursor:pointer;margin:4px">${esc(t)}</button>`;
   if(MG.juego==="frase"){
     const usados=new Set(MG.ans.map(x=>x.i));
@@ -1418,6 +1424,13 @@ function renderMente(){
       <div style="padding:6px 0">${banco}</div>${msg}
       <div class="row" style="gap:8px;flex-wrap:wrap">${MG.ans.length===MG.words.length&&MG.res!=="ok"?`<button class="btn" data-mg="comprobar">Comprobar</button>`:""}${MG.res!=="ok"?`<button class="btn ghost small" data-mg="ver">Ver la respuesta</button>`:""}<button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div></div>`;
   }
+  if(MG.juego==="colores"){const c=MG.col,quedan=c.g.reduce((a,col)=>a+col.length,0),sigue=mgQuedan(c);
+    let cel="";for(let y=c.H-1;y>=0;y--)for(let x=0;x<c.W;x++){const t=c.g[x]?.[y];cel+=t==null?`<div></div>`:`<button data-mg="k-${x}-${y}" aria-label="ficha" style="aspect-ratio:1;border-radius:12px;border:2px solid rgba(0,0,0,.12);background:${MG_COL[t][1]};font-size:1.5rem;padding:0;cursor:pointer">${MG_COL[t][0]}</button>`}
+    return intro+`<div class="card"><span class="tag">🍎 Juntá iguales</span><h2>Tocá los grupos iguales</h2><p class="small muted">Tocá un grupo de 2 o más fichas iguales que estén pegadas. Desaparecen y las de arriba bajan. Cuanto más grande el grupo, más puntos.</p>
+      <div style="display:grid;grid-template-columns:repeat(${c.W},1fr);gap:5px;max-width:360px">${cel}</div>
+      <p class="small">Puntos: <b>${c.pts}</b> · Fichas que quedan: <b>${quedan}</b></p>
+      ${sigue?"":`<p style="background:var(--ok-soft);border-radius:12px;padding:10px 12px"><b>${quedan===0?"¡Limpiaste todo el tablero!":"¡Terminaste!"}</b> Hiciste ${c.pts} puntos${quedan?` y quedaron ${quedan} fichas sueltas`:""}. Mañana hay un tablero nuevo.</p>`}
+      <button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div>`}
   if(MG.juego==="sopa"){const S2=MG.sopa,fc=new Set(S2.found.flatMap(w=>S2.pos[w].map(([a,b])=>a+"-"+b)));
     const grid=S2.g.map((row,a)=>row.map((ch,b)=>{const k=a+"-"+b,on=MG.sel===k;return `<button data-mg="s-${k}" style="aspect-ratio:1;border:1px solid var(--line);border-radius:6px;font:700 1rem var(--display);padding:0;background:${on?"var(--accent)":fc.has(k)?"var(--ok-soft)":"var(--card)"};color:${on?"#fff":"var(--ink)"};cursor:pointer">${ch}</button>`}).join("")).join("");
     const lista=S2.pal.map(w=>`<span style="display:inline-block;margin:3px 8px 3px 0;font-weight:700;${S2.found.includes(w)?"text-decoration:line-through;opacity:.5":""}">${w}</span>`).join("");
@@ -1437,7 +1450,13 @@ function renderMente(){
 }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-mg]");if(!b)return;const a=b.dataset.mg;
-  if(a==="j-frase"||a==="j-memoria"||a==="j-sopa"){mgIniciar(a.slice(2));return render()}
+  if(MG.juego==="colores"&&a.startsWith("k-")){const c=MG.col,[x,y]=a.slice(2).split("-").map(Number),gr=mgGrupo(c,x,y);
+    if(gr.length<2)return;const quitar=new Set(gr.map(([a,b])=>a+","+b));
+    c.g=c.g.map((col,cx)=>col.filter((t,cy)=>!quitar.has(cx+","+cy))).filter(col=>col.length);c.pts+=gr.length*gr.length;c.jug++;
+    while(c.g.length<c.W)c.g.push([]);
+    if(!mgQuedan(c))mgGuardar("colores",{puntos:c.pts});
+    return render()}
+  if(a==="j-frase"||a==="j-memoria"||a==="j-sopa"||a==="j-colores"){mgIniciar(a.slice(2));return render()}
   if(MG.juego==="sopa"&&a.startsWith("s-")){const k=a.slice(2),S2=MG.sopa;MG.res="";
     if(!MG.sel){MG.sel=k;return render()}
     if(MG.sel===k){MG.sel=null;return render()}
@@ -1489,7 +1508,7 @@ function renderProgramas(done){
   :`<div class="card lock"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem;background:var(--line);color:var(--muted)">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Aprendé a hablar y entender inglés para la vida diaria: saludar, comprar, viajar, pedir ayuda. Escuchás, repetís y la app te corrige.</p></div></div>
   ${S.perfil.inglesPide?`<p class="chip warn" style="align-self:flex-start">Pedido enviado · Rogelio te habilita en breve</p>`:`<button class="btn" id="pideing">Quiero probarlo gratis</button>`}</div>`}
   <p class="tag">Mente · Juegos para pensar</p>
-  <button class="card prog" id="pmente"><div class="hero"><span class="logo" style="width:64px;height:64px;background:#F7E2D7;padding:8px">${ISO}</span><div class="grow"><h2>Mente</h2><p class="small muted">Tres juegos por día para entrenar la atención y la memoria: Ordená la frase, Memoria y Sopa de letras.</p><span class="chip ok">Jugar los juegos de hoy</span></div></div></button>
+  <button class="card prog" id="pmente"><div class="hero"><span class="logo" style="width:64px;height:64px;background:#F7E2D7;padding:8px">${ISO}</span><div class="grow"><h2>Mente</h2><p class="small muted">Cuatro juegos por día para entrenar la atención y la memoria: Ordená la frase, Memoria, Sopa de letras y Juntá iguales.</p><span class="chip ok">Jugar los juegos de hoy</span></div></div></button>
   <p class="tag">Herramientas · Regalo para participantes</p>
   <div class="card"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.6rem;background:#2c4fb8">$</span><div class="grow"><h2>Cuentas del hogar</h2><p class="small muted">Anotá gastos, ingresos, tarjetas y ahorros de tu casa en segundos, hasta hablando. Gratis para participantes.</p></div></div>
   <button class="btn" id="pcuentas">Quiero saber más</button></div>
