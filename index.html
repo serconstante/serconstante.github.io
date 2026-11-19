@@ -213,6 +213,9 @@ const SES={
  A_inf:["Tren inferior A",[["Sentadilla","15 a 25 reps"],["Zancada hacia atrás","10 a 15 por pierna"],["Puente de glúteo a una pierna","10 a 15 por pierna"],["Sentadilla isométrica en pared","30 a 60 s"],["Elevación de talones","15 a 25 reps"]]],
  B_sup:["Tren superior B",[["Flexiones cerradas","6 a 12 reps"],["Remo con toalla o mochila","10 a 15 reps"],["Flexiones con pies elevados","6 a 12 reps"],["Bíceps: remo supino o curl con mochila","8 a 12 reps"],["Flexiones de escápulas + superman W","10 a 12 reps"]]],
  B_inf:["Tren inferior B",[["Sentadilla búlgara","8 a 12 por pierna"],["Peso muerto a una pierna","10 a 12 por pierna"],["Subida al cajón (silla firme)","10 a 12 por pierna"],["Puente de isquios caminando","8 a 12 reps"],["Bloque de energía","5 minutos"]]],
+ FB_A:["Cuerpo completo A",[["Sentadilla","12 a 20 reps"],["Flexiones de brazos","6 a 12 reps"],["Puente de glúteo a una pierna","8 a 12 por pierna"],["Remo: bajo la mesa o con mochila","8 a 12 reps"],["Elevación de talones","12 a 20 reps"]]],
+ FB_B:["Cuerpo completo B",[["Zancada hacia atrás","8 a 12 por pierna"],["Remo con toalla o mochila","8 a 12 reps"],["Puente de isquios caminando","6 a 10 reps"],["Fondos en silla (tríceps)","6 a 12 reps"],["Sentadilla isométrica en pared","20 a 45 s"]]],
+ FB_C:["Cuerpo completo C",[["Subida al cajón (silla firme)","8 a 12 por pierna"],["Bíceps: remo supino o curl con mochila","8 a 12 reps"],["Peso muerto a una pierna","8 a 10 por pierna"],["Flexiones de escápulas + superman W","8 a 12 reps"],["Sentadilla","12 a 20 reps"]]],
  CORE:["Core, movilidad y estiramiento",[["Plancha frontal","20 a 45 s"],["Plancha lateral","15 a 30 s por lado"],["Dead bug","8 a 12 por lado"],["Hollow hold","15 a 30 s"],["Rutina de movilidad","1 vuelta · 7 minutos"]]]
 };
 const TEST=[["Flexiones máximas sin pausa","reps","Todas las que puedas sin parar, con el cuerpo recto de cabeza a talones. Si en el piso no te sale ninguna, hacelas con las manos en la mesa o en la pared."],["Remo máximo (mesa o mochila)","reps","Todas las que puedas sin parar: bajo la mesa con las rodillas flexionadas, o con la mochila (contá un solo brazo). Tirá hasta juntar los omóplatos y bajá lento."],["Sentadillas en 60 segundos","reps","Poné un cronómetro de 1 minuto y contá cuántas hacés bajando hasta tocar apenas una silla con la cola. Si necesitás, frená un segundo y seguí."],["Sentadilla búlgara máxima, pierna más débil","reps","Pie de atrás apoyado en la silla, bajá hasta que la rodilla de atrás quede cerca del piso. Contá las que puedas con la pierna que sentís más débil. Si te cuesta el equilibrio, apoyate en una pared."]];
@@ -220,6 +223,12 @@ function plan(d){
   const w=Math.ceil(d/7), k=(d-1)%7+1, series=3;
   if(d===1) return {tipo:"test",titulo:"Test inicial + Tren superior A",ses:"A_sup",series:2};
   if(d===28) return {tipo:"testfin",titulo:"Test final y cierre"};
+  if(d>=17){ /* desde el día 17: 4 días de cuerpo completo por semana, 2 series, sin bloque de energía */
+    const m={18:"FB_A",19:"FB_B",22:"FB_C",23:"FB_A",25:"FB_B",26:"FB_C"};
+    if(m[d]) return {tipo:"fuerza",ses:m[d],series:2,titulo:SES[m[d]][0]};
+    if(d===17||d===24) return {tipo:"activo",titulo:"Día liviano: caminata, bici o movilidad",elegir:true};
+    return {tipo:"descanso",titulo:"Descanso total"};
+  }
   if(w===4){
     const m={22:["A_sup",3],23:["A_inf",3],24:["CORE",3],25:["B_sup",3],26:["A_sup",2]};
     if(m[d]) return {tipo:"fuerza",ses:m[d][0],series:m[d][1],titulo:SES[m[d][0]][0]+(d===26?" (descarga suave)":"")};
@@ -230,9 +239,12 @@ function plan(d){
   if(k===6) return {tipo:"activo",titulo:"Descanso activo: caminata de "+[30,35,40][w-1]+" minutos"};
   return {tipo:"descanso",titulo:"Descanso total"};
 }
+const OBJ={FB_A:"Fuerza de piernas, de empuje (pecho y brazos) y de espalda. Te sirve para levantarte de una silla, subir escaleras y cargar cosas con menos esfuerzo.",
+ FB_B:"Piernas de a una, espalda y brazos. Mejora el equilibrio y la fuerza para agacharte, levantar cosas del piso y sostenerte firme.",
+ FB_C:"Subir escalones, agacharte cuidando la espalda, brazos y postura. Te ayuda a subir escaleras, levantar peso del piso y mantener la espalda derecha."};
 const PREG=["¿Para qué querés hacer este reto?", "¿Qué te dijiste hoy antes de empezar?", "Hoy, ¿pensaste «no puedo» o «yo no soy de los que…»? ¿Eso es un hecho o una opinión tuya sobre vos?", "¿Qué hecho de hoy, algo que se pueda contar o medir, te sorprendió de vos?", "¿Qué excusa apareció hoy? ¿Estaba en tu círculo de influencia (lo que depende de vos) o en el de preocupación (lo que no)?", "¿Cómo mirás hoy tu cuerpo: desde lo que le falta o desde lo que puede?", "Un hábito es saber qué hacer, saber cómo y querer hacerlo. ¿Cuál de los tres te está costando más?", "Se terminó la novedad. ¿Qué promesa te hiciste a vos y cómo la estás cumpliendo?", "¿Qué no salió como esperabas esta semana? ¿Qué posibilidad nueva te abre?", "¿Qué emoción apareció hoy al terminar?", "¿En qué momento te descubriste pensando «para qué, si igual…»?", "¿Qué «no puedo» se convirtió en «todavía»?", "Hoy, ¿dijiste «tengo que» o «elijo»? ¿Qué cambia cuando lo decís distinto?", "Mitad del camino: ¿qué hiciste estas dos semanas que antes te parecía imposible?", "¿Qué te dice tu cuerpo hoy, si lo escuchás sin apurarte?", "¿Cómo te parás cuando algo te cuesta? ¿Qué cambia si te parás distinto?", "¿Cómo te hablás cuando algo no sale?", "¿Qué ayuda te estás guardando de pedir?", "¿A quién le podrías prometer algo concreto para la semana que viene? ¿Qué y para cuándo?", "¿Quién te acompaña en esto, aunque no lo sepa?", "¿Qué querés declarar para la última semana?", "¿Qué cosa urgente te sacó hoy de lo importante? ¿A qué le tendrías que decir «no»?", "¿A qué le dijiste «sí» en estas semanas que antes evitabas?", "¿Qué no sabés todavía de vos y te gustaría aprender?", "¿Qué te perdonarías hoy? Un día que faltaste, algo que no salió…", "¿A quién le querés dar las gracias por estos días? ¿Y a vos?", "Cuando termine el reto, ¿cómo vas a seguir cuidando tu cuerpo, tu cabeza y tu ánimo?", "¿Quién sos hoy que no eras hace 28 días?"];
 const FRASES=["Empezá con lo que podés.", "Hoy cuenta aunque sea poco.", "«No puedo» no es un hecho. Es un juicio.", "Los hechos se cuentan. Los juicios se revisan.", "No elegís el día que te toca. Sí elegís qué hacés con él.", "«No sabemos cómo las cosas son. Sólo sabemos cómo las observamos.» R. Echeverría", "Una semana. Ya no sos el mismo que empezó.", "Cumplir una pequeña promesa con vos mismo también es entrenar.", "Cuando algo se corta, aparece una pregunta. No un final.", "Las ganas llegan caminando.", "Un día que faltás no arruina nada. El «ya fue» sí.", "«Todavía no puedo» es una puerta abierta.", "«No puedo» → «Elijo». «Tengo que» → «Prefiero». Así habla la proactividad (S. Covey).", "Mitad del camino. ¿Cómo querés llegar al día 28?", "Tu cuerpo también habla. Escuchalo.", "Cambiá la postura y cambia la conversación.", "Hablate como le hablarías a alguien que querés.", "Pedir no es debilidad. Es animarse a no hacerlo solo.", "Una promesa clara tiene qué, a quién y para cuándo.", "Nadie llega solo.", "Última semana: vos decidís cómo la terminás.", "Moverse nunca es urgente. Por eso hay que ponerlo primero.", "Ya no estás empezando: estás sosteniendo.", "Decir «no sé» es el primer paso para aprender.", "Perdonarte también es seguir.", "Dar las gracias también es cerrar bien.", "Afilar la sierra: cuidarte hoy para poder seguir mañana (S. Covey).", "«No sólo actuamos de acuerdo a como somos, también somos de acuerdo a como actuamos.» R. Echeverría"];
-const EXTRA=["Caminata","Bici","Baile","Pileta","Yoga","Fútbol","Otra"];
+const EXTRA=["Caminata","Bici","Movilidad","Baile","Pileta","Yoga","Fútbol","Otra"];
 const EMO=["😣","😕","😐","🙂","😄"];
 function ring(done,today,size=120){
   const r=size/2-10,c=size/2;let o="";
@@ -350,26 +362,43 @@ function barInner(){
 function drawBar(){const b=document.getElementById("tbar");if(b){b.querySelector(".in").innerHTML=W.on?wInner():barInner()}}
 function barHTML(){return `<div id="tbar"><div class="in">${W.on?wInner():barInner()}</div></div>`}
 function estiramiento(p){
-  const L=p.ses==="CORE"?null:(p.ses&&p.ses.endsWith("sup")?ESTS:ESTI);
+  const L=p.ses==="CORE"?null:(p.ses&&/^FB/.test(p.ses)?ESTI.slice(0,3).concat(ESTS.slice(0,2)):(p.ses&&p.ses.endsWith("sup")?ESTS:ESTI));
   const body=L?`<p class="small">Empezá con 30 segundos de caminata en el lugar respirando profundo. Sostené cada posición <b>20 a 30 segundos</b>, respirando lento y sin rebotes. Tiene que sentirse tensión, nunca dolor.</p>${L.map(([n,c],i)=>`<div><p class="optname">${i+1}. ${esc(n)}</p>${ESTF[n]?`<div class="figbox" style="max-width:260px">${ESTF[n]}</div>`:""}<p class="small">${esc(c)}</p></div>`).join("")}`
     :`<p class="small">Hoy la sesión ya termina con la rutina de movilidad. Cerrá con la postura del niño y 1 minuto de respiración profunda boca arriba.</p>`;
   return `<details class="how"><summary>Al final: estiramiento · 5 minutos ▾</summary><div class="how-body">${body}</div></details>`;
 }
 function antes(p,d){
   const w=Math.ceil(d/7);
-  const rir=["Dejá 3 repeticiones en reserva","Dejá 2 repeticiones en reserva","Dejá 1 repetición en reserva","Última serie hasta el fallo técnico"][w-1];
+  const rir=["Dejá 3 repeticiones en reserva","Dejá 2 repeticiones en reserva","Dejá 1 repetición en reserva","Última serie hasta el fallo técnico"][w-1]+"";
+  const rirOk=d>=17?"Dejá 2 repeticiones en reserva: terminá cada serie sintiendo que podías hacer 2 más":rir;
   const nec=["Ropa cómoda y un espacio de 2 x 2 metros","Una silla firme, sin rueditas","Una botella de agua cerca"];
-  if(p.ses&&/sup/.test(p.ses)) nec.push("Para la espalda: una mesa firme o una mochila con libros o botellas","Una toalla grande y un poste firme, si vas a hacer el remo con toalla");
+  if(p.ses&&/sup|^FB/.test(p.ses)) nec.push("Para la espalda: una mesa firme o una mochila con libros o botellas","Una toalla grande y un poste firme, si vas a hacer el remo con toalla");
   if(p.ses==="B_inf") nec.push("Una pared libre para apoyarte en el equilibrio");
   if(p.ses==="CORE") nec.push("Una toalla o colchoneta para el piso");
   if(p.tipo==="activo") nec.splice(0,3,"Zapatillas cómodas","Agua","Ropa según el clima");
   const fuerza=p.ses&&p.ses!=="CORE";
   return `<div class="card"><span class="tag">Antes de empezar</span><h2>Preparate para hoy</h2>
   <details class="how"><summary>Qué necesitás ▾</summary><ul class="how-body" style="margin:0;padding-left:20px">${nec.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></details>
-  ${fuerza?`<details class="how"><summary>Tiempos y pausas · 40 minutos ▾</summary><div class="how-body small">
-    <div class="compare" style="grid-template-columns:1fr auto"><span>Calentamiento</span><b>5 min</b><span>Biserie 1 (ejercicios 1 y 2 alternados)</span><b>12–13 min</b><span>Biserie 2 (ejercicios 3 y 4 alternados)</span><b>12–13 min</b><span>Ejercicio 5 o bloque de energía</span><b>5 min</b><span>Estiramiento</span><b>5 min</b></div>
+  ${fuerza?`<details class="how"><summary>Tiempos y pausas · ${/^FB/.test(p.ses)?30:40} minutos ▾</summary><div class="how-body small">
+    <div class="compare" style="grid-template-columns:1fr auto"><span>Calentamiento</span><b>5 min</b><span>Biserie 1 (ejercicios 1 y 2 alternados)</span><b>${/^FB/.test(p.ses)?"8":"12–13"} min</b><span>Biserie 2 (ejercicios 3 y 4 alternados)</span><b>${/^FB/.test(p.ses)?"8":"12–13"} min</b><span>${/^FB/.test(p.ses)?"Ejercicio 5":"Ejercicio 5 o bloque de energía"}</span><b>${/^FB/.test(p.ses)?"4":"5"} min</b><span>Estiramiento</span><b>5 min</b></div>
     <p><b>Cómo se hace una biserie:</b> una serie del ejercicio 1, pausa de <b>30 segundos</b>, una serie del ejercicio 2, pausa de <b>60 a 90 segundos</b>. Repetís hasta completar las series de los dos.</p>
-    <p><b>Esta semana:</b> ${rir}. Si la técnica se rompe, la serie terminó.</p></div></details>`:""}
+    <p><b>Esta semana:</b> ${rirOk}. Si la técnica se rompe, la serie terminó.</p></div></details>`:""}
+  <details class="how"><summary>Cuidarte mientras entrenás ▾</summary><div class="how-body small"><ul style="margin:0;padding-left:20px">
+    <li>Hacé siempre la entrada en calor antes de empezar.</li>
+    <li>Respirá durante el esfuerzo: no contengas el aire.</li>
+    <li>Subí de nivel cuando la técnica te salga bien, no porque lo diga el calendario. Si un día te cuesta, quedate en el nivel que venías o bajá uno.</li>
+    <li>Cambiá una sola cosa por vez: más repeticiones o un nivel más difícil, no las dos juntas.</li>
+    <li>Cansancio muscular es normal. <b>Frená</b> si aparece dolor agudo o en una articulación, mareos, dolor de pecho o falta de aire fuera de lo común. Si los síntomas son fuertes, buscá atención médica.</li>
+    <li>Si tenés una enfermedad, una lesión o estás embarazada, consultá con tu médico antes de seguir.</li>
+    <li>Entrená en un lugar despejado, con agua cerca.</li></ul></div></details>
+  <details class="how"><summary>¿Para qué entreno? ▾</summary><div class="how-body small">
+    <p><b>La finalidad.</b> Entrenar busca que tu cuerpo te acompañe en la vida de todos los días: subir escaleras, cargar las bolsas, levantarte del piso, jugar con los chicos y hacer tus cosas sin depender de nadie. La meta es moverte mejor, con más fuerza y con menos dolor, a tu ritmo.</p>
+    <p><b>Lo que buscamos entrenar</b></p>
+    <ul style="margin:0;padding-left:20px"><li><b>Fuerza:</b> con los años se pierde músculo, y entrenarlo ayuda a mantenerlo.</li><li><b>Equilibrio y movilidad:</b> ayudan a prevenir caídas y a moverte con soltura.</li><li><b>Resistencia:</b> cansarte menos en lo cotidiano.</li><li><b>Constancia:</b> que moverte sea parte de tu semana. La OMS recomienda ejercicios de fuerza 2 o más días por semana y unos 150 minutos semanales de actividad moderada (caminar a paso ligero cuenta), empezando de a poco y sumando de a poco.</li></ul>
+    <p><b>Lo que dicen la OMS y los CDC</b></p>
+    <ul style="margin:0;padding-left:20px"><li><b>Enseguida:</b> ayuda a dormir mejor, baja la ansiedad y baja la presión arterial.</li><li><b>Con el tiempo:</b> baja el riesgo de enfermedades del corazón, ACV y diabetes tipo 2, fortalece los huesos, reduce el riesgo de caídas, cuida la memoria y el ánimo, y ayuda a vivir más años de forma independiente.</li></ul>
+    <p>Son resultados de estudios con muchas personas: cada cuerpo responde a su manera. Lo que sí dicen los CDC es que cualquier cantidad de movimiento ayuda, a cualquier edad. Si tenés dudas de salud, consultá con tu médico.</p>
+    <p class="muted">Fuentes: Organización Mundial de la Salud (OMS) y Centros para el Control y la Prevención de Enfermedades de EE. UU. (CDC).</p></div></details>
   <details class="how"><summary>Agua ▾</summary><div class="how-body small"><p>Tomá un vaso de agua un rato antes de empezar. Durante la sesión, tomá sorbos en las pausas largas. Al terminar, otro vaso. Si hace calor, tomá más.</p></div></details>
   </div>`;
 }
@@ -1424,7 +1453,7 @@ function renderHoy(){
     ${p.tipo==="test"?`<details class="how"><summary>Cómo se hace el test ▾</summary><div class="how-body small"><p><b>1.</b> Primero el calentamiento de 5 minutos (está justo arriba).</p><p><b>2.</b> Hacé las 4 pruebas en orden, con <b>2 o 3 minutos de pausa</b> entre una y otra.</p><p><b>3.</b> Contá solo las repeticiones con buena técnica. Cuando la técnica se rompe, la prueba terminó.</p><p><b>4.</b> Acordate qué variante usaste (piso, mesa, pared…): el día 28 repetís el test igual para comparar.</p><p><b>5.</b> Después del test hacés el entrenamiento de hoy con 2 series en vez de 3.</p></div></details>`:""}
     ${TEST.map(([t,u,c],i)=>`<div><label for="t${i}">${esc(t)}</label>${c?`<p class="small muted" style="margin:2px 0 6px">${esc(c)}</p>`:""}<input id="t${i}" data-test="${esc(t)}" inputmode="numeric" value="${esc(d.test?.[t]??"")}"></div>`).join("")}</div>`:"";
   if(p.tipo==="descanso"){const pm=plan(Math.min(28,DIA+1)),nec=["Ropa cómoda y un espacio de 2 x 2 metros","Una silla firme, sin rueditas","Una botella de agua cerca"];
-    if(pm.ses&&/sup/.test(pm.ses)) nec.push("Una mesa firme o una mochila con libros o botellas para el remo");
+    if(pm.ses&&/sup|^FB/.test(pm.ses)) nec.push("Una mesa firme o una mochila con libros o botellas para el remo");
     if(pm.ses==="CORE") nec.push("Una toalla o colchoneta para el piso");
     if(pm.tipo==="activo") nec.splice(0,3,"Zapatillas cómodas","Agua","Ropa según el clima");
     const PREP=["Dormí bien esta noche","Tomé agua durante el día","Elegí a qué hora entreno mañana","Dejé preparado lo que necesito"],pr=d.prep||[];
@@ -1447,6 +1476,8 @@ function renderHoy(){
   ${esTest?`<div class="card"><span class="tag">Primero</span><h2>Calentamiento · 5 minutos</h2><p class="small muted">Antes del test, calentá bien: así el número es real y te cuidás. Tocá el botón y la app te va marcando el tiempo de cada ejercicio, con aviso al terminar.</p>${musicaBtn()}${calBtn}<details class="how"><summary>Ver cómo se hace cada ejercicio ▾</summary><div class="how-body">${calBody}</div></details></div>`:""}
   ${test}
   ${p.tipo!=="testfin"?`<div class="card"><span class="tag">2 · Entrenamiento</span><h2>${esc(p.titulo)}</h2>
+    ${p.ses&&OBJ[p.ses]?`<p style="background:var(--accent-soft);border-radius:12px;padding:10px 12px"><b>🎯 Objetivo de hoy:</b> ${esc(OBJ[p.ses])}</p>`:""}
+    ${p.elegir?`<p>Hoy elegís <b>una</b> de estas tres. Las tres valen lo mismo:</p><ul style="margin:0;padding-left:20px"><li>🚶 <b>Caminata · 20 minutos</b> a paso cómodo, que puedas hablar mientras caminás.</li><li>🚲 <b>Bici · 15 a 20 minutos</b> suave y en llano, sin apurarte.</li><li>🧘 <b>Movilidad · 2 vueltas tranquilas</b> de la rutina de movilidad (unos 15 minutos en total).</li></ul><p class="small muted" style="margin:6px 0 0">Cuando termines, anotá cuál hiciste en «Extra», más abajo.</p>${guiaHTML("Rutina de movilidad",d)}`:""}
     ${p.ses?`<p class="small muted">${p.series} series · anotá las repeticiones (o segundos) de cada serie</p><p class="small" style="background:var(--accent-soft);border-radius:12px;padding:10px 12px;margin:0"><b>¿Cuántas hago?</b> El número de cada ejercicio es la meta. Elegí el nivel donde llegues al mínimo con buena técnica y terminá cada serie sintiendo que te quedaban 1 o 2 más. Si ni en el nivel fácil llegás al mínimo, hacé las que puedas: la próxima vez sumá una.</p>`:""}${ej}</div>`:""}
   <div class="card"><span class="tag">3 · Al terminar</span><h2>¿Cómo te sentís ahora?</h2>
     <div class="moods" data-k="despues">${EMO.map((e,i)=>`<button aria-label="ánimo ${i+1}" data-v="${i+1}" class="${d.despues===i+1?"on":""}">${e}</button>`).join("")}</div>
