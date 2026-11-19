@@ -2,6 +2,7 @@
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ser Constante</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%201024%201024%22%3E%3Crect%20width%3D%221024%22%20height%3D%221024%22%20rx%3D%22224%22%20fill%3D%22%23161616%22/%3E%3Cg%20transform%3D%22translate%28152%20152%29%20scale%287.2%29%22%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%2216%22%20r%3D%2210%22%20fill%3D%22%23F08A5D%22/%3E%3Cpath%20d%3D%22M10%2034%20Q32%2042%2044%2058%20Q54%2072%2070%2090%22%20fill%3D%22none%22%20stroke%3D%22%23F08A5D%22%20stroke-width%3D%2212%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M88%2012%20Q62%2036%2050%2054%20Q40%2070%2020%2090%22%20fill%3D%22none%22%20stroke%3D%22%23FFFFFF%22%20stroke-width%3D%2212%22%20stroke-linecap%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#B33A0C">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap">
@@ -197,7 +198,9 @@ input[type=range]{padding:0;accent-color:var(--accent)}
 .eng .stat span{font-size:.85rem;color:var(--muted)}
 .lock{opacity:.85}
 </style></head>
-<body><div class="wrap"><main id="app" class="wrap" style="padding:0"></main></div>
+<body><div id="splash" style="position:fixed;inset:0;background:#F3F1EE;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s"><div style="display:flex;align-items:center;gap:18px;animation:scin .7s ease-out both"><div style="width:96px;height:96px"><svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><circle cx="38" cy="16" r="10" fill="#B33A0C"/><path d="M10 34 Q32 42 44 58 Q54 72 70 90" fill="none" stroke="#B33A0C" stroke-width="12" stroke-linecap="round"/><path d="M88 12 Q62 36 50 54 Q40 70 20 90" fill="none" stroke="#161616" stroke-width="12" stroke-linecap="round"/></svg></div><div style="font-family:Poppins,system-ui,sans-serif;color:#161616"><div style="font-weight:700;font-size:2.1rem;line-height:1.02">Ser<br>Constante</div><div style="color:#B33A0C;font-style:italic;font-weight:600;font-size:.82rem;margin-top:6px;border-bottom:3px solid #B33A0C;border-radius:0 0 50% 50%/0 0 6px 6px;padding-bottom:3px">Cuerpo • Emoción • Lenguaje</div></div></div></div>
+<style>@keyframes scin{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){#splash *{animation:none!important}}</style>
+<script>setTimeout(function(){var s=document.getElementById("splash");if(!s)return;s.style.opacity="0";setTimeout(function(){s.remove()},550)},1700)</script><div class="wrap"><main id="app" class="wrap" style="padding:0"></main></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,sendEmailVerification,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1228,7 +1231,7 @@ return {page, click, load, stop, total:LESSONS.length, aprobadas:()=>Object.keys
 
 /* ---------- Ingreso ---------- */
 function renderLogin(){
-  return `<div class="brand"><span class="logo">SC</span><div><h1>Ser Constante</h1><p class="small muted">por Rogelio Coach</p></div></div>
+  return `<div class="brand">${LOGO}<div><h1>Ser Constante</h1><p class="small muted">por Rogelio Coach</p></div></div>
   <div class="card"><h2>Entrá con tu celular</h2>
     <p class="muted small">Usá el mismo número con el que te inscribiste. La primera vez, elegís tu PIN de 4 números.</p>
     <div><label for="tel">Número de celular</label><input id="tel" inputmode="tel" autocomplete="tel" placeholder="343 154 123456" value="${esc(S.loginTel)}"></div>
@@ -1240,7 +1243,7 @@ function renderLogin(){
 }
 function renderAdminLogin(){
   const eq=S.loginRol==="equipo";
-  return `<div class="brand"><span class="logo">SC</span><div><h1>${eq?"Panel del equipo":"Panel de Rogelio"}</h1><p class="small muted">${eq?"Profes, coaches y administración":"Solo para "+ADMIN_EMAIL}</p></div></div>
+  return `<div class="brand">${LOGO}<div><h1>${eq?"Panel del equipo":"Panel de Rogelio"}</h1><p class="small muted">${eq?"Profes, coaches y administración":"Solo para "+ADMIN_EMAIL}</p></div></div>
   <div class="card">${eq?`<div><label for="aemail">Tu mail</label><input id="aemail" type="email" autocomplete="email" value="${esc(S.aemail)}"></div>`:""}<div><label for="apass">Contraseña del panel</label><input id="apass" type="password" autocomplete="current-password"></div>
     ${S.msg?`<p class="err">${S.msg}</p>`:""}${S.ok?`<p class="small" style="color:var(--ok)">${S.ok}</p>`:""}
     <button class="btn" id="aentrar" ${S.busy?"disabled":""}>Entrar</button>
@@ -1362,9 +1365,13 @@ function aEquipo(){
 
 /* ---------- Participante ---------- */
 /* ---------- Mente: juegos para entrenar la atención y la memoria ---------- */
+const ISO=`<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><circle cx="38" cy="16" r="10" fill="#B33A0C"/><path d="M10 34 Q32 42 44 58 Q54 72 70 90" fill="none" stroke="#B33A0C" stroke-width="12" stroke-linecap="round"/><path d="M88 12 Q62 36 50 54 Q40 70 20 90" fill="none" stroke="#161616" stroke-width="12" stroke-linecap="round"/></svg>`;
+const LOGO=`<span class="logo" style="background:#F3F1EE;border:1px solid var(--line);padding:5px">${ISO}</span>`;
+function progBar(nombre){return `<div class="brand" style="gap:10px">${LOGO}<div><p class="tag" style="margin:0">Ser Constante</p><p style="margin:0;font-weight:700;font-family:var(--display)">${esc(nombre)}</p></div></div>`}
 const MG_FRASES=["Hoy cuenta aunque sea poco","Esto es difícil, pero hoy empiezo igual","Un ladrillo detrás de otro","Todavía no puedo es una puerta abierta","Elijo moverme aunque no tenga ganas","Lo que repetís es lo que construís","Mi cuerpo también habla y lo escucho","Si hoy me corto, mañana retomo","Paso a paso también se llega lejos","Ser constante es volver cada día","Cuido mi cuerpo porque me acompaña siempre","Cumplir lo que me propongo me hace más fuerte","El descanso también es parte del plan","Hoy hago lo que puedo, y eso suma"];
 const MG_FICHAS=["🏃","💪","🧘","🚲","🍎","💧"];
-const MG={juego:null,dia:null,words:[],ans:[],res:"",cards:[],open:[],ok:[],moves:0,lock:false,guardado:{}};
+const MG_SOPA=["CONSTANTE","CUERPO","EMOCION","LENGUAJE","HABITO","ACCION","EMPEZAR","RETO","FUERZA","CAMINAR","DESCANSO","META","ANIMO","PUEDO","VOLVER","AGUA","PASO","CUMPLIR","ELEGIR","MOVERSE"];
+const MG={juego:null,dia:null,sopa:null,sel:null,words:[],ans:[],res:"",cards:[],open:[],ok:[],moves:0,lock:false,guardado:{}};
 function mgRand(seed){let x=seed*9301+49297;return()=>{x=(x*9301+49297)%233280;return x/233280}}
 function mgMezclar(arr,seed){const r=mgRand(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function mgNorm(t){return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zñ ]/g,"").trim()}
@@ -1372,17 +1379,34 @@ function mgDia(){return Math.min(Math.max(HOY,1),28)}
 function mgIniciar(juego){
   const d=mgDia();MG.juego=juego;MG.dia=d;MG.res="";
   if(juego==="frase"){const f=MG_FRASES[(d-1)%MG_FRASES.length];let w=f.split(" ").map((t,i)=>({t,i}));let m=mgMezclar(w,d+7);if(m.every((x,i)=>x.i===i))m=m.reverse();MG.words=m;MG.ans=[];MG.frase=f}
+  else if(juego==="sopa"){MG.sopa=mgSopa(d);MG.sel=null}
   else{MG.cards=mgMezclar(MG_FICHAS.concat(MG_FICHAS),d*3+1).map((e,i)=>({e,i}));MG.open=[];MG.ok=[];MG.moves=0;MG.lock=false}
 }
+function mgSopa(d){
+  const N=10,DIRS=[[0,1],[1,0],[1,1],[0,-1]];
+  for(let t=0;t<60;t++){
+    const r=mgRand(d*101+t*7+3),pal=mgMezclar(MG_SOPA,d*13+t).filter(w=>w.length<=N).slice(0,6),g=Array.from({length:N},()=>Array(N).fill(null)),pos={};let ok=true;
+    for(const w of pal.slice().sort((a,b)=>b.length-a.length)){let puesto=false;
+      for(let k=0;k<300&&!puesto;k++){const[dr,dc]=DIRS[Math.floor(r()*DIRS.length)],rr=Math.floor(r()*N),cc=Math.floor(r()*N),er=rr+dr*(w.length-1),ec=cc+dc*(w.length-1);
+        if(er<0||er>=N||ec<0||ec>=N)continue;const cel=[...w].map((ch,i)=>[rr+dr*i,cc+dc*i]);
+        if(cel.every(([a,b],i)=>g[a][b]===null||g[a][b]===w[i])){cel.forEach(([a,b],i)=>g[a][b]=w[i]);pos[w]=cel;puesto=true}}
+      if(!puesto){ok=false;break}}
+    if(!ok)continue;const L="ABCDEFGHILMNOPRSTU";
+    for(let a=0;a<N;a++)for(let b=0;b<N;b++)if(g[a][b]===null)g[a][b]=L[Math.floor(r()*L.length)];
+    return{N,g,pal,pos,found:[]};
+  }
+}
+function mgHecho(j){return !!MG.guardado["d"+mgDia()+j]}
 function mgGuardar(juego,extra){
   const k="d"+mgDia();if(MG.guardado[k+juego])return;MG.guardado[k+juego]=true;
   try{setDoc(doc(db,"usuarios",S.tel),{mente:{[k]:{juego,...extra,ts:Date.now()}}},{merge:true}).catch(()=>{})}catch(e){}
 }
 function renderMente(){
-  const d=mgDia(),hoyJ=d%2?"frase":"memoria";
-  if(!MG.juego||MG.dia!==d) mgIniciar(hoyJ);
-  const sel=`<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ${MG.juego==="frase"?"":"ghost"} small" data-mg="j-frase">🧩 Ordená la frase</button><button class="btn ${MG.juego==="memoria"?"":"ghost"} small" data-mg="j-memoria">🃏 Memoria</button></div>`;
-  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Un juego corto para ejercitar la atención y la memoria. El de hoy es <b>${hoyJ==="frase"?"Ordená la frase":"Memoria"}</b>, pero podés jugar los dos cuando quieras.</p>${sel}</div>`;
+  const d=mgDia();
+  if(!MG.juego||MG.dia!==d) mgIniciar("frase");
+  const J=[["frase","🧩 Ordená la frase"],["memoria","🃏 Memoria"],["sopa","🔎 Sopa de letras"]],hechos=J.filter(([k])=>mgHecho(k)).length;
+  const sel=`<div class="row" style="gap:8px;flex-wrap:wrap">${J.map(([k,t])=>`<button class="btn ${MG.juego===k?"":"ghost"} small" data-mg="j-${k}">${t}${mgHecho(k)?" ✓":""}</button>`).join("")}</div>`;
+  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Tres juegos cortos para ejercitar la atención y la memoria. Cambian todos los días. Hoy llevás <b>${hechos} de 3</b>.</p>${sel}</div>`;
   const chip=(t,extra,attr)=>`<button ${attr} style="border:2px solid var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;font-size:1.05rem;background:${extra};color:var(--ink);cursor:pointer;margin:4px">${esc(t)}</button>`;
   if(MG.juego==="frase"){
     const usados=new Set(MG.ans.map(x=>x.i));
@@ -1394,6 +1418,15 @@ function renderMente(){
       <div style="padding:6px 0">${banco}</div>${msg}
       <div class="row" style="gap:8px;flex-wrap:wrap">${MG.ans.length===MG.words.length&&MG.res!=="ok"?`<button class="btn" data-mg="comprobar">Comprobar</button>`:""}${MG.res!=="ok"?`<button class="btn ghost small" data-mg="ver">Ver la respuesta</button>`:""}<button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div></div>`;
   }
+  if(MG.juego==="sopa"){const S2=MG.sopa,fc=new Set(S2.found.flatMap(w=>S2.pos[w].map(([a,b])=>a+"-"+b)));
+    const grid=S2.g.map((row,a)=>row.map((ch,b)=>{const k=a+"-"+b,on=MG.sel===k;return `<button data-mg="s-${k}" style="aspect-ratio:1;border:1px solid var(--line);border-radius:6px;font:700 1rem var(--display);padding:0;background:${on?"var(--accent)":fc.has(k)?"var(--ok-soft)":"var(--card)"};color:${on?"#fff":"var(--ink)"};cursor:pointer">${ch}</button>`}).join("")).join("");
+    const lista=S2.pal.map(w=>`<span style="display:inline-block;margin:3px 8px 3px 0;font-weight:700;${S2.found.includes(w)?"text-decoration:line-through;opacity:.5":""}">${w}</span>`).join("");
+    const fin=S2.found.length===S2.pal.length;
+    return intro+`<div class="card"><span class="tag">🔎 Sopa de letras</span><h2>Encontrá las ${S2.pal.length} palabras</h2><p class="small muted">Tocá la primera letra de la palabra y después la última. Pueden estar al derecho, al revés, hacia abajo o en diagonal.</p>
+      <div style="display:grid;grid-template-columns:repeat(${S2.N},1fr);gap:3px;max-width:380px">${grid}</div>
+      <p class="small">${lista}</p>${MG.res==="mal"?`<p class="small" style="background:var(--warn-soft);border-radius:12px;padding:8px 12px">Ahí no hay una palabra. Probá de nuevo.</p>`:""}
+      ${fin?`<p style="background:var(--ok-soft);border-radius:12px;padding:10px 12px"><b>¡Encontraste todas!</b> Mañana hay una sopa nueva.</p>`:""}
+      <button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div>`}
   const n=MG.ok.length/2,fin=n===MG_FICHAS.length;
   const grid=MG.cards.map((c,k)=>{const vis=MG.open.includes(k)||MG.ok.includes(k);return `<button data-mg="c-${k}" aria-label="carta ${k+1}" style="aspect-ratio:1;border-radius:14px;border:2px solid var(--ink);font-size:2rem;background:${MG.ok.includes(k)?"var(--ok-soft)":vis?"var(--card)":"var(--accent)"};color:var(--ink);cursor:pointer">${vis?c.e:""}</button>`}).join("");
   return intro+`<div class="card"><span class="tag">🃏 Memoria</span><h2>Encontrá los pares</h2><p class="small muted">Tocá dos cartas. Si son iguales, quedan dadas vuelta.</p>
@@ -1404,7 +1437,14 @@ function renderMente(){
 }
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-mg]");if(!b)return;const a=b.dataset.mg;
-  if(a==="j-frase"||a==="j-memoria"){mgIniciar(a.slice(2));return render()}
+  if(a==="j-frase"||a==="j-memoria"||a==="j-sopa"){mgIniciar(a.slice(2));return render()}
+  if(MG.juego==="sopa"&&a.startsWith("s-")){const k=a.slice(2),S2=MG.sopa;MG.res="";
+    if(!MG.sel){MG.sel=k;return render()}
+    if(MG.sel===k){MG.sel=null;return render()}
+    const[a1,b1]=MG.sel.split("-").map(Number),[a2,b2]=k.split("-").map(Number);MG.sel=null;
+    const w=S2.pal.find(w=>{if(S2.found.includes(w))return false;const c=S2.pos[w],p0=c[0],p1=c[c.length-1];return (p0[0]===a1&&p0[1]===b1&&p1[0]===a2&&p1[1]===b2)||(p0[0]===a2&&p0[1]===b2&&p1[0]===a1&&p1[1]===b1)});
+    if(w){S2.found.push(w);if(S2.found.length===S2.pal.length)mgGuardar("sopa",{ok:true})}else MG.res="mal";
+    return render()}
   if(a==="reiniciar"){mgIniciar(MG.juego);return render()}
   if(MG.juego==="frase"){
     if(a.startsWith("w-")){const i=+a.slice(2),w=MG.words.find(x=>x.i===i);if(w)MG.ans.push(w);MG.res=""}
@@ -1428,13 +1468,14 @@ function renderPart(){
   const done=Object.keys(S.logs).map(Number);
   if(!S.perfil?.nombre) return `<div class="card"><h2>Completá tus datos</h2><div><label for="nom">Nombre y apellido</label><input id="nom"></div><div><label for="eda">Edad</label><input id="eda" inputmode="numeric"></div><button class="btn" id="guardarperfil">Guardar</button></div>`;
   if(!S.prog) return renderProgramas(done);
-  if(S.prog==="ingles") return S.engOk?ENG.page():renderProgramas(done);
-  if(S.prog==="cuentas") return renderCuentas();
+  if(S.prog==="ingles") return S.engOk?progBar("Inglés paso a paso")+ENG.page():renderProgramas(done);
+  if(S.prog==="cuentas") return progBar("Cuentas del hogar")+renderCuentas();
+  if(S.prog==="mente") return progBar("Mente · Juegos para pensar")+`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>`+renderMente();
   const estadoTxt=HOY<1?`Arranca el martes 3 de noviembre`:HOY>28?`Reto terminado`:`Día ${HOY} de 28`;
-  const head=`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
+  const head=progBar(PROG.nombre)+`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
   <div class="card"><div class="hero">${ring(done,HOY)}<div class="grow"><span class="tag">${esc(PROG.nombre)}</span><h1>${estadoTxt}</h1><p class="muted small">${done.length} días cargados${HOY>=1&&HOY<=28?` · ${28-HOY} por delante`:""}</p></div></div></div>
-  <div class="tabs"><button data-tab="hoy" class="${S.tab==="hoy"?"on":""}">Hoy</button><button data-tab="rec" class="${S.tab==="rec"?"on":""}">Mi recorrido</button><button data-tab="mente" class="${S.tab==="mente"?"on":""}">Mente 🧠</button><button data-tab="con" class="${S.tab==="con"?"on":""}">Consultas${(S.consultas||[]).some(c=>c.respuestas?.length&&!c.leida)?" 🔔":""}</button></div>`;
-  return head+(S.tab==="hoy"?renderHoy():S.tab==="mente"?renderMente():S.tab==="con"?renderConsultasPart():renderRecorrido());
+  <div class="tabs"><button data-tab="hoy" class="${S.tab==="hoy"?"on":""}">Hoy</button><button data-tab="rec" class="${S.tab==="rec"?"on":""}">Mi recorrido</button><button data-tab="con" class="${S.tab==="con"?"on":""}">Consultas${(S.consultas||[]).some(c=>c.respuestas?.length&&!c.leida)?" 🔔":""}</button></div>`;
+  return head+(S.tab==="hoy"?renderHoy():S.tab==="con"?renderConsultasPart():renderRecorrido());
 }
 function renderProgramas(done){
   const sub=HOY<1?`Arranca el martes 3/11 · faltan ${1-HOY} días`:HOY>28?"Terminado":`Día ${HOY} de 28`;
@@ -1447,6 +1488,8 @@ function renderProgramas(done){
   ${S.engOk?`<button class="card prog" id="ping"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Hablar y entender inglés para la vida diaria · ${ENG.total} lecciones</p><span class="chip ok">${ENG.aprobadas()?`${ENG.aprobadas()} de ${ENG.total} aprobadas`:"Habilitado · empezá cuando quieras"}</span></div></div></button>`
   :`<div class="card lock"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.2rem;background:var(--line);color:var(--muted)">EN</span><div class="grow"><h2>Inglés paso a paso</h2><p class="small muted">Aprendé a hablar y entender inglés para la vida diaria: saludar, comprar, viajar, pedir ayuda. Escuchás, repetís y la app te corrige.</p></div></div>
   ${S.perfil.inglesPide?`<p class="chip warn" style="align-self:flex-start">Pedido enviado · Rogelio te habilita en breve</p>`:`<button class="btn" id="pideing">Quiero probarlo gratis</button>`}</div>`}
+  <p class="tag">Mente · Juegos para pensar</p>
+  <button class="card prog" id="pmente"><div class="hero"><span class="logo" style="width:64px;height:64px;background:#F7E2D7;padding:8px">${ISO}</span><div class="grow"><h2>Mente</h2><p class="small muted">Tres juegos por día para entrenar la atención y la memoria: Ordená la frase, Memoria y Sopa de letras.</p><span class="chip ok">Jugar los juegos de hoy</span></div></div></button>
   <p class="tag">Herramientas · Regalo para participantes</p>
   <div class="card"><div class="hero"><span class="logo" style="width:64px;height:64px;font-size:1.6rem;background:#2c4fb8">$</span><div class="grow"><h2>Cuentas del hogar</h2><p class="small muted">Anotá gastos, ingresos, tarjetas y ahorros de tu casa en segundos, hasta hablando. Gratis para participantes.</p></div></div>
   <button class="btn" id="pcuentas">Quiero saber más</button></div>
@@ -1686,7 +1729,7 @@ function estado(u){
 }
 function renderAdmin(){
   const P=!!S.profe;
-  const head=`<div class="brand"><span class="logo">SC</span><div><h1>${P?esc(S.profe.nombre||"Equipo")+" · "+esc(rub().nombre):"Panel de Rogelio"}</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
+  const head=`<div class="brand">${LOGO}<div><h1>${P?esc(S.profe.nombre||"Equipo")+" · "+esc(rub().nombre):"Panel de Rogelio"}</h1><p class="small muted">${esc(PROG.area)} · ${esc(PROG.nombre)} · ${PROG.edicion}${HOY>=1&&HOY<=28?` · hoy es el día ${HOY}`:HOY<1?` · arranca en ${1-HOY} días`:""}</p></div></div>`;
   if(!S.A) return head+`<div class="card"><p class="muted">Cargando datos…</p></div>`;
   const np=S.A.cons.filter(c=>!c.respuestas?.length).length, cT="Consultas"+(np?` (${np})`:"");
   const TT=(P?rub().tabs:["resumen","gente","cons","opi","plan","ideas","num","ing","cont","equipo"]).map(k=>[k,k==="cons"?cT:TABN[k]]);
@@ -1820,6 +1863,7 @@ document.addEventListener("click",async e=>{
   const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.eact) return ENG.click(b);
   if(b.id==="ping"){S.prog="ingles";return render()}
+  if(b.id==="pmente"){S.prog="mente";scrollTo(0,0);return render()}
   if(b.id==="pcuentas"){S.prog="cuentas";scrollTo(0,0);return render()}
   if(b.id==="pideing"){b.disabled=true;try{await setDoc(doc(db,"usuarios",S.tel),{inglesPide:serverTimestamp()},{merge:true});S.perfil.inglesPide=true;}catch(err){b.disabled=false;alert("No se pudo enviar el pedido. Revisá tu internet y probá de nuevo.");}return render()}
   if(b.dataset.ingon||b.dataset.ingoff){const t=b.dataset.ingon||b.dataset.ingoff,on=!!b.dataset.ingon;b.disabled=true;await setDoc(doc(db,"habilitados",t),{ingles:on},{merge:true});S.A.hab[t]={...(S.A.hab[t]||{}),ingles:on};return render()}
