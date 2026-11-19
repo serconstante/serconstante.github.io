@@ -1361,6 +1361,67 @@ function aEquipo(){
 }
 
 /* ---------- Participante ---------- */
+/* ---------- Mente: juegos para entrenar la atención y la memoria ---------- */
+const MG_FRASES=["Hoy cuenta aunque sea poco","Esto es difícil, pero hoy empiezo igual","Un ladrillo detrás de otro","Todavía no puedo es una puerta abierta","Elijo moverme aunque no tenga ganas","Lo que repetís es lo que construís","Mi cuerpo también habla y lo escucho","Si hoy me corto, mañana retomo","Paso a paso también se llega lejos","Ser constante es volver cada día","Cuido mi cuerpo porque me acompaña siempre","Cumplir lo que me propongo me hace más fuerte","El descanso también es parte del plan","Hoy hago lo que puedo, y eso suma"];
+const MG_FICHAS=["🏃","💪","🧘","🚲","🍎","💧"];
+const MG={juego:null,dia:null,words:[],ans:[],res:"",cards:[],open:[],ok:[],moves:0,lock:false,guardado:{}};
+function mgRand(seed){let x=seed*9301+49297;return()=>{x=(x*9301+49297)%233280;return x/233280}}
+function mgMezclar(arr,seed){const r=mgRand(seed),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mgNorm(t){return t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-zñ ]/g,"").trim()}
+function mgDia(){return Math.min(Math.max(HOY,1),28)}
+function mgIniciar(juego){
+  const d=mgDia();MG.juego=juego;MG.dia=d;MG.res="";
+  if(juego==="frase"){const f=MG_FRASES[(d-1)%MG_FRASES.length];let w=f.split(" ").map((t,i)=>({t,i}));let m=mgMezclar(w,d+7);if(m.every((x,i)=>x.i===i))m=m.reverse();MG.words=m;MG.ans=[];MG.frase=f}
+  else{MG.cards=mgMezclar(MG_FICHAS.concat(MG_FICHAS),d*3+1).map((e,i)=>({e,i}));MG.open=[];MG.ok=[];MG.moves=0;MG.lock=false}
+}
+function mgGuardar(juego,extra){
+  const k="d"+mgDia();if(MG.guardado[k+juego])return;MG.guardado[k+juego]=true;
+  try{setDoc(doc(db,"usuarios",S.tel),{mente:{[k]:{juego,...extra,ts:Date.now()}}},{merge:true}).catch(()=>{})}catch(e){}
+}
+function renderMente(){
+  const d=mgDia(),hoyJ=d%2?"frase":"memoria";
+  if(!MG.juego||MG.dia!==d) mgIniciar(hoyJ);
+  const sel=`<div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ${MG.juego==="frase"?"":"ghost"} small" data-mg="j-frase">🧩 Ordená la frase</button><button class="btn ${MG.juego==="memoria"?"":"ghost"} small" data-mg="j-memoria">🃏 Memoria</button></div>`;
+  const intro=`<div class="card"><span class="tag">🧠 Mente</span><h2>Entrená la cabeza también</h2><p class="small">Un juego corto para ejercitar la atención y la memoria. El de hoy es <b>${hoyJ==="frase"?"Ordená la frase":"Memoria"}</b>, pero podés jugar los dos cuando quieras.</p>${sel}</div>`;
+  const chip=(t,extra,attr)=>`<button ${attr} style="border:2px solid var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;font-size:1.05rem;background:${extra};color:var(--ink);cursor:pointer;margin:4px">${esc(t)}</button>`;
+  if(MG.juego==="frase"){
+    const usados=new Set(MG.ans.map(x=>x.i));
+    const resp=MG.ans.length?MG.ans.map((x,k)=>chip(x.t,"var(--accent-soft)",`data-mg="q-${k}"`)).join(""):`<p class="small muted" style="margin:8px 4px">Tocá las palabras de abajo en el orden correcto.</p>`;
+    const banco=MG.words.filter(x=>!usados.has(x.i)).map(x=>chip(x.t,"var(--card)",`data-mg="w-${x.i}"`)).join("");
+    const msg=MG.res==="ok"?`<p style="background:var(--ok-soft);border-radius:12px;padding:10px 12px"><b>¡Muy bien!</b> «${esc(MG.frase)}». Llevala con vos hoy.</p>`:MG.res==="mal"?`<p style="background:var(--warn-soft);border-radius:12px;padding:10px 12px">Todavía no. Tocá una palabra de arriba para devolverla y probá otro orden.</p>`:MG.res==="ver"?`<p style="background:var(--accent-soft);border-radius:12px;padding:10px 12px">La frase era: <b>«${esc(MG.frase)}»</b>.</p>`:"";
+    return intro+`<div class="card"><span class="tag">🧩 Ordená la frase</span><h2>¿Qué frase se forma?</h2>
+      <div style="min-height:64px;border:2px dashed var(--line);border-radius:14px;padding:6px">${resp}</div>
+      <div style="padding:6px 0">${banco}</div>${msg}
+      <div class="row" style="gap:8px;flex-wrap:wrap">${MG.ans.length===MG.words.length&&MG.res!=="ok"?`<button class="btn" data-mg="comprobar">Comprobar</button>`:""}${MG.res!=="ok"?`<button class="btn ghost small" data-mg="ver">Ver la respuesta</button>`:""}<button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div></div>`;
+  }
+  const n=MG.ok.length/2,fin=n===MG_FICHAS.length;
+  const grid=MG.cards.map((c,k)=>{const vis=MG.open.includes(k)||MG.ok.includes(k);return `<button data-mg="c-${k}" aria-label="carta ${k+1}" style="aspect-ratio:1;border-radius:14px;border:2px solid var(--ink);font-size:2rem;background:${MG.ok.includes(k)?"var(--ok-soft)":vis?"var(--card)":"var(--accent)"};color:var(--ink);cursor:pointer">${vis?c.e:""}</button>`}).join("");
+  return intro+`<div class="card"><span class="tag">🃏 Memoria</span><h2>Encontrá los pares</h2><p class="small muted">Tocá dos cartas. Si son iguales, quedan dadas vuelta.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:360px">${grid}</div>
+    <p class="small">Pares: <b>${n} de ${MG_FICHAS.length}</b> · Intentos: <b>${MG.moves}</b></p>
+    ${fin?`<p style="background:var(--ok-soft);border-radius:12px;padding:10px 12px"><b>¡Lo lograste en ${MG.moves} intentos!</b> Mañana probá de hacerlo en menos.</p>`:""}
+    <button class="btn ghost small" data-mg="reiniciar">Empezar de nuevo</button></div>`;
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-mg]");if(!b)return;const a=b.dataset.mg;
+  if(a==="j-frase"||a==="j-memoria"){mgIniciar(a.slice(2));return render()}
+  if(a==="reiniciar"){mgIniciar(MG.juego);return render()}
+  if(MG.juego==="frase"){
+    if(a.startsWith("w-")){const i=+a.slice(2),w=MG.words.find(x=>x.i===i);if(w)MG.ans.push(w);MG.res=""}
+    else if(a.startsWith("q-")){MG.ans.splice(+a.slice(2),1);MG.res=""}
+    else if(a==="comprobar"){const ok=mgNorm(MG.ans.map(x=>x.t).join(" "))===mgNorm(MG.frase);MG.res=ok?"ok":"mal";if(ok)mgGuardar("frase",{ok:true})}
+    else if(a==="ver"){MG.res="ver";MG.ans=MG.frase.split(" ").map((t,i)=>({t,i}))}
+    return render();
+  }
+  if(a.startsWith("c-")){
+    const k=+a.slice(2);if(MG.lock||MG.ok.includes(k)||MG.open.includes(k))return;
+    MG.open.push(k);
+    if(MG.open.length===2){MG.moves++;const[x,y]=MG.open;
+      if(MG.cards[x].e===MG.cards[y].e){MG.ok.push(x,y);MG.open=[];if(MG.ok.length===MG.cards.length)mgGuardar("memoria",{intentos:MG.moves})}
+      else{MG.lock=true;setTimeout(()=>{MG.open=[];MG.lock=false;render()},900)}}
+    return render();
+  }
+});
 function renderPart(){
   if(S.imprimir) return renderImprimir();
   if(S.diploma) return renderDiploma();
@@ -1372,8 +1433,8 @@ function renderPart(){
   const estadoTxt=HOY<1?`Arranca el martes 3 de noviembre`:HOY>28?`Reto terminado`:`Día ${HOY} de 28`;
   const head=`<button class="btn ghost small" id="aprog" style="align-self:flex-start">← Mis programas</button>
   <div class="card"><div class="hero">${ring(done,HOY)}<div class="grow"><span class="tag">${esc(PROG.nombre)}</span><h1>${estadoTxt}</h1><p class="muted small">${done.length} días cargados${HOY>=1&&HOY<=28?` · ${28-HOY} por delante`:""}</p></div></div></div>
-  <div class="tabs"><button data-tab="hoy" class="${S.tab==="hoy"?"on":""}">Hoy</button><button data-tab="rec" class="${S.tab==="rec"?"on":""}">Mi recorrido</button><button data-tab="con" class="${S.tab==="con"?"on":""}">Consultas${(S.consultas||[]).some(c=>c.respuestas?.length&&!c.leida)?" 🔔":""}</button></div>`;
-  return head+(S.tab==="hoy"?renderHoy():S.tab==="con"?renderConsultasPart():renderRecorrido());
+  <div class="tabs"><button data-tab="hoy" class="${S.tab==="hoy"?"on":""}">Hoy</button><button data-tab="rec" class="${S.tab==="rec"?"on":""}">Mi recorrido</button><button data-tab="mente" class="${S.tab==="mente"?"on":""}">Mente 🧠</button><button data-tab="con" class="${S.tab==="con"?"on":""}">Consultas${(S.consultas||[]).some(c=>c.respuestas?.length&&!c.leida)?" 🔔":""}</button></div>`;
+  return head+(S.tab==="hoy"?renderHoy():S.tab==="mente"?renderMente():S.tab==="con"?renderConsultasPart():renderRecorrido());
 }
 function renderProgramas(done){
   const sub=HOY<1?`Arranca el martes 3/11 · faltan ${1-HOY} días`:HOY>28?"Terminado":`Día ${HOY} de 28`;
